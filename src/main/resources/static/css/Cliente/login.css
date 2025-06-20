@@ -1,0 +1,181 @@
+/* src/main/resources/static/css/Cliente/login.css */
+:root {
+  --color-primario: #0074b7; /* Azul principal */
+  --color-primario-oscuro: #005f94; /* Para hover de botones */
+  --color-fondo-pagina: #0d6297; /* Un azul un poco más oscuro y menos saturado para el fondo */
+  --color-fondo-tarjeta: #ffffff;
+  --color-texto-principal: #1e293b; /* Gris muy oscuro para texto principal */
+  --color-texto-secundario: #475569; /* Gris medio para etiquetas y enlaces */
+  --color-borde-input: #cbd5e1; /* Gris claro para bordes */
+  --color-sombra: rgba(0, 50, 100, 0.1); /* Sombra más suave y azulada */
+  --fuente-principal: 'Inter', sans-serif;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: var(--fuente-principal);
+  background-color: var(--color-fondo-pagina);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after { /* Mejor reseteo de box-sizing */
+  box-sizing: inherit;
+}
+
+.login-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px; /* Espacio alrededor de la tarjeta en pantallas pequeñas */
+}
+
+.login-card {
+  background-color: var(--color-fondo-tarjeta);
+  padding: 40px 45px; /* Un poco más de padding horizontal */
+  border-radius: 20px; /* Bordes más redondeados */
+  max-width: 420px; /* Ligeramente más ancha */
+  width: 100%;
+  box-shadow: 0 15px 35px var(--color-sombra);
+  text-align: center;
+}
+
+.login-card .header { /* Contenedor para el logo y el título */
+  margin-bottom: 30px; /* Más espacio después del header */
+}
+
+.login-card .logo {
+  width: 64px; /* Ajusta según tu logo */
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.login-card h2 {
+  font-weight: 700;
+  font-size: 1.75em; /* Título más grande */
+  color: var(--color-texto-principal);
+  margin-top: 0; /* Si el logo está arriba, quitar margen superior */
+  margin-bottom: 0; /* El margen lo dará el contenedor .header */
+}
+
+.login-form .input-group {
+  margin-bottom: 22px; /* Espacio entre campos */
+  text-align: left;
+}
+
+.login-form .input-group label {
+  font-weight: 600;
+  font-size: 0.9em; /* Etiqueta un poco más pequeña */
+  margin-bottom: 8px; /* Espacio entre etiqueta e input */
+  display: block;
+  color: var(--color-texto-secundario);
+}
+
+.login-form .input-group input {
+  width: 100%;
+  padding: 14px 16px; /* Padding interno del input */
+  border-radius: 12px; /* Bordes más redondeados */
+  border: 1px solid var(--color-borde-input);
+  font-size: 1em;
+  color: var(--color-texto-principal);
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.login-form .input-group input::placeholder {
+    color: #94a3b8; /* Color del placeholder */
+}
+
+.login-form .input-group input:focus {
+  border-color: var(--color-primario);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 116, 183, 0.15); /* Sombra de foco más sutil */
+}
+
+.btn-login {
+  background-color: var(--color-primario);
+  color: var(--color-fondo-tarjeta);
+  border: none;
+  width: 100%;
+  padding: 15px; /* Botón más alto */
+  border-radius: 12px; /* Consistente con inputs */
+  font-weight: 600;
+  font-size: 1.05em;
+  margin-top: 15px; /* Espacio antes del botón */
+  margin-bottom: 25px; /* Espacio después del botón */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-login:hover {
+  background-color: var(--color-primario-oscuro);
+  transform: translateY(-2px); /* Ligero efecto de elevación */
+}
+.btn-login:active {
+    transform: translateY(0); /* Para el efecto de click */
+}
+
+
+.extra-links {
+  margin-top: 0; /* El espacio lo da el margin-bottom del botón */
+  font-size: 0.9em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Alinear verticalmente si tienen diferentes alturas */
+  padding: 0 5px; /* Pequeño padding si es necesario */
+}
+
+.extra-links a {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-weight: 500; /* Un poco más de peso */
+  padding: 5px 0; /* Área de click un poco más grande */
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+  color: var(--color-primario-oscuro);
+}
+
+.back-link {
+  margin-top: 30px; /* Más espacio antes del enlace de volver */
+  font-size: 0.95em;
+}
+
+.back-link a {
+  color: var(--color-texto-secundario); /* Un gris para que no compita tanto con los enlaces primarios */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 12px; /* Hacerlo un poco más como un botón sutil */
+  border-radius: 8px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+.back-link a .material-icons-round { /* Estilo para el icono de flecha */
+    font-size: 1.2em; /* Ajustar tamaño del icono */
+}
+
+.back-link a:hover {
+  background-color: #e2e8f0; /* Un fondo gris muy claro al pasar el mouse */
+  color: var(--color-primario); /* Cambia a color primario al pasar el mouse */
+  text-decoration: none; /* Quitar subrayado en hover si tiene fondo */
+}
+
+/* Estilos para mensajes de error de Thymeleaf (si los usas) */
+.alert-login {
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.9em;
+}
+.alert-login.error { /* Específico para errores */
+    color: #721c24; /* Rojo oscuro */
+    background-color: #f8d7da; /* Rosa claro */
+    border-color: #f5c6cb; /* Borde rosa */
+}

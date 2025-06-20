@@ -1,0 +1,509 @@
+/* src/main/resources/static/css/Cliente/detalle_producto.css */
+:root {
+  --color-primario: #0074b7;
+  --color-primario-oscuro: #005f94;
+  --color-secundario: #ff5c00; /* Naranja para ofertas o acentos */
+  --color-fondo-pagina: #f8f9fa; /* Fondo muy claro */
+  --color-fondo-elemento: #ffffff;
+  --color-texto-principal: #212529; /* Negro suave */
+  --color-texto-secundario: #495057; /* Gris oscuro */
+  --color-texto-claro: #6c757d; /* Gris medio */
+  --color-borde: #dee2e6; /* Borde estándar */
+  --color-etiqueta-nuevo: #17a2b8; /* Cian para "Nuevo" */
+  --color-sombra: rgba(0, 0, 0, 0.075);
+  --fuente-principal: 'Inter', sans-serif;
+  --radio-borde-general: 12px; /* Radio de borde común */
+}
+
+body {
+  font-family: var(--fuente-principal);
+  background-color: var(--color-fondo-pagina);
+  color: var(--color-texto-principal);
+  line-height: 1.6;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  flex: 1; /* Para que el footer quede abajo */
+  padding-top: 30px; /* Espacio después del header */
+  padding-bottom: 40px; /* Espacio antes del footer */
+}
+
+.container { /* Clase de utilidad para centrar contenido */
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px; 
+    padding-right: 20px; 
+}
+
+.detalle-wrapper {
+  display: grid;
+  grid-template-columns: 100px 1fr; /* Miniaturas y Contenido Principal (Imagen + Info) */
+  gap: 30px; /* Espacio entre miniaturas y el resto */
+  align-items: flex-start;
+}
+
+.contenido-principal-producto { /* Nueva div para agrupar Imagen Principal e Info */
+    display: grid;
+    grid-template-columns: minmax(300px, 1.2fr) 1fr; /* Imagen Principal (más ancha) e Info. AJUSTA PROPORCIONES */
+    gap: 30px;
+    align-items: flex-start;
+}
+
+
+/* --- Galería de Miniaturas --- */
+.galeria {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.galeria .miniatura {
+  width: 80px; /* Miniaturas un poco más grandes */
+  height: 80px;
+  object-fit: cover; /* O 'contain' si prefieres ver toda la imagen */
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio-borde-general);
+  cursor: pointer;
+  transition: opacity 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  opacity: 0.7;
+}
+.galeria .miniatura.active,
+.galeria .miniatura:hover {
+  opacity: 1;
+  border-color: var(--color-primario);
+  transform: scale(1.05);
+}
+
+.zoom-img {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Para que sea cuadrada, o ajusta a tus imágenes */
+  max-height: 500px; /* Límite de altura */
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde-general);
+  background-color: var(--color-fondo-elemento); /* Fondo por si la imagen es 'contain' */
+}
+.zoom-img .zoom {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.1s ease-out;
+  cursor: crosshair; /* Indica que se puede hacer zoom */
+}
+
+/* --- Información del Producto --- */
+.info-producto {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Espaciado entre elementos de info */
+}
+.etiqueta-nuevo {
+  background-color: var(--color-etiqueta-nuevo);
+  color: white;
+  font-size: 0.8em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  width: fit-content;
+  text-transform: uppercase;
+}
+.info-producto h1 {
+  font-size: 1.8em; /* Título más grande y prominente */
+  color: var(--color-texto-principal);
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.presentacion {
+  font-size: 0.95em;
+  color: var(--color-texto-claro);
+  margin: -10px 0 0 0; /* Acercarlo al título */
+}
+.precios {
+  display: flex;
+  flex-wrap: wrap; /* Para que se apilen si no caben */
+  gap: 12px;
+  align-items: baseline; /* Alinear por la base del texto */
+  margin-top: 5px;
+}
+.precio-descuento {
+  color: var(--color-secundario);
+  font-weight: 700;
+  font-size: 1.7em; /* Precio principal bien grande */
+}
+.precio-regular {
+  text-decoration: line-through;
+  color: var(--color-texto-claro);
+  font-size: 1em;
+}
+.precio-oferta { /* Opcional, si tienes un tercer tipo de precio */
+  background-color: #e7f3fe;
+  color: var(--color-primario);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.beneficios ul {
+  list-style: none;
+  padding: 0;
+  color: var(--color-texto-secundario);
+  margin: 0;
+}
+.beneficios li {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre icono y texto */
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+.beneficios li .material-symbols-rounded, /* Usar material-symbols-rounded Consistentemente */
+.beneficios li .material-icons-round {
+    color: var(--color-primario);
+    font-size: 1.3em;
+}
+
+.metodos-entrega {
+  background-color: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.titulo-entrega {
+  font-weight: 600;
+  color: var(--color-texto-principal);
+  margin: 0 0 12px 0;
+  font-size: 1em;
+}
+.opciones-entrega {
+  display: flex;
+  flex-direction: column; /* Opciones apiladas */
+  gap: 12px;
+}
+.opcion-entrega { /* Renombrado de .opcion para claridad */
+  display: flex;
+  align-items: center; /* Alinear icono y texto verticalmente */
+  gap: 10px;
+  font-size: 0.9em;
+}
+.opcion-entrega .icono-entrega { /* Renombrado de .icono */
+  font-size: 1.8em; /* Iconos de entrega un poco más grandes */
+  color: var(--color-primario);
+}
+.opcion-entrega .info-opcion p {
+    margin: 0;
+    color: var(--color-texto-secundario);
+}
+.opcion-entrega .etiqueta-entrega { /* Renombrado de .etiqueta */
+  display: inline-block;
+  font-size: 0.8em;
+  margin-top: 3px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+.opcion-entrega .etiqueta-entrega.disponible {
+  background-color: #d1fae5; /* Verde claro para disponible */
+  color: #065f46; /* Verde oscuro */
+}
+
+.btn-agregar-carrito { /* Renombrado de .btn-agregar */
+  background-color: var(--color-primario);
+  color: white;
+  padding: 15px 25px; /* Botón más grande */
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%; /* Ocupar todo el ancho disponible en la columna de info */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.btn-agregar-carrito:hover {
+  background-color: var(--color-primario-oscuro);
+  transform: translateY(-2px);
+}
+
+/* --- Sección Descripción Larga --- */
+/* La clase .descripcion-larga-producto se usa junto con .container en el HTML */
+.descripcion-larga-producto { 
+  margin-top: 50px; /* Margen superior para separar de la sección anterior */
+  margin-bottom: 50px; /* Margen inferior para separar de la sección siguiente */
+  /* El padding lateral (20px a cada lado) es proporcionado por la clase .container en el HTML */
+  padding-top: 30px; /* Padding interno superior */
+  padding-bottom: 30px; /* Padding interno inferior */
+  background-color: var(--color-fondo-elemento);
+  border-radius: var(--radio-borde-general);
+  box-shadow: 0 4px 15px var(--color-sombra);
+}
+.descripcion-larga-producto details summary {
+  font-weight: 600;
+  font-size: 1.25em;
+  color: var(--color-primario);
+  cursor: pointer;
+  margin-bottom: 15px;
+  list-style: none; /* Ocultar marcador por defecto */
+  display: flex; /* Para un icono personalizado */
+  align-items: center;
+  justify-content: space-between;
+}
+.descripcion-larga-producto details summary::-webkit-details-marker { display: none; }
+.descripcion-larga-producto details summary::marker { display: none; }
+
+.descripcion-larga-producto details summary::after { /* Icono de flecha para el summary */
+  content: 'expand_more'; /* Icono de Material Symbols */
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-size: 1.5em;
+  transition: transform 0.3s ease;
+}
+.descripcion-larga-producto details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.contenido-descripcion {
+  padding-top: 15px;
+  border-top: 1px solid var(--color-borde);
+  line-height: 1.7;
+  color: var(--color-texto-secundario);
+}
+.contenido-descripcion h3 {
+    font-size: 1.1em;
+    color: var(--color-texto-principal);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+.contenido-descripcion .logo-descripcion {
+  max-width: 100px;
+  display: block;
+  margin: 0 auto 25px; /* Centrado y con más margen */
+}
+.contenido-descripcion .img-descripcion {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  width: auto; /* Dejar que se ajuste, pero con max-width */
+  max-width: 350px;
+  margin: 25px auto 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.contenido-descripcion .leyenda-img {
+  text-align: center;
+  font-style: italic;
+  color: var(--color-texto-claro);
+  font-size: 0.9em;
+}
+
+/* --- Carrusel de Productos Sugeridos --- */
+/* La clase .sugerencias-productos se usa junto con .container en el HTML */
+.sugerencias-productos { 
+  margin-top: 50px; /* Margen superior para separar de la sección anterior */
+  margin-bottom: 50px; /* Margen inferior para separar del footer */
+  /* El padding lateral (20px a cada lado) es proporcionado por la clase .container en el HTML */
+  /* No se necesita padding adicional aquí a menos que sea específico para el interior de esta sección (verticalmente) */
+}
+.sugerencias-productos h2.titulo-seccion { /* Clase específica para este título */
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--color-primario);
+  margin-bottom: 25px; /* Espacio entre el título y el carrusel */
+  text-align: left; /* Título alineado a la izquierda dentro del .container */
+}
+.carrusel-contenedor-sugerencias { /* Renombrado de .carrusel-contenedor */
+  position: relative;
+}
+.carrusel-track-sugerencias { /* Renombrado de .carrusel-track */
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 5px 5px 20px 5px; /* Padding para que las sombras no se corten y espacio para scrollbar si es visible */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.carrusel-track-sugerencias::-webkit-scrollbar { display: none; }
+
+.tarjeta-producto-sugerido { /* Renombrado de .tarjeta-producto */
+  background: var(--color-fondo-elemento);
+  border-radius: var(--radio-borde-general);
+  padding: 20px;
+  min-width: 230px; /* Tarjetas un poco más anchas */
+  max-width: 230px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px var(--color-sombra);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tarjeta-producto-sugerido:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.tarjeta-producto-sugerido img {
+  max-width: 100%;
+  height: 140px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+.tarjeta-producto-sugerido .nombre-producto { /* Renombrado de .nombre */
+  font-weight: 600; /* Más peso */
+  color: var(--color-texto-principal);
+  font-size: 0.95em;
+  margin-bottom: 5px;
+  min-height: 2.6em; /* Ajustar para 2 líneas */
+  line-height: 1.3em;
+  overflow: hidden;
+}
+.tarjeta-producto-sugerido .marca-producto { /* Renombrado de .marca */
+  font-size: 0.85em;
+  color: var(--color-texto-claro);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.tarjeta-producto-sugerido .precios-tarjeta { /* Contenedor para precios en tarjeta */
+    margin-bottom: 12px;
+}
+.tarjeta-producto-sugerido .precio-regular-tarjeta { /* Renombrado */
+  font-size: 0.8em;
+  text-decoration: line-through;
+  color: var(--color-texto-claro);
+  display: block; /* Para que ocupe su línea si está solo */
+}
+.tarjeta-producto-sugerido .precio-descuento-tarjeta { /* Renombrado */
+  font-size: 1.1em;
+  color: var(--color-primario);
+  font-weight: 700;
+}
+.tarjeta-producto-sugerido .btn-agregar-tarjeta { /* Renombrado */
+  margin-top: auto;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.9em;
+  font-weight: 600;
+  background-color: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.tarjeta-producto-sugerido .btn-agregar-tarjeta:hover {
+    background-color: var(--color-primario-oscuro);
+}
+
+.carrusel-btn-sugerencias { /* Renombrado de .carrusel-btn */
+  position: absolute;
+  top: calc(50% - 20px); /* Ajustar para centrar verticalmente con respecto a las tarjetas, no al track completo */
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente */
+  border: 1px solid var(--color-borde);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  color: var(--color-texto-secundario);
+}
+.carrusel-btn-sugerencias:hover {
+  background-color: var(--color-primario);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+.carrusel-btn-sugerencias .material-symbols-rounded, /* Usar material-symbols-rounded */
+.carrusel-btn-sugerencias .material-icons-round {
+  font-size: 28px;
+}
+.carrusel-btn-sugerencias.prev { left: -15px; } /* Ligeramente fuera del track */
+.carrusel-btn-sugerencias.next { right: -15px; }
+
+/* --- Footer --- (Se asume que se estiliza en main.css o un fragmento) */
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 1024px) {
+    .contenido-principal-producto {
+        grid-template-columns: minmax(280px, 1fr) 1fr; /* Ajustar proporciones para tablets */
+        gap: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+  .detalle-wrapper {
+    grid-template-columns: 1fr; /* Miniaturas arriba, luego contenido principal */
+    gap: 20px;
+  }
+  .galeria {
+    flex-direction: row;
+    justify-content: center;
+    order: -1; /* Para que las miniaturas aparezcan antes del contenido principal si es necesario */
+    flex-wrap: wrap; /* Para que se apilen si hay muchas */
+  }
+  .galeria .miniatura {
+    width: 60px; height: 60px;
+  }
+  .contenido-principal-producto {
+    grid-template-columns: 1fr; /* Imagen y Info en una sola columna */
+    gap: 25px;
+  }
+  .zoom-img {
+    max-height: 350px; /* Reducir altura de imagen principal en móviles */
+  }
+  .info-producto {
+    text-align: center; /* Centrar texto de info en móviles */
+    align-items: center;
+  }
+  .btn-agregar-carrito {
+    width: auto; /* No ocupar todo el ancho, o usar max-width */
+    padding: 12px 20px;
+  }
+  .descripcion-larga-producto {
+      padding-top: 20px; /* Reducir padding vertical en móviles */
+      padding-bottom: 20px;
+      /* El padding lateral sigue siendo manejado por .container */
+  }
+  .carrusel-btn-sugerencias.prev { left: 5px; }
+  .carrusel-btn-sugerencias.next { right: 5px; }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding-top: 20px;
+        padding-bottom: 30px;
+    }
+    .detalle-wrapper, .contenido-principal-producto {
+        gap: 20px;
+    }
+    .info-producto h1 { font-size: 1.5em; }
+    .precios { flex-direction: column; gap: 5px; }
+    .precio-descuento { font-size: 1.5em; }
+    
+    .sugerencias-productos h2.titulo-seccion { font-size: 1.3em; }
+    .tarjeta-producto-sugerido { min-width: 170px; max-width: 170px; padding: 15px;}
+    .tarjeta-producto-sugerido img { height: 100px; }
+
+    .descripcion-larga-producto details summary { font-size: 1.1em; }
+    /* No es necesario redefinir padding para .descripcion-larga-producto aquí si el de 768px es suficiente,
+       o se puede ajustar más si es necesario. */
+}

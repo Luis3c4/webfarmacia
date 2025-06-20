@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pasarela de Pago - FARMA</title>
+    <link rel="stylesheet" th:href="@{/css/Cliente/pasarela.css}" />
+    <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo-nombre">
+                <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+                <span class="nombre-empresa">FARMA</span>
+            </div>
+            <nav>
+                <a th:href="@{/inicio}">Inicio</a>
+                <a th:href="@{/productos}">Productos</a>
+                <a th:href="@{/contacto}">Contacto</a>
+            </nav>
+            <div class="acciones-header">
+                <button class="login-btn" th:onclick="|window.location.href='@{/login}'|">
+                    <span class="material-symbols-rounded">person</span>
+                    Iniciar sesión
+                </button>
+                <button class="carrito-btn" id="openCartBtnHeaderPasarela">
+                    <span class="material-symbols-rounded">shopping_cart</span>
+                    <span class="carrito-contador" id="headerCartCounterPasarela">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="pasarela-container">
+        <h1>Confirmar y Pagar</h1>
+
+        <div class="pasarela-layout">
+            <section class="columna-resumen">
+                <div class="resumen-compra">
+                    <h2><span class="material-symbols-rounded icon-titulo">receipt_long</span>Resumen de tu Pedido</h2>
+                    <ul id="resumen-pedido-items">
+                        <li class="placeholder-resumen">Cargando resumen del pedido...</li>
+                    </ul>
+                    <ul style="border-top: 1px solid var(--color-borde-suave); margin-top: 10px; padding-top: 10px;">
+                        <li style="color: var(--color-texto-secundario);">
+                            <span class="item-nombre">Costo de Envío</span>
+                            <span class="item-precio" id="resumen-costo-envio">S/ 0.00</span>
+                        </li>
+                        <li class="total">
+                            <span class="item-nombre">Total a Pagar:</span>
+                            <span class="item-precio" id="resumen-total-general">S/ 0.00</span>
+                        </li>
+                    </ul>
+                    <p style="font-size: 0.85em; text-align: center; color: var(--color-texto-secundario);" id="mensaje-revision-pedido">
+                        Revisa tu pedido antes de continuar.
+                    </p>
+                </div>
+            </section>
+
+            <section class="columna-formulario" id="columnaFormularioPago">
+                <form class="formulario-pago" id="paymentForm" method="POST" th:action="@{/procesar-pago-simulado}">
+                    <h2><span class="material-symbols-rounded icon-titulo">local_shipping</span>Dirección de Entrega</h2>
+                    <div class="form-group">
+                        <label for="nombreCompleto">Nombre Completo Destinatario</label>
+                        <input type="text" id="nombreCompleto" name="nombreCompleto" placeholder="Quien recibirá el pedido" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección completa (Calle, Número, Dpto.)</label>
+                        <input type="text" id="direccion" name="direccion" placeholder="Ej: Av. Siempre Viva 742, Dpto. 3A" required>
+                    </div>
+                    <div class="input-fila">
+                        <div class="form-group">
+                            <label for="distrito">Distrito</label>
+                            <input type="text" id="distrito" name="distrito" placeholder="Ej: Miraflores" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ciudad">Ciudad</label>
+                            <input type="text" id="ciudad" name="ciudad" placeholder="Ej: Lima" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="referencia">Referencia (Opcional)</label>
+                        <input type="text" id="referencia" name="referencia" placeholder="Ej: Frente al parque, casa azul">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefonoContacto">Teléfono de Contacto</label>
+                        <input type="tel" id="telefonoContacto" name="telefonoContacto" placeholder="Ej: 987654321" pattern="[0-9]{9}" title="Debe ser un número de 9 dígitos" required>
+                    </div>
+
+                    <h2><span class="material-symbols-rounded icon-titulo">credit_card</span>Método de Pago</h2>
+                    <div class="form-group">
+                        <label class="metodo-pago-label">
+                            <input type="radio" name="metodo_pago" value="tarjeta" checked>
+                            Tarjeta de Crédito / Débito
+                        </label>
+                    </div>
+
+                    <div class="campos-tarjeta">
+                        <div class="form-group">
+                            <label for="nombre_tarjeta">Nombre en la tarjeta</label>
+                            <input type="text" id="nombre_tarjeta" name="nombre_tarjeta" placeholder="Como aparece en la tarjeta" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_tarjeta">Número de tarjeta</label>
+                            <input type="text" id="numero_tarjeta" name="numero_tarjeta" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" required>
+                        </div>
+                        <div class="input-fila">
+                            <div class="form-group">
+                                <label for="fecha_exp">Fecha de Exp. (MM/AA)</label>
+                                <input type="text" id="fecha_exp" name="fecha_exp" pattern="\d{2}\s*\/\s*\d{2}" placeholder="MM/AA" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV/CVC</label>
+                                <input type="text" id="cvv" name="cvv" inputmode="numeric" pattern="[0-9]{3,4}" maxlength="4" placeholder="XXX" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-confirmar-pedido">
+                        <span class="material-symbols-rounded icon-btn">lock</span>Confirmar y Pagar Pedido
+                    </button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+ <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', () => {
+            const resumenItemsUl = document.getElementById('resumen-pedido-items');
+            const resumenCostoEnvioEl = document.getElementById('resumen-costo-envio');
+            const resumenTotalGeneralEl = document.getElementById('resumen-total-general');
+            const columnaFormularioPago = document.getElementById('columnaFormularioPago');
+            const mensajeRevisionPedidoEl = document.getElementById('mensaje-revision-pedido');
+            const headerCartCounterPasarela = document.getElementById('headerCartCounterPasarela');
+
+            let carritoActual = [];
+            let subtotalCalculado = 0;
+            const costoEnvioFijo = 5.00; 
+
+            try {
+                const storedCart = localStorage.getItem('shoppingCartFarma');
+                if (storedCart) {
+                    carritoActual = JSON.parse(storedCart);
+                }
+            } catch (e) {
+                console.error("Error al leer el carrito de localStorage:", e);
+                carritoActual = [];
+            }
+            
+            if (headerCartCounterPasarela) {
+                const totalItemsEnCarrito = carritoActual.reduce((sum, item) => sum + item.cantidad, 0);
+                headerCartCounterPasarela.textContent = totalItemsEnCarrito;
+            }
+
+            if (resumenItemsUl && carritoActual.length > 0) {
+                resumenItemsUl.innerHTML = ''; 
+                carritoActual.forEach(item => {
+                    const li = document.createElement('li');
+                    const nombreSpan = document.createElement('span');
+                    nombreSpan.className = 'item-nombre';
+                    nombreSpan.textContent = `${item.nombre} (x${item.cantidad})`;
+
+                    const precioSpan = document.createElement('span');
+                    precioSpan.className = 'item-precio';
+                    const precioItemTotal = parseFloat(item.precio) * item.cantidad;
+                    precioSpan.textContent = `S/ ${precioItemTotal.toFixed(2)}`;
+                    
+                    li.appendChild(nombreSpan);
+                    li.appendChild(precioSpan);
+                    resumenItemsUl.appendChild(li);
+
+                    subtotalCalculado += precioItemTotal;
+                });
+
+                const totalGeneralCalculado = subtotalCalculado + costoEnvioFijo;
+                resumenCostoEnvioEl.textContent = `S/ ${costoEnvioFijo.toFixed(2)}`;
+                resumenTotalGeneralEl.textContent = `S/ ${totalGeneralCalculado.toFixed(2)}`;
+                if (columnaFormularioPago) columnaFormularioPago.style.display = 'block'; 
+                if (mensajeRevisionPedidoEl) mensajeRevisionPedidoEl.style.display = 'block';
+
+            } else if (resumenItemsUl) {
+                resumenItemsUl.innerHTML = '<li class="carrito-vacio-pasarela">Tu carrito está vacío. <a href="' + /*[[@{/productos}]]*/ '/productos' + '">Añade productos</a> para continuar.</li>';
+                if (columnaFormularioPago) columnaFormularioPago.style.display = 'none'; 
+                if (resumenCostoEnvioEl) resumenCostoEnvioEl.textContent = 'S/ 0.00';
+                if (resumenTotalGeneralEl) resumenTotalGeneralEl.textContent = 'S/ 0.00';
+                if (mensajeRevisionPedidoEl) mensajeRevisionPedidoEl.style.display = 'none';
+            }
+
+
+            const paymentForm = document.getElementById('paymentForm');
+            if (paymentForm) {
+                paymentForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    if (carritoActual.length === 0) {
+                        alert("Tu carrito está vacío. No puedes proceder al pago.");
+                        window.location.href = /*[[@{/productos}]]*/ '/productos';
+                        return;
+                    }
+
+                    const nombreCompletoInput = document.getElementById('nombreCompleto');
+                    const direccionInput = document.getElementById('direccion');
+                    const distritoInput = document.getElementById('distrito');
+                    const ciudadInput = document.getElementById('ciudad');
+                    const referenciaInput = document.getElementById('referencia');
+                    const telefonoContactoInput = document.getElementById('telefonoContacto');
+                    const nombreTarjetaInput = document.getElementById('nombre_tarjeta');
+                    const numeroTarjetaInput = document.getElementById('numero_tarjeta');
+                    const fechaExpInput = document.getElementById('fecha_exp');
+                    const cvvInput = document.getElementById('cvv');
+
+                    if (!nombreCompletoInput.value || !direccionInput.value || !distritoInput.value || !ciudadInput.value || !telefonoContactoInput.value ||
+                        !nombreTarjetaInput.value || !numeroTarjetaInput.value ||
+                        !fechaExpInput.value || !cvvInput.value) {
+                        alert("Por favor, complete todos los campos obligatorios del formulario.");
+                        return;
+                    }
+
+                    const formatearMoneda = (monto, moneda = "S/") => `${moneda} ${parseFloat(monto).toFixed(2)}`;
+                    const pedidoId = `OV-${String(Date.now()).slice(-7)}`;
+                    const fechaSolicitud = new Date();
+                    const fechaEntrega = new Date(fechaSolicitud);
+                    fechaEntrega.setDate(fechaSolicitud.getDate() + 3);
+
+                    const productosParaLocalStorage = carritoActual.map(item => ({
+                        nombre: `${item.nombre} (x${item.cantidad})`, // Incluir cantidad en el nombre para el resumen
+                        // Ya no necesitamos 'cantidad' y 'precioUnitarioFormateado' separados aquí si el nombre lo incluye.
+                        // Si 'compra.html' los necesita por separado, mantenlos.
+                        precioFormateado: formatearMoneda(parseFloat(item.precio) * item.cantidad) // Precio total del item
+                    }));
+
+                    const orderDetails = {
+                        pedidoId: pedidoId,
+                        fechaSolicitud: fechaSolicitud.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                        fechaEntrega: fechaEntrega.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                        nombreCliente: nombreCompletoInput.value,
+                        direccionCompleta: `${direccionInput.value}, ${distritoInput.value}, ${ciudadInput.value}${referenciaInput.value ? ', Ref: ' + referenciaInput.value : ''}`,
+                        telefonoContacto: telefonoContactoInput.value,
+                        metodoPago: "Tarjeta de Crédito/Débito",
+                        numeroTarjetaMasked: `**** **** **** ${numeroTarjetaInput.value.replace(/\s/g, '').slice(-4)}`,
+                        productosComprados: productosParaLocalStorage,
+                        subtotal: formatearMoneda(subtotalCalculado),
+                        costoEnvio: formatearMoneda(costoEnvioFijo),
+                        totalGeneral: formatearMoneda(subtotalCalculado + costoEnvioFijo),
+                        montoPagado: formatearMoneda(subtotalCalculado + costoEnvioFijo)
+                    };
+
+                    try {
+                        localStorage.setItem('currentOrderDetails', JSON.stringify(orderDetails));
+                        // Redirección a compra.html (o la ruta que hayas definido en tu controlador para ella)
+                        window.location.href = /*[[@{/compra}]]*/ '/compra' + '?pedidoId=' + pedidoId;
+                    } catch (error) {
+                        console.error("Error al guardar en localStorage o redirigir:", error);
+                        alert("Hubo un problema al procesar tu pedido. Por favor, inténtalo de nuevo.");
+                    }
+                });
+            }
+
+            const openCartBtnHeaderPasarela = document.getElementById('openCartBtnHeaderPasarela');
+            if (openCartBtnHeaderPasarela) {
+                openCartBtnHeaderPasarela.addEventListener('click', () => {
+                    if (typeof window.openCartGlobal === 'function') { 
+                         window.openCartGlobal();
+                    } else {
+                        console.warn("Función para abrir el carrito global no encontrada.");
+                    }
+                });
+            }
+        });
+        /*]]>*/
+    </script>
+    
+</body>
+</html>

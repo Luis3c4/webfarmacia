@@ -1,0 +1,278 @@
+/* src/main/resources/static/css/Cliente/pasarela.css */
+:root {
+  --color-primario: #0074b7;
+  --color-primario-oscuro: #005f94;
+  --color-fondo-pagina: #f0f4f8; /* Un azul/gris muy pálido, más neutro */
+  --color-fondo-tarjeta: #ffffff;
+  --color-texto-principal: #1e293b; /* Azul oscuro/gris */
+  --color-texto-secundario: #475569; /* Gris medio */
+  --color-borde-input: #cbd5e1; /* Borde estándar */
+  --color-borde-input-focus: var(--color-primario);
+  --color-sombra: rgba(50, 70, 90, 0.1); /* Sombra más suave */
+  --fuente-principal: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--fuente-principal);
+  background-color: var(--color-fondo-pagina);
+  margin: 0;
+  padding: 0;
+  color: var(--color-texto-principal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased; /* Mejor renderizado de fuentes */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Header y Footer (Si no usas fragmentos y los tienes aquí) --- */
+/* Ya deberías tener estilos para header y footer en main.css */
+/* Si no, considera añadir estilos básicos aquí o importarlos */
+
+/* --- Contenedor Principal de la Pasarela --- */
+.pasarela-container {
+  max-width: 960px; /* Aumentamos el ancho máximo para acomodar mejor las columnas */
+  margin: 40px auto;
+  padding: 35px 40px; /* Buen padding interno */
+  background-color: var(--color-fondo-tarjeta);
+  border-radius: 20px; /* Bordes más redondeados */
+  box-shadow: 0 12px 35px var(--color-sombra);
+}
+
+.pasarela-container h1 {
+  color: var(--color-primario);
+  text-align: center;
+  font-size: 2em;
+  margin-top: 0;
+  margin-bottom: 35px; /* Más espacio después del título principal */
+  font-weight: 700;
+}
+
+/* --- Layout de dos columnas: Resumen y Formulario --- */
+.pasarela-layout {
+  display: grid; /* Cambiamos a Grid para un control más fino de las columnas */
+  grid-template-columns: 1fr 1.5fr; /* Resumen ocupa 1 parte, Formulario 1.5 partes. AJUSTA ESTO */
+  /* O podrías usar: grid-template-columns: minmax(300px, 2fr) minmax(400px, 3fr); */
+  gap: 40px; /* Espacio entre columnas */
+}
+
+
+
+/* --- Resumen de Compra --- */
+.resumen-compra {
+  background-color: #f8fafc; /* Un fondo muy sutil para el resumen */
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0; /* Borde muy claro */
+  height: fit-content; /* Para que no se estire innecesariamente si el form es más alto */
+}
+
+.resumen-compra h2 {
+  font-size: 1.3em; /* Título de sección un poco más pequeño */
+  color: var(--color-primario);
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
+  font-weight: 600; /* Un poco menos pesado que el H1 */
+  display: flex;
+  align-items: center;
+}
+.resumen-compra h2 .material-symbols-rounded {
+    margin-right: 10px;
+    font-size: 1.3em; /* Ajuste del icono */
+}
+
+.resumen-compra ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0; /* Margen inferior antes del texto pequeño */
+}
+
+.resumen-compra li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 5px; /* Más padding vertical */
+  font-size: 0.95em;
+  color: var(--color-texto-secundario);
+  border-bottom: 1px dashed #e2e8f0;
+}
+.resumen-compra li:first-child {
+    padding-top: 0; /* Quitar padding superior del primer item */
+}
+.resumen-compra li:last-of-type { /* Aplicar al último <li> que NO sea el total */
+    border-bottom: none;
+}
+
+.resumen-compra .item-nombre {
+  flex-grow: 1;
+  padding-right: 10px; /* Espacio antes del precio */
+}
+.resumen-compra .item-precio {
+  font-weight: 600;
+  color: var(--color-texto-principal);
+  white-space: nowrap; /* Evitar que el precio se parta */
+}
+
+.resumen-compra .total {
+  font-weight: 700;
+  font-size: 1.25em; /* Total un poco más grande */
+  color: var(--color-primario);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--color-primario);
+}
+.resumen-compra .nota-resumen { /* Para el texto "Revisa tu pedido..." */
+    font-size: 0.85em;
+    text-align: center;
+    color: var(--color-texto-secundario);
+    margin-top: 15px;
+}
+
+
+.formulario-pago h2 {
+  font-size: 1.3em;
+  color: var(--color-primario);
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+.formulario-pago h2 .material-symbols-rounded {
+    margin-right: 10px;
+    font-size: 1.3em;
+}
+
+.formulario-pago .form-group {
+  margin-bottom: 22px; /* Espacio consistente */
+}
+
+.formulario-pago label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500; /* Peso medio para etiquetas */
+  font-size: 0.9em;
+  color: var(--color-texto-secundario);
+}
+
+.formulario-pago input[type="text"],
+.formulario-pago input[type="tel"] {
+  width: 100%;
+  padding: 13px 16px; /* Buen padding */
+  border: 1px solid var(--color-borde-input);
+  border-radius: 8px;
+  font-size: 1em;
+  color: var(--color-texto-principal);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.formulario-pago input::placeholder {
+    color: #94a3b8;
+    font-size: 0.95em;
+}
+.formulario-pago input:focus {
+  outline: none;
+  border-color: var(--color-borde-input-focus);
+  box-shadow: 0 0 0 3px rgba(0, 116, 183, 0.12);
+}
+
+.input-fila {
+  display: grid; /* Usar grid para las filas de inputs */
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  gap: 20px; /* Espacio entre ellas */
+}
+.input-fila .form-group {
+  margin-bottom: 0; /* El gap del grid maneja el espacio, quitamos margen inferior aquí */
+}
+
+.metodo-pago-label {
+  display: flex;
+  align-items: center;
+  background-color: #e9f5ff;
+  padding: 14px 18px; /* Más padding */
+  border-radius: 10px; /* Bordes más redondeados */
+  border: 1px solid #b3d7f0;
+  margin-bottom: 25px; /* Más espacio después */
+  font-weight: 600; /* Texto más fuerte */
+  color: var(--color-texto-principal);
+  cursor: pointer; /* Si fuera seleccionable */
+}
+.metodo-pago-label input[type="radio"] {
+  margin-right: 12px;
+  width: 18px; /* Tamaño del radio */
+  height: 18px;
+  accent-color: var(--color-primario);
+}
+
+
+.btn-confirmar-pedido {
+  background-color: var(--color-primario);
+  color: var(--color-fondo-tarjeta);
+  border: none;
+  padding: 16px 25px; /* Botón más grande */
+  width: 100%;
+  margin-top: 30px; /* Más espacio antes del botón */
+  border-radius: 10px;
+  font-size: 1.1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex; /* Para alinear icono y texto */
+  align-items: center;
+  justify-content: center;
+}
+.btn-confirmar-pedido .material-symbols-rounded {
+    margin-right: 10px; /* Espacio entre icono y texto */
+    font-size: 1.3em; /* Tamaño del icono del candado */
+}
+
+.btn-confirmar-pedido:hover {
+  background-color: var(--color-primario-oscuro);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 95, 148, 0.2); /* Sombra al hacer hover */
+}
+.btn-confirmar-pedido:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Media Query para apilar columnas en pantallas pequeñas */
+@media (max-width: 860px) { /* Ajustar el breakpoint si es necesario */
+  .pasarela-layout {
+    grid-template-columns: 1fr; /* Una sola columna */
+  }
+  .pasarela-container {
+    margin: 20px auto;
+    padding: 25px 20px; /* Menos padding en móviles */
+  }
+  .pasarela-container h1 {
+    font-size: 1.7em;
+    margin-bottom: 25px;
+  }
+  .columna-resumen {
+    margin-bottom: 30px;
+  }
+
+}
+@media (max-width: 480px) {
+    .input-fila { /* Apilar Exp y CVV en pantallas muy pequeñas */
+        grid-template-columns: 1fr;
+        gap: 0; /* Quitar gap */
+    }
+    .input-fila .form-group {
+        margin-bottom: 22px; /* Restaurar margen inferior si se apilan */
+    }
+    .input-fila .form-group:last-child {
+        margin-bottom: 0;
+    }
+    .pasarela-container {
+        padding: 20px 15px;
+    }
+    .btn-confirmar-pedido {
+        padding: 14px 20px;
+        font-size: 1em;
+    }
+}
