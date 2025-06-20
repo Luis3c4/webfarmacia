@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/inicio.css}">
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}" class="active">Inicio</a>
+        <a th:href="@{/productos}">Productos</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+       <button class="login-btn" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+       </button>
+        <button class="carrito-btn">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+<section class="slider">
+    <button class="nav left">❮</button>
+    <div class="carousel">
+      <img th:src="@{/imagenes/cliente/banner/banner_01.avif}" class="slide active" alt="Banner 1">
+      <img th:src="@{/imagenes/cliente/banner/banner_02.png}" class="slide" alt="Banner 2">
+    </div>
+    <button class="nav right">❯</button>
+  </section>
+
+  <section class="productos-destacados">
+    <h2>Lo más visto</h2>
+    <div class="carrusel-productos">
+      <button class="slide-btn left" onclick="document.getElementById('productosSlider').scrollBy({left:-320,behavior:'smooth'})">❮</button>
+      <div class="productos-slider" id="productosSlider">
+
+        <div class="producto">
+          <!-- Corregido: Añadido /cliente/ a la ruta -->
+          <img th:src="@{/imagenes/cliente/Productos_destacados/eucerin_baby.jpg}" alt="Eucerin Baby">
+          <p class="etiqueta">FRASCO 240 ML</p>
+          <h3>Baño y Shampoo Eucerin Baby</h3>
+          <p class="marca">FARMA</p>
+          <div class="precios">
+            <p class="precio-regular">S/ 89.90</p>
+            <p class="precio-final">S/ 68.90</p>
+          </div>
+          <div class="delivery-icons">
+            <span class="material-symbols-rounded">local_shipping</span>
+            <span class="material-symbols-rounded">store</span>
+          </div>
+          <button>Agregar al carrito</button>
+        </div>
+
+        <div class="producto">
+          <!-- Corregido: Añadido /cliente/ a la ruta -->
+          <img th:src="@{/imagenes/cliente/Productos_destacados/Vital_Vitamina.jpg}" alt="Vital Adulto">
+          <p class="etiqueta">LATA 400 GR</p>
+          <h3>Vital Vitaminado Adulto Vainilla</h3>
+          <p class="marca">FARMA</p>
+          <div class="precios">
+            <p class="precio-regular">S/ 49.90</p>
+            <p class="precio-final">S/ 39.90</p>
+          </div>
+          <div class="delivery-icons">
+            <span class="material-symbols-rounded">local_shipping</span>
+            <span class="material-symbols-rounded">store</span>
+          </div>
+          <button>Agregar al carrito</button>
+        </div>
+
+        <div class="producto">
+          <!-- Corregido: Añadido /cliente/ a la ruta -->
+          <img th:src="@{/imagenes/cliente/Productos_destacados/shampoo_head.png}" alt="Shampoo Head & Shoulders">
+          <p class="etiqueta">FRASCO 375 ML</p>
+          <h3>Shampoo Head & Shoulders Menta</h3>
+          <p class="marca">Head & Shoulders</p>
+          <div class="precios">
+            <p class="precio-regular">S/ 24.90</p>
+            <p class="precio-final">S/ 14.90</p>
+          </div>
+          <div class="delivery-icons">
+            <span class="material-symbols-rounded">local_shipping</span>
+            <span class="material-symbols-rounded">store</span>
+          </div>
+          <button>Agregar al carrito</button>
+        </div>
+
+        <div class="producto">
+            <!-- Corregido: Añadido /cliente/ a la ruta -->
+            <img th:src="@{/imagenes/cliente/Productos_destacados/nivea_men.jpg}" alt="Nivea Men Pack">
+            <p class="etiqueta">SUPER PACK</p>
+            <h3>Pack 02 Desodorante Spray Nivea Men Black & White Invisible</h3>
+            <p class="marca">Nivea Men</p>
+            <div class="precios">
+              <p class="precio-regular">S/ 60.90</p>
+              <p class="precio-final">S/ 41.00</p>
+            </div>
+            <div class="delivery-icons">
+              <span class="material-symbols-rounded">local_shipping</span>
+              <span class="material-symbols-rounded">store</span>
+            </div>
+            <button>Agregar al carrito</button>
+          </div>
+
+      </div>
+      <button class="slide-btn right" onclick="document.getElementById('productosSlider').scrollBy({left:320,behavior:'smooth'})">❯</button>
+    </div>
+  </section>
+  <section class="seccion-marcas">
+    <div class="contenedor-marca">
+      <div class="banner-marca">
+        <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
+        <img th:src="@{/imagenes/cliente/Productos_Dove/shampoo-seco-ppal.jpg}" alt="Lo nuevo de Dove">
+        <div class="texto-banner">
+          <h2>Lo nuevo de Dove</h2>
+          <button class="ver-mas">Ver más productos</button>
+        </div>
+      </div>
+  
+<div class="carrusel-productos">
+  <button class="slide-btn left" onclick="document.getElementById('sliderDove').scrollBy({left:-320,behavior:'smooth'})">❮</button> <!-- CORREGIDO AQUÍ -->
+  <div class="productos-slider" id="sliderDove">
+  
+          <div class="producto">
+            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
+            <img th:src="@{/imagenes/cliente/Productos_Dove/shampoo_dove.jpg}" alt="Shampoo Dove">
+            <p class="etiqueta">FRASCO 350 ML</p>
+            <h3>Shampoo Dove Bond Intense Repair</h3>
+            <p class="marca">FARMA</p>
+            <div class="precios">
+              <p class="precio-regular">S/ 19.90</p>
+              <p class="precio-descuento">S/ 16.90</p>
+              <p class="precio-final">S/ 15.90</p>
+            </div>
+            <div class="delivery-icons">
+              <span class="material-symbols-rounded">local_shipping</span>
+              <span class="material-symbols-rounded">store</span>
+            </div>
+            <button>Agregar al carrito</button>
+          </div>
+  
+          <div class="producto">
+            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
+            <img th:src="@{/imagenes/cliente/Productos_Dove/acondicionador_dove.jpg}" alt="Acondicionador Dove">
+            <p class="etiqueta">TUBO 250 ML</p>
+            <h3>Acondicionador Dove Bond Intense Repair</h3>
+            <p class="marca">FARMA</p>
+            <div class="precios">
+              <p class="precio-regular">S/ 19.90</p>
+              <p class="precio-descuento">S/ 16.90</p>
+              <p class="precio-final">S/ 15.90</p>
+            </div>
+            <div class="delivery-icons">
+              <span class="material-symbols-rounded">local_shipping</span>
+              <span class="material-symbols-rounded">store</span>
+            </div>
+            <button>Agregar al carrito</button>
+          </div>
+  
+          <div class="producto">
+            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
+            <img th:src="@{/imagenes/cliente/Productos_Dove/mascarilla_dove.jpg}" alt="Mascarilla Dove">
+            <p class="etiqueta">FRASCO 250 GR</p>
+            <h3>Mascarilla Capilar Dove Bond Intense Repair</h3>
+            <p class="marca">FARMA</p>
+            <div class="precios">
+              <p class="precio-regular">S/ 39.90</p>
+              <p class="precio-descuento">S/ 25.90</p>
+              <p class="precio-final">S/ 24.90</p>
+            </div>
+            <div class="delivery-icons">
+              <span class="material-symbols-rounded">local_shipping</span>
+              <span class="material-symbols-rounded">store</span>
+            </div>
+            <button>Agregar al carrito</button>
+          </div>
+
+          <div class="producto">
+            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
+            <img th:src="@{/imagenes/cliente/Productos_Dove/serum.jpg}" alt="Serum Dove">
+            <p class="etiqueta">FRASCO 110 ML</p>
+            <h3>Sérum Capilar Bifásico Dove Bond Intense Repair</h3>
+            <p class="marca">FARMA</p>
+            <div class="precios">
+              <p class="precio-regular">S/ 39.90</p>
+              <p class="precio-descuento">S/ 25.90</p>
+              <p class="precio-final">S/ 24.90</p>
+            </div>
+            <div class="delivery-icons">
+              <span class="material-symbols-rounded">local_shipping</span>
+              <span class="material-symbols-rounded">store</span>
+            </div>
+            <button>Agregar al carrito</button>
+          </div>
+  
+        </div>
+        <button class="slide-btn right" onclick="document.getElementById('sliderDove').scrollBy({left:320,behavior:'smooth'})">❯</button>
+      </div>
+    </div>
+  </section>
+  <section class="ofertas">
+
+    <div class="oferta">
+      <!-- Corregido: Añadido /cliente/ a la ruta -->
+      <img th:src="@{/imagenes/cliente/ofertas/oferta_1.avif}" alt="PediaSure Pack">
+      <button class="btn-agregar">＋</button>
+    </div>
+    <div class="oferta">
+      <!-- Corregido: Añadido /cliente/ a la ruta -->
+      <img th:src="@{/imagenes/cliente/ofertas/oferta_2.avif}" alt="Huggies Promoción">
+      <button class="btn-agregar">＋</button>
+    </div>
+  </section>
+  
+  <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+  
+  <!-- Verificando nombre del script -->
+  <script th:src="@{/js/inicio.js}"></script>
+</body>
+</html>

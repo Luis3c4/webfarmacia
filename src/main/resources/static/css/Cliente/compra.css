@@ -1,0 +1,155 @@
+/* css/gracias.css */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f5f8fb; /* Un fondo claro consistente */
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.gracias-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.breadcrumb-nav {
+  font-size: 0.9em;
+  color: #777;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.breadcrumb-nav span {
+  margin: 0 5px;
+}
+
+.breadcrumb-nav .active {
+  color: #0074b7; /* Color primario de tu marca */
+  font-weight: 600;
+}
+
+.mensaje-confirmacion {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.mensaje-confirmacion .check-icon {
+  font-size: 72px;
+  color: #4CAF50; /* Verde éxito */
+  margin-bottom: 15px;
+}
+
+.mensaje-confirmacion h1 {
+  color: #0074b7;
+  font-size: 2.2em;
+  margin-bottom: 10px;
+}
+
+.mensaje-confirmacion p {
+  font-size: 1.1em;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.info-pedido {
+  margin-top: 20px;
+  font-size: 1em;
+  color: #333;
+}
+.info-pedido p {
+    margin-bottom: 5px;
+}
+
+
+.detalles-compra-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 30px;
+}
+
+.detalle-seccion {
+  padding: 15px;
+  /* border: 1px solid #e0e0e0; */
+  /* border-radius: 8px; */
+}
+
+.detalle-seccion h3 {
+  font-size: 1.2em;
+  color: #0074b7;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+.detalle-seccion h3 .icon-detalle {
+    margin-right: 8px;
+    font-size: 1.3em; /* Ajusta el tamaño del icono */
+    vertical-align: middle;
+}
+
+
+.detalle-seccion p {
+  font-size: 0.95em;
+  color: #444;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.detalle-seccion p span:first-child {
+  display: inline-block;
+  /* min-width: 120px; */ /* Para alinear un poco los valores en la sección de Resumen */
+}
+.detalle-seccion p span:last-child {
+    float: right; /* Para la sección de Resumen */
+}
+.detalle-seccion p.total-resumen span:last-child {
+    font-weight: bold;
+    color: #0074b7;
+}
+/* Específico para que no flote en las secciones de Entrega y Medio de Pago */
+.detalle-seccion:not(:last-child) p span:last-child {
+    float: none;
+}
+
+
+.acciones-finales {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn-volver {
+    display: inline-block;
+    background-color: #0074b7;
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-volver:hover {
+    background-color: #005a91;
+}
+
+/* Ajustes responsivos si es necesario */
+@media (max-width: 768px) {
+  .detalles-compra-grid {
+    grid-template-columns: 1fr; /* Una columna en móviles */
+  }
+  .gracias-container {
+    margin: 20px;
+    padding: 20px;
+  }
+  .mensaje-confirmacion h1 {
+    font-size: 1.8em;
+  }
+}

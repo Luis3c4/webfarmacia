@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${producto != null ? producto.nombre : 'Shampoo Dove Bond Intense Repair'} + ' - FARMA'">Detalle del Producto</title>
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/detalle_producto.css}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+</head>
+<body>
+
+  <header>
+    <div class="container"> <!-- OK: Header ya usa .container -->
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}">Inicio</a>
+        <a th:href="@{/productos}">Productos</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+        <button class="login-btn" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+        </button>
+        <button class="carrito-btn" th:onclick="|window.location.href='@{/carrito}'|">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Sección principal del producto, ya utiliza .container -->
+    <section class="detalle-producto-principal container">
+      <div class="detalle-wrapper">
+        <div class="galeria">
+          <img th:src="@{/imagenes/cliente/Detalle_Producto/Shampoo.jpg}" 
+               data-imagen-grande th:attr="data-imagen-grande=@{/imagenes/cliente/Detalle_Producto/Shampoo.jpg}"
+               class="miniatura active" alt="Miniatura 1 Shampoo Dove Bond Intense Repair" />
+          <img th:src="@{/imagenes/cliente/Detalle_Producto/074649-2L.jpg}" 
+               data-imagen-grande th:attr="data-imagen-grande=@{/imagenes/cliente/Detalle_Producto/074649-2L.jpg}"
+               class="miniatura" alt="Miniatura 2 Shampoo Dove Bond Intense Repair"/>
+          <img th:src="@{/imagenes/cliente/Detalle_Producto/074649-3L.jpg}" 
+               data-imagen-grande th:attr="data-imagen-grande=@{/imagenes/cliente/Detalle_Producto/074649-3L.jpg}"
+               class="miniatura" alt="Miniatura 3 Shampoo Dove Bond Intense Repair"/>
+          <img th:src="@{/imagenes/cliente/Detalle_Producto/074649-4L.jpg}" 
+               data-imagen-grande th:attr="data-imagen-grande=@{/imagenes/cliente/Detalle_Producto/074649-4L.jpg}"
+               class="miniatura" alt="Miniatura 4 Shampoo Dove Bond Intense Repair"/>
+        </div>
+
+        <div class="contenido-principal-producto">
+          <div class="imagen-principal-contenedor">
+            <div class="zoom-img">
+              <img th:src="@{/imagenes/cliente/Detalle_Producto/Shampoo.jpg}" alt="Shampoo Dove Bond Intense Repair Principal" class="zoom" />
+            </div>
+          </div>
+
+          <div class="info-producto">
+            <span class="etiqueta-nuevo">NUEVO</span>
+            <h1>Shampoo Dove Bond Intense Repair</h1>
+            <p class="presentacion">Frasco 110 ml</p>
+            <div class="precios">
+              <span class="precio-regular">S/ 47.50</span>
+              <span class="precio-descuento">S/ 30.00</span>
+              <span class="precio-oferta">S/ 29.90</span>
+            </div>
+            <div class="beneficios">
+              <p style="font-weight: 600; color: var(--color-texto-principal); margin-bottom: 8px;">Beneficios Clave:</p>
+              <ul>
+                <li><span class="material-symbols-rounded">auto_awesome</span> Brilla</li>
+                <li><span class="material-symbols-rounded">spa</span> Suaviza</li>
+                <li><span class="material-symbols-rounded">health_and_safety</span> Repara Bonos</li>
+                <li><span class="material-symbols-rounded">shield</span> Protege</li>
+              </ul>
+            </div>
+            <div class="metodos-entrega">
+              <p class="titulo-entrega">Métodos de entrega disponibles:</p>
+              <div class="opciones-entrega">
+                <div class="opcion-entrega">
+                  <span class="material-symbols-rounded icono-entrega">local_shipping</span>
+                  <div class="info-opcion">
+                    <p>Despacho a domicilio</p>
+                    <span class="etiqueta-entrega disponible">Disponible</span>
+                  </div>
+                </div>
+                <div class="opcion-entrega">
+                  <span class="material-symbols-rounded icono-entrega">storefront</span>
+                  <div class="info-opcion">
+                    <p>Retiro en tienda (Gratis)</p>
+                    <span class="etiqueta-entrega disponible">Disponible</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn-agregar-carrito">
+              <span class="material-symbols-rounded">add_shopping_cart</span>
+              Agregar al carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORRECCIÓN APLICADA: Añadir clase .container a la sección -->
+    <section class="descripcion-larga-producto container">
+      <details open>
+        <summary>Descripción Detallada</summary>
+        <div class="contenido-descripcion">
+            <img th:src="@{/imagenes/cliente/Detalle_Producto/images.png}" alt="Logo Dove" class="logo-descripcion" />
+            <p>
+                Dove es una marca dedicada al cuidado personal que busca potenciar la belleza natural de todas las personas. 
+                Este producto combina nutrición y reparación para lograr un cabello fuerte, saludable y con brillo.
+            </p>
+            <h3>Goza de un Cabello Único con el Shampoo Dove Bond Intense Repair</h3>
+            <p>
+                Con tecnología patentada, este shampoo penetra en el cabello para nutrirlo desde el interior, 
+                reconstruyendo los bonos capilares dañados y reduciendo el quiebre visible desde el primer uso.
+                Ideal para cabellos debilitados, teñidos o tratados químicamente, este shampoo ayuda a restaurar 
+                la vitalidad del cabello, devolviéndole suavidad, brillo y manejabilidad sin apelmazar.
+            </p>
+            <img th:src="@{/imagenes/cliente/Detalle_Producto/Elvive-3.png}" alt="Modelo mostrando cuidado del cabello" class="img-descripcion" />
+            <p class="leyenda-img">Dove es una marca guía en el proceso del cuidado personal.</p>
+        </div>
+      </details>
+    </section>
+  
+    <!-- CORRECCIÓN APLICADA: Añadir clase .container a la sección -->
+    <section class="sugerencias-productos container">
+      <h2 class="titulo-seccion">También te Podría Interesar</h2>
+      <div class="carrusel-contenedor-sugerencias">
+        <button class="carrusel-btn-sugerencias prev" aria-label="Producto anterior"><span class="material-symbols-rounded">chevron_left</span></button>
+        <div class="carrusel-track-sugerencias">
+          <a th:href="@{/producto/detalle/dummy-id-1}" class="tarjeta-producto-sugerido">
+              <img th:src="@{/imagenes/cliente/Catalogo_Productos/01.jpg}" alt="Baño y Shampoo Eucerin Baby" />
+              <p class="nombre-producto">Baño y Shampoo Eucerin Baby</p>
+              <p class="marca-producto">EUCERIN</p>
+              <div class="precios-tarjeta">
+                  <span class="precio-regular-tarjeta">S/ 89.90</span>
+                  <span class="precio-descuento-tarjeta">S/ 68.90</span>
+              </div>
+              <button type="button" class="btn-agregar-tarjeta">Ver Detalle</button>
+          </a>
+          <a th:href="@{/producto/detalle/dummy-id-2}" class="tarjeta-producto-sugerido">
+              <img th:src="@{/imagenes/cliente/Catalogo_Productos/02.jpg}" alt="Vital Vitaminado Adulto Vainilla" />
+              <p class="nombre-producto">Vital Vitaminado Adulto Vainilla</p>
+              <p class="marca-producto">VITAL</p>
+              <div class="precios-tarjeta">
+                  <span class="precio-regular-tarjeta">S/ 40.90</span>
+                  <span class="precio-descuento-tarjeta">S/ 39.90</span>
+              </div>
+              <button type="button" class="btn-agregar-tarjeta">Ver Detalle</button>
+          </a>
+          <a th:href="@{/producto/detalle/dummy-id-3}" class="tarjeta-producto-sugerido">
+              <img th:src="@{/imagenes/cliente/Catalogo_Productos/03.jpg}" alt="Shampoo Head & Shoulders Menta" />
+              <p class="nombre-producto">Shampoo Head & Shoulders Menta</p>
+              <p class="marca-producto">HEAD & SHOULDERS</p>
+              <div class="precios-tarjeta">
+                  <span class="precio-regular-tarjeta">S/ 24.90</span>
+                  <span class="precio-descuento-tarjeta">S/ 14.90</span>
+              </div>
+              <button type="button" class="btn-agregar-tarjeta">Ver Detalle</button>
+          </a>
+          <a th:href="@{/producto/detalle/dummy-id-4}" class="tarjeta-producto-sugerido">
+              <img th:src="@{/imagenes/cliente/Catalogo_Productos/04.jpg}" alt="Pack 02 Desodorante Nivea Men" />
+              <p class="nombre-producto">Pack 02 Desodorante Nivea Men</p>
+              <p class="marca-producto">NIVEA</p>
+              <div class="precios-tarjeta">
+                  <span class="precio-regular-tarjeta">S/ 60.90</span>
+                  <span class="precio-descuento-tarjeta">S/ 41.00</span>
+              </div>
+              <button type="button" class="btn-agregar-tarjeta">Ver Detalle</button>
+          </a>
+          <a th:href="@{/producto/detalle/dummy-id-5}" class="tarjeta-producto-sugerido">
+              <img th:src="@{/imagenes/cliente/Catalogo_Productos/01.jpg}" alt="Crema Hidratante Eucerin pH5" />
+              <p class="nombre-producto">Crema Hidratante Eucerin pH5</p>
+              <p class="marca-producto">EUCERIN</p>
+              <div class="precios-tarjeta">
+                  <span class="precio-regular-tarjeta">S/ 55.50</span>
+                  <span class="precio-descuento-tarjeta">S/ 45.90</span>
+              </div>
+              <button type="button" class="btn-agregar-tarjeta">Ver Detalle</button>
+          </a>
+        </div>
+        <button class="carrusel-btn-sugerencias next" aria-label="Siguiente producto"><span class="material-symbols-rounded">chevron_right</span></button>
+      </div>
+    </section>
+  </main>
+  
+ <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tu script JS (sin cambios necesarios aquí, ya que los selectores internos deberían seguir funcionando)
+    document.addEventListener('DOMContentLoaded', () => {
+        const miniaturas = document.querySelectorAll('.galeria .miniatura');
+        const imagenPrincipal = document.querySelector('.zoom-img .zoom');
+
+        if (miniaturas.length > 0 && imagenPrincipal) {
+            miniaturas.forEach(miniatura => {
+                miniatura.addEventListener('click', function() {
+                    miniaturas.forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                    imagenPrincipal.src = this.dataset.imagenGrande || this.src; 
+                    imagenPrincipal.alt = this.alt.replace("Miniatura", "Principal");
+                    imagenPrincipal.style.transformOrigin = 'center center';
+                    imagenPrincipal.style.transform = 'scale(1)';
+                });
+            });
+            if (miniaturas.length > 0 && miniaturas[0].classList.contains('active')) { // Asegurar que miniaturas[0] existe
+                const primeraMiniaturaActiva = miniaturas[0];
+                imagenPrincipal.src = primeraMiniaturaActiva.dataset.imagenGrande || primeraMiniaturaActiva.src;
+                imagenPrincipal.alt = primeraMiniaturaActiva.alt.replace("Miniatura", "Principal");
+            }
+        }
+
+        const imagenContenedorZoom = document.querySelector('.zoom-img');
+        if (imagenContenedorZoom && imagenPrincipal) {
+            const zoomFactor = 1.75;
+            imagenContenedorZoom.addEventListener('mousemove', (e) => {
+                const rect = imagenContenedorZoom.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xPercent = (x / rect.width) * 100;
+                const yPercent = (y / rect.height) * 100;
+                imagenPrincipal.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                imagenPrincipal.style.transform = `scale(${zoomFactor})`;
+            });
+            imagenContenedorZoom.addEventListener('mouseleave', () => {
+                imagenPrincipal.style.transformOrigin = 'center center';
+                imagenPrincipal.style.transform = 'scale(1)';
+            });
+        }
+
+        const carruselTrack = document.querySelector('.carrusel-track-sugerencias');
+        const btnNext = document.querySelector('.carrusel-btn-sugerencias.next');
+        const btnPrev = document.querySelector('.carrusel-btn-sugerencias.prev');
+
+        if (carruselTrack && btnNext && btnPrev) {
+            const scrollAmountButtons = () => {
+                const firstCard = carruselTrack.querySelector('.tarjeta-producto-sugerido');
+                const gapStyle = getComputedStyle(carruselTrack).gap;
+                const gap = gapStyle && gapStyle !== 'normal' ? parseFloat(gapStyle) : 20;
+                return firstCard ? firstCard.offsetWidth + gap : 250;
+            };
+            const scrollAmountWheel = 120;
+
+            btnNext.addEventListener('click', () => carruselTrack.scrollBy({ left: scrollAmountButtons(), behavior: 'smooth' }));
+            btnPrev.addEventListener('click', () => carruselTrack.scrollBy({ left: -scrollAmountButtons(), behavior: 'smooth' }));
+
+            carruselTrack.addEventListener('wheel', (e) => {
+                if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && e.deltaX !== 0) return; 
+                const scrollDirection = e.deltaY < 0 ? -1 : 1;
+                const scrollStep = scrollAmountWheel * scrollDirection;
+                const currentScroll = carruselTrack.scrollLeft;
+                const maxScroll = carruselTrack.scrollWidth - carruselTrack.clientWidth;
+
+                if ((scrollDirection < 0 && currentScroll > 0) || (scrollDirection > 0 && currentScroll < maxScroll)) {
+                    if (e.cancelable) e.preventDefault();
+                    carruselTrack.scrollBy({ left: scrollStep, behavior: 'smooth' });
+                }
+            }, { passive: false });
+        }
+    });
+  </script>
+</body>
+</html>

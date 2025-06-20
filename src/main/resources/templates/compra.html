@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Confirmación de Compra - FARMA</title>
+    <!-- Rutas de CSS con Thymeleaf -->
+    <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/Cliente/compra.css}" /> <!-- CSS específico para esta página -->
+    <!-- Fuentes e Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="logo-nombre">
+                <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+                <span class="nombre-empresa">FARMA</span>
+            </div>
+            <!-- Navegación simplificada si es necesario -->
+        </div>
+    </header>
+
+    <main class="gracias-container">
+        <!-- Breadcrumb (puede ser estático) -->
+        <div class="breadcrumb-nav">
+            <span>RESUMEN COMPRA</span> —
+            <span>DESPACHO</span> —
+            <span>PAGO</span> —
+            <span class="active">CONFIRMACIÓN</span>
+        </div>
+
+        <!-- El contenido se llenará con JavaScript desde localStorage -->
+        <div id="confirmacion-content">
+            <!-- Este div se llenará o se reemplazará por el script -->
+            <div class="mensaje-confirmacion-placeholder" style="text-align:center; padding: 40px;">
+                <p>Cargando detalles de la compra...</p>
+            </div>
+        </div>
+
+    </main>
+
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', () => {
+            const confirmacionContentDiv = document.getElementById('confirmacion-content');
+            const orderDetailsString = localStorage.getItem('currentOrderDetails');
+
+            if (orderDetailsString && confirmacionContentDiv) {
+                try {
+                    const order = JSON.parse(orderDetailsString);
+
+                    // Construir el HTML dinámicamente
+                    let productosHTML = '';
+                    if (order.productosComprados && order.productosComprados.length > 0) {
+                        productosHTML = '<h4>Productos Comprados:</h4><ul>';
+                        order.productosComprados.forEach(p => {
+                            productosHTML += `<li>${p.nombre} - ${p.precioFormateado}</li>`;
+                        });
+                        productosHTML += '</ul>';
+                    }
+
+
+                    confirmacionContentDiv.innerHTML = `
+                        <div class="mensaje-confirmacion">
+                            <span class="material-icons-round check-icon">check_circle</span>
+                            <h1>¡Gracias por tu compra, <span style="text-transform: capitalize;">${order.nombreCliente ? order.nombreCliente.split(' ')[0] : 'Cliente'}</span>!</h1>
+                            <p>Tu solicitud de compra fue recibida.</p>
+                            <p>Tu pedido se encuentra en proceso de validación, en breve recibirás un correo con el detalle de tu compra.</p>
+                            <div class="info-pedido">
+                                <p><strong>Pedido:</strong> <span id="pedido-id">${order.pedidoId}</span></p>
+                                <p><strong>Fecha de Solicitud de compra:</strong> <span id="fecha-solicitud">${order.fechaSolicitud}</span></p>
+                            </div>
+                        </div>
+
+                        <div class="detalles-compra-grid">
+                            <section class="detalle-seccion">
+                                <h3><span class="material-symbols-rounded icon-detalle">local_shipping</span> Entrega</h3>
+                                <p><strong>Fecha Estimada Entrega:</strong> <span id="fecha-entrega">${order.fechaEntrega}</span></p>
+                                <p id="nombre-cliente-entrega"><strong>Para:</strong> ${order.nombreCliente}</p>
+                                <p id="direccion-cliente"><strong>Dirección:</strong> ${order.direccionCompleta}</p>
+                                ${order.telefonoContacto ? `<p><strong>Teléfono:</strong> ${order.telefonoContacto}</p>` : ''}
+                            </section>
+
+                            <section class="detalle-seccion">
+                                <h3><span class="material-symbols-rounded icon-detalle">credit_card</span> Medio de Pago</h3>
+                                <p><strong>Método:</strong> ${order.metodoPago || 'Tarjeta de Crédito/Débito'}</p>
+                                ${order.numeroTarjetaMasked ? `<p><strong>Número de tarjeta:</strong> <span id="numero-tarjeta">${order.numeroTarjetaMasked}</span></p>` : ''}
+                                <p><strong>Monto Pagado:</strong> <span id="monto-pagado">${order.montoPagado || order.totalGeneral}</span></p>
+                            </section>
+
+                            <section class="detalle-seccion">
+                                <h3><span class="material-symbols-rounded icon-detalle">receipt_long</span> Resumen</h3>
+                                ${productosHTML} <!-- Productos comprados -->
+                                <p><span>Subtotal</span> <span id="subtotal">${order.subtotal}</span></p>
+                                <p><span>Costo del envío</span> <span id="costo-envio">${order.costoEnvio}</span></p>
+                                <p class="total-resumen"><strong><span>Total</span> <span id="total-general">${order.totalGeneral}</span></strong></p>
+                            </section>
+                        </div>
+                        <div class="acciones-finales">
+                            <a href="${/*[[@{/inicio}]]*/ '/inicio'}" class="btn-volver">Volver al Inicio</a>
+                        </div>
+                    `;
+
+                    // Opcional: Limpiar los detalles del pedido de localStorage después de mostrarlos
+                    // para que no se muestren si el usuario vuelve a esta página sin un nuevo pedido.
+                    // localStorage.removeItem('currentOrderDetails');
+
+                    // Opcional: Limpiar el carrito de compras después de una compra exitosa
+                    // localStorage.setItem('shoppingCartFarma', JSON.stringify([]));
+                    // console.log('Carrito de compras limpiado de localStorage.');
+                    // Aquí también podrías querer actualizar el contador del carrito en el header, si no hay recarga de página.
+                    // const cartCounterHeader = document.querySelector('.carrito-contador'); // Necesitarías el selector correcto
+                    // if (cartCounterHeader) {
+                    //     cartCounterHeader.textContent = '0';
+                    // }
+
+                } catch (error) {
+                    console.error("Error al parsear detalles del pedido desde localStorage:", error);
+                    confirmacionContentDiv.innerHTML = generadorHtmlError("Hubo un problema al mostrar los detalles de tu compra.");
+                }
+            } else {
+                console.warn("No se encontraron 'currentOrderDetails' en localStorage.");
+                confirmacionContentDiv.innerHTML = generadorHtmlError("No se encontraron detalles de la compra. Por favor, realiza un pedido primero.");
+            }
+        });
+
+        function generadorHtmlError(mensaje) {
+            return `
+                <div class="mensaje-error-confirmacion" style="text-align: center; padding: 40px;">
+                    <h1>Error</h1>
+                    <p>${mensaje}</p>
+                    <a href="${/*[[@{/inicio}]]*/ '/inicio'}" class="btn-volver" style="display: inline-block; margin-top: 20px; background-color: #0074b7; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">Volver al Inicio</a>
+                </div>`;
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

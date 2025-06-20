@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Productos - FARMA</title>
+  <link rel="stylesheet" th:href="@{/css/Cliente/productos.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/cart.css}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}">Inicio</a>
+        <a th:href="@{/productos}" class="active">Productos</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+        <button class="login-btn" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+        </button>
+        <button class="carrito-btn" aria-label="Ver carrito de compras">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <main>
+    <section class="buscador-productos">
+      <div class="container-buscador">
+        <div class="columna-categorias">
+          <select aria-label="Seleccionar categoría de productos">
+            <option value="">Categorías</option>
+            <option value="vitaminas">Vitaminas</option>
+            <option value="dermocosmetica">Dermocosmética</option>
+            <option value="higiene">Higiene</option>
+            <option value="ninos">Niños</option>
+          </select>
+        </div>
+        <div class="buscador-estilizado">
+          <input type="text" placeholder="Buscar productos..." aria-label="Campo de búsqueda de productos">
+          <button class="btn-icono" aria-label="Buscar">
+            <span class="material-icons-round">search</span>
+          </button>
+        </div>
+      </div>
+    </section>
+    
+    <section class="productos-destacados container">
+      <h2>Nuestros Productos</h2>
+      <!-- CONTENEDOR PARA DELEGACIÓN DE EVENTOS EN CART.JS -->
+      <div class="ofertas" id="product-list-container"> 
+        <!-- Producto 1 -->
+        <div class="producto" data-id="prod001" data-nombre="Shampoo Dove Bond Intense Repair" data-precio="30.00" 
+             th:attr="data-imagen=@{/imagenes/cliente/Productos_Dove/shampoo_dove.jpg}" 
+             data-presentacion="Frasco 110 ml">
+          <img th:src="@{/imagenes/cliente/Productos_Dove/shampoo_dove.jpg}" alt="Shampoo Dove Bond Intense Repair"  />
+          <p class="etiqueta">Shampoo Dove Bond Intense Repair</p>
+          <h3>Frasco 110 ml</h3>
+          <p class="precio-final">S/ 30.00</p>
+          <button class="add-to-cart" >Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 2 -->
+        <div class="producto" data-id="prod002" data-nombre="Babylac Pro 3 HMO + DHA" data-precio="59.90" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/02.jpg}" 
+             data-presentacion="Lata 800g">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/02.jpg}" alt="Babylac Pro 3 HMO + DHA" />
+          <p class="etiqueta">Lactancia</p>
+          <h3>Babylac Pro 3 HMO + DHA</h3>
+          <p class="precio-final">S/ 59.90</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 3 -->
+        <div class="producto" data-id="prod003" data-nombre="Shampoo H&S Anti-resequedad" data-precio="14.90" data-precioregular="20.90" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/03.jpg}" 
+             data-presentacion="Frasco 375ml">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/03.jpg}" alt="Shampoo Head & Shoulders Anti-resequedad" />
+          <p class="etiqueta">Cuidado Capilar</p>
+          <h3>Shampoo H&S Anti-resequedad</h3>
+          <p class="precio-regular" style="display: block;">S/ 20.90</p>
+          <p class="precio-final">S/ 14.90</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 4 -->
+        <div class="producto" data-id="prod004" data-nombre="Vital Vitaminado Adulto Vainilla 400G" data-precio="39.90" data-precioregular="49.90" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/04.jpg}" 
+             data-presentacion="Lata 400g">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/04.jpg}" alt="Vital Vitaminado Adulto Vainilla 400G" />
+          <p class="etiqueta">Nutrición</p>
+          <h3>Vital Vitaminado Adulto Vainilla 400G</h3>
+          <p class="precio-regular" style="display: block;">S/ 49.90</p>
+          <p class="precio-final">S/ 39.90</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 5 -->
+        <div class="producto" data-id="prod005" data-nombre="Bloqueador Solar ISDIN Fusion Water" data-precio="75.50" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/05.jpg}" 
+             data-presentacion="Frasco 50ml">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/05.jpg}" alt="Bloqueador Solar ISDIN Fusion Water" />
+          <p class="etiqueta">Dermocosmética</p>
+          <h3>Bloqueador Solar ISDIN Fusion Water</h3>
+          <p class="precio-final">S/ 75.50</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 6 -->
+        <div class="producto" data-id="prod006" data-nombre="Pañales Huggies Natural Care Talla M" data-precio="42.00" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/06.jpg}" 
+             data-presentacion="Paquete x40">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/06.jpg}" alt="Pañales Huggies Natural Care Talla M" />
+          <p class="etiqueta">Bebés</p>
+          <h3>Pañales Huggies Natural Care Talla M</h3>
+          <p class="precio-final">S/ 42.00</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 7 -->
+        <div class="producto" data-id="prod007" data-nombre="Pasta Dental Colgate Total 12" data-precio="12.30" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/07.jpg}" 
+             data-presentacion="Tubo 75ml">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/07.jpg}" alt="Pasta Dental Colgate Total 12" />
+          <p class="etiqueta">Higiene Bucal</p>
+          <h3>Pasta Dental Colgate Total 12</h3>
+          <p class="precio-final">S/ 12.30</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+
+        <!-- Producto 8 -->
+        <div class="producto" data-id="prod008" data-nombre="Suplemento Centrum Mujer" data-precio="65.00" data-precioregular="72.00" 
+             th:attr="data-imagen=@{/imagenes/cliente/Catalogo_Productos/08.jpg}" 
+             data-presentacion="Frasco x30 Tabletas">
+          <img th:src="@{/imagenes/cliente/Catalogo_Productos/08.jpg}" alt="Suplemento Centrum Mujer" />
+          <p class="etiqueta">Vitaminas</p>
+          <h3>Suplemento Centrum Mujer</h3>
+          <p class="precio-regular" style="display: block;">S/ 72.00</p>
+          <p class="precio-final">S/ 65.00</p>
+          <button class="add-to-cart">Agregar al carrito</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+   <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+
+  <!-- SIDEBAR DEL CARRITO -->
+  <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3><span class="material-symbols-rounded">shopping_cart</span> Mi carrito (<span id="cart-count-sidebar">0</span>)</h3>
+      <button id="close-cart-btn" class="close-cart-btn" aria-label="Cerrar carrito">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+    <div id="cart-items-container" class="cart-items-container">
+      <!-- Los items del carrito se insertarán aquí por JavaScript -->
+    </div>
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">S/ 0.00</span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Total</span>
+        <strong id="cart-total">S/ 0.00</strong>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <a th:href="@{/carrito}" class="view-cart-btn">Ir a mi carrito</a>
+      <button class="checkout-now-btn">Comprar ahora</button>
+    </div>
+  </div>
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <script th:src="@{/js/cliente/cart.js}" defer></script>
+
+</body>
+</html>
