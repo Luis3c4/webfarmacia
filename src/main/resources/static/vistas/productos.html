@@ -1,0 +1,132 @@
+<div class="container">
+    <div class="header">
+      <h1>Productos</h1>
+      <button class="btn-agregar">Agregar</button>
+    </div>
+    
+    <table class="productos-tabla">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Cantidad-ingresada</th>
+          <th>Stock-actual</th>
+          <th>Stock-status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Cerave</td>
+          <td>S/.430</td>
+          <td>43 Packets</td>
+          <td>12 Packets</td>
+          <td class="in-stock">In- stock</td>
+        </tr>
+        <tr>
+          <td>Bru</td>
+          <td>S/.257</td>
+          <td>22 Packets</td>
+          <td>12 Packets</td>
+          <td class="out-stock">Out of stock</td>
+        </tr>
+        <tr>
+          <td>Red Bull</td>
+          <td>S/.405</td>
+          <td>36 Packets</td>
+          <td>9 Packets</td>
+          <td class="in-stock">In- stock</td>
+        </tr>
+        <tr>
+          <td>Bourn Vita</td>
+          <td>S/.502</td>
+          <td>14 Packets</td>
+          <td>6 Packets</td>
+          <td class="out-stock">Out of stock</td>
+        </tr>
+        <tr>
+          <td>Horlicks</td>
+          <td>S/.530</td>
+          <td>5 Packets</td>
+          <td>5 Packets</td>
+          <td class="in-stock">In- stock</td>
+        </tr>
+        <tr>
+          <td>Harpic</td>
+          <td>S/.605</td>
+          <td>10 Packets</td>
+          <td>5 Packets</td>
+          <td class="in-stock">In- stock</td>
+        </tr>
+        <tr>
+          <td>Ariel</td>
+          <td>S/.408</td>
+          <td>23 Packets</td>
+          <td>7 Packets</td>
+          <td class="out-stock">Out of stock</td>
+        </tr>
+        <tr>
+          <td>Scotch Brite</td>
+          <td>S/.359</td>
+          <td>43 Packets</td>
+          <td>8 Packets</td>
+          <td class="in-stock">In- stock</td>
+        </tr>
+        <tr>
+          <td>Coca cola</td>
+          <td>S/.205</td>
+          <td>41 Packets</td>
+          <td>10 Packets</td>
+          <td class="low-stock">Low stock</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination">
+      <button class="btn-prev">Previous</button>
+      <span class="page-info">Page 1 of 10</span>
+      <button class="btn-next">Next</button>
+    </div>
+  </div>
+
+  <!-- Modal para agregar producto -->
+  <div id="modalAgregarProducto" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Agregar Nuevo Producto</h2>
+        <span class="close">&times;</span>
+      </div>
+      <form id="formAgregarProducto">
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio:</label>
+          <input type="number" id="precio" name="precio" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="cantidadIngresada">Cantidad:</label>
+          <input type="number" id="cantidadIngresada" name="cantidadIngresada" required>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripción:</label>
+          <textarea id="descripcion" name="descripcion" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="stock">Cantidad en Stock:</label>
+          <input type="number" id="stock" name="stock" required min="0">
+          <p class="stock-status-info">El estado del stock se calculará automáticamente:</p>
+          <ul class="stock-status-rules">
+            <li>0 unidades: Out of stock</li>
+            <li>1-10 unidades: Low stock</li>
+            <li>>10 unidades: In stock</li>
+          </ul>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn-guardar">Guardar</button>
+          <button type="button" class="btn-cancelar">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FARMA Dashboard</title>
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo-container">
+        <div class="logo">
+          <img th:src="@{/imagenes/logo.png}" alt="FARMA logo" width="32" height="32">
+        </div>
+        <span class="brand-name">FARMA</span>
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item" onclick="cargarVista('dashboard')">
+          <i class="fas fa-home icon"></i>
+          <span>Inicio</span>
+        </a>
+        <a href="#" class="nav-item" onclick="cargarVista('productos')">
+          <i class="fas fa-box icon"></i>
+          <span>Productos</span>
+        </a>
+        <a href="#" class="nav-item" onclick="cargarVista('ventas')">
+          <i class="fas fa-chart-bar icon"></i>
+          <span>Ventas</span>
+        </a>
+        <a href="#" class="nav-item" onclick="cargarVista('clientes')">
+          <i class="fas fa-users icon"></i>
+          <span>Clientes</span>
+        </a>
+      </nav>
+      <div class="logout-container">
+        <a href="#" class="nav-item">
+          <i class="fas fa-sign-out-alt icon"></i>
+          <span>Cerrar Sesión</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-layout">
+      <!-- Header -->
+      <header class="header">
+        <h1 class="page-title">Dashboard</h1>
+        <div class="user-actions">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+          </button>
+          <div class="avatar">
+            <img th:src="@{/imagenes/avatar.png}" alt="User" class="avatar-img">
+          </div>
+        </div>
+      </header>
+      <main id="main-content" class="main-content">
+        <p>hola</p>
+      </main>
+    </div>
+  </div>
+</body>
+<script th:src="@{/js/router.js}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/dashboard.js}" defer></script>
+<script th:src="@{/js/productos.js}" defer></script>
+
+</html>
