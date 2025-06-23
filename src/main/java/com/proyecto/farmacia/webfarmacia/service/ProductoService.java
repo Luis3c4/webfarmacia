@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import com.proyecto.farmacia.webfarmacia.model.Producto;
 import com.proyecto.farmacia.webfarmacia.repository.ProductoRepository;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ProductoService {
@@ -25,5 +27,9 @@ public class ProductoService {
 
     public void deleteProducto(Long id) {
         productoRepository.deleteById(id);
+    }
+
+    public Page<Producto> getProductosPage(Pageable pageable) {
+        return productoRepository.findAll(pageable);
     }
 } 

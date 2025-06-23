@@ -1,7 +1,60 @@
 // Función para inicializar el formulario de productos
 function initProductosForm() {
     console.log('Inicializando formulario de productos...');
-    
+    let currentPage = 0;
+    const pageSize = 10;
+    const tbody = document.querySelector('.productos-tabla tbody');
+    const pageInfo = document.querySelector('.page-info');
+    const btnPrev = document.querySelector('.btn-prev');
+    const btnNext = document.querySelector('.btn-next');
+
+    function fetchAndRender(page) {
+        fetch(`/api/productos?page=${page}&size=${pageSize}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Datos recibidos:', data);
+                tbody.innerHTML = '';
+                data.content.forEach(producto => {
+                    let stockStatus = '';
+                    if (producto.stock <= 0) {
+                        stockStatus = '<td class="out-stock">Out of stock</td>';
+                    } else if (producto.stock <= 10) {
+                        stockStatus = '<td class="low-stock">Low stock</td>';
+                    } else {
+                        stockStatus = '<td class="in-stock">In stock</td>';
+                    }
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${producto.nombre}</td>
+                        <td>${producto.precio}</td>
+                        <td>${producto.cantidadIngresada}</td>
+                        <td>${producto.stock}</td>
+                        ${stockStatus}
+                    `;
+                    tbody.appendChild(row);
+                });
+                // Actualizar paginación
+                pageInfo.textContent = `Page ${data.number + 1} of ${data.totalPages}`;
+                btnPrev.disabled = data.number === 0;
+                btnNext.disabled = data.number + 1 >= data.totalPages;
+                currentPage = data.number;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    // Listeners de paginación
+    btnPrev.addEventListener('click', () => {
+        if (currentPage > 0) {
+            fetchAndRender(currentPage - 1);
+        }
+    });
+    btnNext.addEventListener('click', () => {
+        fetchAndRender(currentPage + 1);
+    });
+
+    fetchAndRender(currentPage);
     // Esperar un poco más para asegurar que el DOM esté completamente cargado
     setTimeout(() => {
         const modal = document.getElementById('modalAgregarProducto');
@@ -117,6 +170,7 @@ function initProductosForm() {
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar si estamos en la vista de productos
     if (window.location.hash === '#/productos' || document.querySelector('.productos-tabla')) {
+        console.log('Cargando productos...');
         initProductosForm();
     }
 });

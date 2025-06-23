@@ -5,18 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.proyecto.farmacia.webfarmacia.model.Producto;
 import com.proyecto.farmacia.webfarmacia.service.ProductoService;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 @RequestMapping("/api/productos")
 public class ProductoController {
     @Autowired
     private ProductoService productoService;
-
-    @GetMapping
-    public List<Producto> getAllProductos() {
-        return productoService.getAllProductos();
-    }
 
     @PostMapping
     public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
@@ -37,5 +34,10 @@ public class ProductoController {
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
         productoService.deleteProducto(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public Page<Producto> getProductosPage(@PageableDefault(size = 10) Pageable pageable) {
+        return productoService.getProductosPage(pageable);
     }
 } 
