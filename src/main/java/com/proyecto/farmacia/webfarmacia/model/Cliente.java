@@ -13,7 +13,7 @@ import jakarta.persistence.EnumType;
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long clienteId;
     private String nombre;
     private String producto;
     private String numeroContacto;
@@ -36,12 +36,12 @@ public class Cliente {
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getClienteId() {
+        return clienteId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getNombre() {

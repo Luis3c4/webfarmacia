@@ -37,7 +37,19 @@ function cargarVista(vista) {
           }
         }, 300);
       }
-      
+      // Ejecutar inicialización si es ventas
+      if (vista === "ventas") {
+        console.log('Vista de ventas cargada, esperando inicialización...');
+        // Esperar un poco más para asegurar que el DOM esté listo
+        setTimeout(() => {
+          if (typeof initVentasView === "function") {
+            console.log('Llamando a initVentasView...');
+            initVentasView();
+          } else {
+            console.error('initVentasView no está disponible');
+          }
+        }, 300);
+      }
       // Ejecutar inicialización si es clientes
       if (vista === "clientes") {
         console.log('Vista de clientes cargada, esperando inicialización...');
