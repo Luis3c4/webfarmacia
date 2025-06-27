@@ -37,6 +37,32 @@ function cargarVista(vista) {
           }
         }, 300);
       }
+      // Ejecutar inicialización si es ventas
+      if (vista === "ventas") {
+        console.log('Vista de ventas cargada, esperando inicialización...');
+        // Esperar un poco más para asegurar que el DOM esté listo
+        setTimeout(() => {
+          if (typeof initVentasView === "function") {
+            console.log('Llamando a initVentasView...');
+            initVentasView();
+          } else {
+            console.error('initVentasView no está disponible');
+          }
+        }, 300);
+      }
+      // Ejecutar inicialización si es clientes
+      if (vista === "clientes") {
+        console.log('Vista de clientes cargada, esperando inicialización...');
+        // Esperar un poco más para asegurar que el DOM esté listo
+        setTimeout(() => {
+          if (typeof initClientesTable === "function") {
+            console.log('Llamando a initClientesTable...');
+            initClientesTable();
+          } else {
+            console.error('initClientesTable no está disponible');
+          }
+        }, 300);
+      }
     })
     .catch(err => {
       console.error("Error al cargar la vista:", err)
