@@ -1,8 +1,12 @@
+// Variables globales para paginación
+let currentPage = 0;
+const pageSize = 10;
+let fetchAndRenderFunction = null;
+
 // Función para inicializar el formulario de productos
 function initProductosForm() {
     console.log('Inicializando formulario de productos...');
-    let currentPage = 0;
-    const pageSize = 10;
+    currentPage = 0;
     const tbody = document.querySelector('.productos-tabla tbody');
     const pageInfo = document.querySelector('.page-info');
     const btnPrev = document.querySelector('.btn-prev');
@@ -26,15 +30,25 @@ function initProductosForm() {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${producto.nombre}</td>
-                        <td>${producto.precio}</td>
+                        <td>${producto.precio_unitario}</td>
                         <td>${producto.cantidadIngresada}</td>
                         <td>${producto.stock}</td>
                         ${stockStatus}
+                        <td>
+                            <button class="btn-editar" data-id="${producto.productoId}" onclick="editarProducto(${producto.productoId})" title="Editar producto">
+                                <i class="fas fa-edit"></i>
+                                <span>Editar</span>
+                            </button>
+                            <button class="btn-eliminar" data-id="${producto.productoId}" onclick="eliminarProducto(${producto.productoId})" title="Eliminar producto">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Eliminar</span>
+                            </button>
+                        </td>
                     `;
                     tbody.appendChild(row);
                 });
                 // Actualizar paginación
-                pageInfo.textContent = `Page ${data.number + 1} of ${data.totalPages}`;
+                pageInfo.textContent = `Page ${data.number + 1} of ${data.totalPages || 1}`;
                 btnPrev.disabled = data.number === 0;
                 btnNext.disabled = data.number + 1 >= data.totalPages;
                 currentPage = data.number;
@@ -43,6 +57,9 @@ function initProductosForm() {
                 console.error('Error:', error);
             });
     }
+
+    // Asignar la función al scope global
+    fetchAndRenderFunction = fetchAndRender;
 
     // Listeners de paginación
     btnPrev.addEventListener('click', () => {
@@ -58,22 +75,30 @@ function initProductosForm() {
     // Esperar un poco más para asegurar que el DOM esté completamente cargado
     setTimeout(() => {
         const modal = document.getElementById('modalAgregarProducto');
+        const modalEditar = document.getElementById('modalEditarProducto');
         const btnAgregar = document.querySelector('.btn-agregar');
         const closeBtn = document.querySelector('.close');
+        const closeBtnEditar = document.querySelector('#modalEditarProducto .close');
         const btnCancelar = document.querySelector('.btn-cancelar');
+        const btnCancelarEditar = document.querySelector('#modalEditarProducto .btn-cancelar');
         const form = document.getElementById('formAgregarProducto');
+        const formEditar = document.getElementById('formEditarProducto');
 
         console.log('Elementos encontrados:', {
             modal: !!modal,
+            modalEditar: !!modalEditar,
             btnAgregar: !!btnAgregar,
             closeBtn: !!closeBtn,
+            closeBtnEditar: !!closeBtnEditar,
             btnCancelar: !!btnCancelar,
-            form: !!form
+            btnCancelarEditar: !!btnCancelarEditar,
+            form: !!form,
+            formEditar: !!formEditar
         });
 
         // Verificar que todos los elementos existan
-        if (!modal || !btnAgregar || !closeBtn || !btnCancelar || !form) {
-            console.error('No se encontraron todos los elementos necesarios para el modal');
+        if (!modal || !modalEditar || !btnAgregar || !closeBtn || !closeBtnEditar || !btnCancelar || !btnCancelarEditar || !form || !formEditar) {
+            console.error('No se encontraron todos los elementos necesarios para los modales');
             return;
         }
 
@@ -83,8 +108,10 @@ function initProductosForm() {
         btnAgregar.removeEventListener('click', openModal);
         closeBtn.removeEventListener('click', closeModal);
         btnCancelar.removeEventListener('click', closeModal);
+        closeBtnEditar.removeEventListener('click', closeModalEditar);
+        btnCancelarEditar.removeEventListener('click', closeModalEditar);
 
-        // Abrir modal
+        // Abrir modal de agregar
         function openModal() {
             console.log('Botón agregar clickeado');
             modal.style.display = 'block';
@@ -92,7 +119,7 @@ function initProductosForm() {
 
         btnAgregar.addEventListener('click', openModal);
 
-        // Cerrar modal
+        // Cerrar modal de agregar
         function closeModal() {
             modal.style.display = 'none';
             form.reset();
@@ -100,16 +127,28 @@ function initProductosForm() {
 
         closeBtn.addEventListener('click', closeModal);
         btnCancelar.addEventListener('click', closeModal);
+
+        // Cerrar modal de editar
+        function closeModalEditar() {
+            modalEditar.style.display = 'none';
+            formEditar.reset();
+        }
+
+        closeBtnEditar.addEventListener('click', closeModalEditar);
+        btnCancelarEditar.addEventListener('click', closeModalEditar);
         
-        // Cerrar modal al hacer clic fuera de él
+        // Cerrar modales al hacer clic fuera de ellos
         window.addEventListener('click', (e) => {
             console.log('Click en ventana:', e.target);
             if (e.target === modal) {
                 closeModal();
             }
+            if (e.target === modalEditar) {
+                closeModalEditar();
+            }
         });
 
-        // Manejar envío del formulario
+        // Manejar envío del formulario de agregar
         form.removeEventListener('submit', handleSubmit);
         form.addEventListener('submit', handleSubmit);
 
@@ -162,6 +201,60 @@ function initProductosForm() {
             }
         }
 
+        // Manejar envío del formulario de editar
+        formEditar.removeEventListener('submit', handleSubmitEditar);
+        formEditar.addEventListener('submit', handleSubmitEditar);
+
+        async function handleSubmitEditar(e) {
+            e.preventDefault();
+            console.log('Formulario de editar enviado');
+
+            const productoId = document.getElementById('editProductoId').value;
+            const stock = parseInt(document.getElementById('editStock').value);
+            let stockStatus;
+            if (stock <= 0) {
+                stockStatus = 'OUT_OF_STOCK';
+            } else if (stock <= 10) {
+                stockStatus = 'LOW_STOCK';
+            } else {
+                stockStatus = 'IN_STOCK';
+            }
+
+            const formData = {
+                nombre: document.getElementById('editNombre').value,
+                precio: parseFloat(document.getElementById('editPrecio').value),
+                cantidadIngresada: parseInt(document.getElementById('editCantidadIngresada').value),
+                descripcion: document.getElementById('editDescripcion').value,
+                stock: stock,
+                stockStatus: stockStatus
+            };
+
+            console.log('Datos del formulario de editar:', formData);
+
+            try {
+                const response = await fetch(`/api/productos/${productoId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert('Producto actualizado exitosamente');
+                    closeModalEditar();
+                    // Recargar la tabla de productos
+                    location.reload();
+                } else {
+                    const error = await response.text();
+                    alert('Error al actualizar el producto: ' + error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al actualizar el producto');
+            }
+        }
+
         console.log('Formulario de productos inicializado correctamente');
     }, 200); // Aumentar el delay a 200ms
 }
@@ -180,4 +273,66 @@ window.addEventListener('hashchange', function() {
     if (window.location.hash === '#/productos') {
         setTimeout(initProductosForm, 100); // Pequeño delay para asegurar que el DOM está listo
     }
-}); 
+});
+
+// Función para editar un producto
+async function editarProducto(productoId) {
+    if (!productoId || productoId === 'undefined') {
+        console.error('ID de producto inválido:', productoId);
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/productos/${productoId}`);
+        if (response.ok) {
+            const producto = await response.json();
+            
+            // Llenar el formulario de edición con los datos del producto
+            document.getElementById('editProductoId').value = producto.productoId;
+            document.getElementById('editNombre').value = producto.nombre;
+            document.getElementById('editPrecio').value = producto.precio_unitario;
+            document.getElementById('editCantidadIngresada').value = producto.cantidadIngresada;
+            document.getElementById('editDescripcion').value = producto.descripcion;
+            document.getElementById('editStock').value = producto.stock;
+            
+            // Mostrar el modal de edición
+            document.getElementById('modalEditarProducto').style.display = 'block';
+        } else {
+            alert('Error al cargar los datos del producto');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar los datos del producto');
+    }
+}
+
+// Función para eliminar un producto
+function eliminarProducto(productoId) {
+    if (!productoId || productoId === 'undefined') {
+        console.error('ID de producto inválido:', productoId);
+        return;
+    }
+
+    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+        fetch(`/api/productos/${productoId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Producto eliminado exitosamente');
+                // Recargar la tabla de productos
+                if (fetchAndRenderFunction) {
+                    fetchAndRenderFunction(currentPage);
+                } else {
+                    location.reload();
+                }
+            } else {
+                alert('Error al eliminar el producto');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al eliminar el producto');
+        });
+    }
+} 

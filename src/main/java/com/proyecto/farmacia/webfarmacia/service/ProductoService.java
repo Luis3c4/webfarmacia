@@ -7,6 +7,7 @@ import com.proyecto.farmacia.webfarmacia.repository.ProductoRepository;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductoService {
@@ -14,7 +15,7 @@ public class ProductoService {
     private ProductoRepository productoRepository;
 
     public List<Producto> getAllProductos() {
-        return productoRepository.findAll();
+        return productoRepository.findAllActivos();
     }
 
     public Producto saveProducto(Producto producto) {
@@ -25,11 +26,34 @@ public class ProductoService {
         return productoRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public void deleteProducto(Long id) {
-        productoRepository.deleteById(id);
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto != null) {
+            // Soft delete - marcar como inactivo
+            producto.setActivo(false);
+            productoRepository.save(producto);
+        }
     }
 
+    /*
+    @Transactional
+    public void deleteProductoFisico(Long id) {
+        Producto producto = productoRepository.findById(id).orElse(null);
+        if (producto != null) {
+            // Eliminar registros relacionados primero
+            if (producto.getDetalleVentas() != null) {
+                producto.getDetalleVentas().clear();
+            }
+            if (producto.getDetalleCompras() != null) {
+                producto.getDetalleCompras().clear();
+            }
+            productoRepository.deleteById(id);
+        }
+    }
+    */
+
     public Page<Producto> getProductosPage(Pageable pageable) {
-        return productoRepository.findAll(pageable);
+        return productoRepository.findAllActivosPage(pageable);
     }
 } 

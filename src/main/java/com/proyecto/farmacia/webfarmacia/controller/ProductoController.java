@@ -8,9 +8,11 @@ import com.proyecto.farmacia.webfarmacia.service.ProductoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @RestController
 @RequestMapping("/api/productos")
+@EnableSpringDataWebSupport
 public class ProductoController {
     @Autowired
     private ProductoService productoService;
@@ -28,6 +30,24 @@ public class ProductoController {
             return ResponseEntity.ok(producto);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        Producto productoExistente = productoService.getProductoById(id);
+        if (productoExistente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        // Actualizar los campos del producto existente
+        productoExistente.setNombre(producto.getNombre());
+        productoExistente.setPrecio_unitario(producto.getPrecio_unitario());
+        productoExistente.setCantidadIngresada(producto.getCantidadIngresada());
+        productoExistente.setDescripcion(producto.getDescripcion());
+        productoExistente.setStock(producto.getStock());
+        
+        Producto productoActualizado = productoService.saveProducto(productoExistente);
+        return ResponseEntity.ok(productoActualizado);
     }
 
     @DeleteMapping("/{id}")

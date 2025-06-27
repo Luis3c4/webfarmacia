@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import com.proyecto.farmacia.webfarmacia.model.DetalleVenta;
 import com.proyecto.farmacia.webfarmacia.service.DetalleVentaService;
 import java.util.List;
+import com.proyecto.farmacia.webfarmacia.dto.CategoriaVentaDTO;
+import com.proyecto.farmacia.webfarmacia.dto.ProductoVentaDTO;
 
 @RestController
 @RequestMapping("/api/detalle-venta")
@@ -47,5 +49,20 @@ public class DetalleVentaController {
     @GetMapping("/total-revenue")
     public Double getTotalRevenue() {
         return detalleVentaService.calcularTotalRevenue();
+    }
+
+    @GetMapping("/net-sales-value")
+    public Double getNetSalesValue() {
+        return detalleVentaService.calcularNetSalesValue();
+    }
+
+    @GetMapping("/mejores-categorias")
+    public List<CategoriaVentaDTO> getMejoresCategoriasVentas() {
+        return detalleVentaService.getMejoresCategoriasVentas();
+    }
+
+    @GetMapping("/best-selling-products")
+    public List<ProductoVentaDTO> getBestSellingProducts() {
+        return detalleVentaService.getBestSellingProducts();
     }
 } 
