@@ -8,7 +8,7 @@
 		<version>3.4.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.proyecto.farmacia</groupId>
+	<groupId>com.proyecto.farmacia.webfarmacia</groupId>
 	<artifactId>webfarmacia</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>webfarmacia</name>
