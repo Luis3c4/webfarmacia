@@ -1,5 +1,9 @@
 function cargarVista(vista) {
   console.log('Cargando vista:', vista);
+  
+  // Actualizar la pestaña activa en el sidebar
+  actualizarPestañaActiva(vista);
+  
   fetch(`/vistas/${vista}.html`)
     .then(res => res.text())
     .then(html => {
@@ -67,4 +71,26 @@ function cargarVista(vista) {
     .catch(err => {
       console.error("Error al cargar la vista:", err)
     })
+}
+
+// Función para actualizar la pestaña activa en el sidebar
+function actualizarPestañaActiva(vista) {
+  // Remover la clase active de todas las pestañas
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // Agregar la clase active a la pestaña correspondiente
+  const vistaMap = {
+    'dashboard': 0, // Primera pestaña (Inicio)
+    'productos': 1, // Segunda pestaña (Productos)
+    'ventas': 2,    // Tercera pestaña (Ventas)
+    'clientes': 3   // Cuarta pestaña (Clientes)
+  };
+  
+  const index = vistaMap[vista];
+  if (index !== undefined && navItems[index]) {
+    navItems[index].classList.add('active');
+  }
 }

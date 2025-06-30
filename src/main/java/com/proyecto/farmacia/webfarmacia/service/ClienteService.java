@@ -32,4 +32,12 @@ public class ClienteService {
     public void deleteCliente(Long id) {
         clienteRepository.deleteById(id);
     }
+
+    public List<Cliente> getClientesByNombre(String nombre) {
+        return clienteRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    public Page<Cliente> getClientesByNombrePage(String nombre, Pageable pageable) {
+        return clienteRepository.findByNombreContainingIgnoreCasePage(nombre, pageable);
+    }
 } 
