@@ -20,6 +20,11 @@ public class ClienteController {
         return clienteService.getClientesPage(pageable);
     }
 
+    @GetMapping("/buscar")
+    public Page<Cliente> getClientesByNombre(@RequestParam String nombre, @PageableDefault(size = 10) Pageable pageable) {
+        return clienteService.getClientesByNombrePage(nombre, pageable);
+    }
+
     @PostMapping
     public ResponseEntity<Cliente> createCliente(@RequestBody Cliente cliente) {
         Cliente nuevoCliente = clienteService.saveCliente(cliente);
