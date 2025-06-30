@@ -17,12 +17,13 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
+    //crear producto
     @PostMapping
     public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
         Producto nuevoProducto = productoService.saveProducto(producto);
         return ResponseEntity.ok(nuevoProducto);
     }
-
+    //obtener producto por id
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
         Producto producto = productoService.getProductoById(id);
@@ -31,7 +32,7 @@ public class ProductoController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    //editar producto
     @PutMapping("/{id}")
     public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
         Producto productoExistente = productoService.getProductoById(id);
@@ -55,9 +56,15 @@ public class ProductoController {
         productoService.deleteProducto(id);
         return ResponseEntity.ok().build();
     }
-
+    //obtener productos
     @GetMapping
     public Page<Producto> getProductosPage(@PageableDefault(size = 10) Pageable pageable) {
         return productoService.getProductosPage(pageable);
+    }
+    
+    //buscar productos por nombre
+    @GetMapping("/buscar")
+    public Page<Producto> getProductosByNombre(@RequestParam String nombre, @PageableDefault(size = 10) Pageable pageable) {
+        return productoService.getProductosByNombrePage(nombre, pageable);
     }
 } 

@@ -56,4 +56,12 @@ public class ProductoService {
     public Page<Producto> getProductosPage(Pageable pageable) {
         return productoRepository.findAllActivosPage(pageable);
     }
+
+    public List<Producto> getProductosByNombre(String nombre) {
+        return productoRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    public Page<Producto> getProductosByNombrePage(String nombre, Pageable pageable) {
+        return productoRepository.findByNombreContainingIgnoreCasePage(nombre, pageable);
+    }
 } 
