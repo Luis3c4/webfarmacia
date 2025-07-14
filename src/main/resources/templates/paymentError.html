@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error en el Pago - FARMA</title>
+    <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .error-icon {
+            font-size: 64px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        .error-title {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn-volver {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #0074b7;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px;
+        }
+        .btn-volver:hover {
+            background-color: #005a8b;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Error en el Procesamiento del Pago</h1>
+        <p class="error-message">
+            Lo sentimos, ha ocurrido un error al procesar tu pago. 
+            <span th:if="${param.message}" th:text="${param.message}"></span>
+        </p>
+        <p class="error-message">
+            Por favor, intenta nuevamente o contacta con nuestro servicio al cliente.
+        </p>
+        <div>
+            <a th:href="@{/pasarela}" class="btn-volver">Intentar Nuevamente</a>
+            <a th:href="@{/inicio}" class="btn-volver">Volver al Inicio</a>
+        </div>
+    </div>
+</body>
+</html>

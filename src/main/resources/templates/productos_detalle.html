@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${producto != null ? producto.nombre : 'Detalle de Producto'} + ' - FARMA'">Detalle del Producto</title>
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/producto_detalle.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/cart.css}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}">Inicio</a>
+        <a th:href="@{/productos}">Productos</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+        <button class="login-btn" id="loginBtnHeader" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+        </button>
+        <button class="carrito-btn" aria-label="Ver carrito de compras">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+        <div class="usuario-logeado" id="userInfoHeader" style="display:none;">
+          <span class="material-symbols-rounded usuario-icono">person</span>
+          <span id="userNameHeader" class="usuario-nombre"></span>
+          <button id="logoutBtnHeader" class="logout-icon-btn" title="Cerrar sesión">
+            <span class="material-symbols-rounded">logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <div class="container">
+      <a th:href="@{/inicio}">Inicio</a>
+      <span class="separator">/</span>
+      <a th:href="@{/productos}">Productos</a>
+      <span class="separator">/</span>
+      <span class="current" th:text="${producto.nombre}">Producto</span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="product-detail">
+    <div class="container">
+      <!-- Product Header -->
+      <!-- Eliminar este bloque duplicado -->
+
+      <!-- Main Product Grid -->
+      <div class="detalle-grid">
+        <!-- Product Image Column -->
+        <div class="detalle-col-img">
+          <div class="galeria">
+            <div class="zoom-img">
+              <img th:src="${producto.imgUrl != null && producto.imgUrl != '' ? producto.imgUrl : '/imagenes/productos/default-medicine.jpg'}" 
+                   th:alt="${producto.nombre}" 
+                   class="zoom" 
+                   id="mainImage" />
+            </div>
+            <!-- Thumbnail Gallery -->
+            <div class="galeria-miniaturas">
+              <div class="miniatura active" onclick="changeImage(this, 'mainImage')">
+                <img th:src="${producto.imgUrl != null && producto.imgUrl != '' ? producto.imgUrl : '/imagenes/productos/default-medicine.jpg'}" 
+                     th:alt="${producto.nombre}" />
+              </div>
+              <!-- Additional thumbnails can be added here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Info Column -->
+        <div class="detalle-col-info">
+          <!-- Estado, nombre y categoría arriba del precio -->
+          <div class="estado-producto" style="margin-bottom: var(--espaciado-md);">
+            <span th:if="${producto.stock > 0}" class="badge-disponible">
+              <span class="material-symbols-rounded">check_circle</span>
+              Disponible
+            </span>
+            <span th:if="${producto.stock <= 0}" class="badge-agotado">
+              <span class="material-symbols-rounded">cancel</span>
+              Agotado
+            </span>
+            <div class="producto-titulo" th:text="${producto.nombre}">Nombre del Producto</div>
+            <div class="producto-categoria">
+              <span class="material-symbols-rounded">category</span>
+              <span th:text="${producto.categoria != null ? producto.categoria : 'Sin categoría'}">Vitaminico</span>
+            </div>
+          </div>
+          <!-- Sección de Precio -->
+          <div class="precios-farmacia">
+            <div class="precio-container">
+              <span class="label-precio">
+                <span class="material-symbols-rounded">sell</span>
+                Precio
+              </span>
+              <div class="precio-principal">
+                <span class="moneda">S/</span>
+                <span class="precio-actual" th:text="${#numbers.formatDecimal(producto.precio_unitario, 1, 2)}">0.00</span>
+              </div>
+              <div class="descuento-container" th:if="${producto.descuento != null && producto.descuento > 0}">
+                <div class="descuento-badge">
+                  <span class="material-symbols-rounded">trending_down</span>
+                  <span th:text="'-' + ${producto.descuento} + '%'">-0%</span>
+                </div>
+                <div class="precio-original">
+                  <span class="precio-tachado" th:text="'S/ ' + ${#numbers.formatDecimal(producto.precio_unitario * (1 + producto.descuento / 100), 1, 2)}">S/ 0.00</span>
+                  <span class="ahorro-texto" th:text="'Ahorras S/ ' + ${#numbers.formatDecimal(producto.precio_unitario * producto.descuento / 100, 1, 2)}">Ahorras S/ 0.00</span>
+                </div>
+              </div>
+            </div>
+            <div class="precio-info">
+              Precio unitario<br/>
+              <span style="color: var(--color-success);">Incluye IGV</span>
+            </div>
+          </div>
+
+          <!-- Información del Producto (stock, etc.) debajo del precio -->
+          <div class="info-farmacia">
+            <div class="info-farmacia-header">
+              <h3>
+                <span class="material-symbols-rounded">info</span>
+                Información del Producto
+              </h3>
+            </div>
+            <div class="info-farmacia-grid">
+              <div class="info-item">
+                <div class="info-icon">
+                  <span class="material-symbols-rounded">inventory_2</span>
+                </div>
+                <div class="info-content">
+                  <div class="info-label">Stock Disponible</div>
+                  <div class="info-value">
+                    <span class="stock-status" 
+                          th:class="${producto.stock > 10 ? 'stock-alto' : producto.stock > 0 ? 'stock-bajo' : 'stock-agotado'}"
+                          th:text="${producto.stock} + ' unidades'">0 unidades</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="info-item" th:if="${producto.metodoEntrega != null}">
+                <div class="info-icon">
+                  <span class="material-symbols-rounded">local_shipping</span>
+                </div>
+                <div class="info-content">
+                  <div class="info-label">Método de Entrega</div>
+                  <div class="info-value">
+                    <span class="metodo-entrega-status" 
+                          th:class="${producto.metodoEntrega == 'delivery' ? 'metodo-delivery' : producto.metodoEntrega == 'tienda' ? 'metodo-tienda' : 'metodo-ambos'}"
+                          th:text="${producto.metodoEntrega == 'delivery' ? 'Delivery' : producto.metodoEntrega == 'tienda' ? 'Tienda' : 'Ambos'}">Ambos</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuadro de acciones: solo cantidad y agregar al carrito -->
+          <div class="acciones-producto">
+            <div class="acciones-cantidad">
+              <button type="button" class="btn-cantidad" onclick="cambiarCantidad(-1)">-</button>
+              <input type="number" id="cantidadProducto" min="1" th:attr="max=${producto.stock}" value="1" />
+              <button type="button" class="btn-cantidad" onclick="cambiarCantidad(1)">+</button>
+            </div>
+            <button class="btn-principal add-to-cart" 
+                    th:if="${producto.stock > 0}" 
+                    th:attr="data-id=${producto.productoId},
+                             data-nombre=${producto.nombre},
+                             data-precio=${producto.precio_unitario},
+                             data-imagen=${producto.imgUrl != null ? producto.imgUrl : '/imagenes/productos/default-medicine.jpg'},
+                             data-presentacion=${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}">
+              <span class="material-symbols-rounded">shopping_cart</span>
+              <span class="btn-texto">Agregar al Carrito</span>
+            </button>
+            <button class="btn-principal" th:if="${producto.stock <= 0}" disabled>
+              <span class="material-symbols-rounded">cancel</span>
+              <span class="btn-texto">Producto Agotado</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Sections Grid -->
+      <div class="fila-dos-tarjetas">
+        <!-- Description Section -->
+        <div class="descripcion-larga-producto">
+          <details>
+            <summary>
+              <span class="material-symbols-rounded">description</span>
+              Descripción del Producto
+            </summary>
+            <div class="contenido-descripcion">
+              <p th:text="${producto.descripcion != null ? producto.descripcion : 'Sin descripción disponible para este producto.'}">
+                Descripción del producto
+              </p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Services Section -->
+        <div class="servicios-farmacia">
+          <div class="servicios-header">
+            <h3>
+              <span class="material-symbols-rounded">medical_services</span>
+              Servicios Farmacéuticos
+            </h3>
+          </div>
+          <div class="servicios-grid">
+            <div class="servicio-item">
+              <div class="servicio-icon">
+                <span class="material-symbols-rounded">support_agent</span>
+              </div>
+              <div class="servicio-content">
+                <h4>Asesoría Farmacéutica</h4>
+                <p>Consulta con nuestros expertos</p>
+              </div>
+            </div>
+            <div class="servicio-item">
+              <div class="servicio-icon">
+                <span class="material-symbols-rounded">verified</span>
+              </div>
+              <div class="servicio-content">
+                <h4>Productos Originales</h4>
+                <p>100% garantizados</p>
+              </div>
+            </div>
+            <div class="servicio-item">
+              <div class="servicio-icon">
+                <span class="material-symbols-rounded">local_shipping</span>
+              </div>
+              <div class="servicio-content">
+                <h4>Entrega Rápida</h4>
+                <p>En 24-48 horas</p>
+              </div>
+            </div>
+            <div class="servicio-item" th:if="${producto.descuento != null && producto.descuento > 0}">
+              <div class="servicio-icon">
+                <span class="material-symbols-rounded">local_offer</span>
+              </div>
+              <div class="servicio-content">
+                <h4>Descuento Especial</h4>
+                <p>Precio reducido</p>
+                <span class="servicio-badge oferta" th:text="${producto.descuento} + '% OFF'">Oferta</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Options -->
+        <div class="entrega-farmacia" th:if="${producto.metodoEntrega != null && producto.metodoEntrega != ''}">
+          <div class="entrega-header">
+            <h3>
+              <span class="material-symbols-rounded">local_shipping</span>
+              Opciones de Entrega
+            </h3>
+          </div>
+          <div class="entrega-opciones">
+            <!-- Retiro en Tienda - Solo se muestra si es 'tienda' o 'ambos' -->
+            <div class="entrega-opcion opcion-activa" 
+                 th:if="${producto.metodoEntrega == 'tienda' || producto.metodoEntrega == 'ambos'}">
+              <div class="entrega-icon">
+                <span class="material-symbols-rounded">store</span>
+              </div>
+              <div class="entrega-info">
+                <h4>Retiro en Tienda</h4>
+                <p>Recoge en nuestras sucursales</p>
+                <div class="entrega-details">
+                  <span class="entrega-precio">Gratis</span>
+                  <span class="entrega-tiempo">Inmediato</span>
+                </div>
+              </div>
+              <div class="entrega-status">
+                <span class="material-symbols-rounded available">check_circle</span>
+              </div>
+            </div>
+            
+            <!-- Delivery a Domicilio - Solo se muestra si es 'delivery' o 'ambos' -->
+            <div class="entrega-opcion opcion-activa" 
+                 th:if="${producto.metodoEntrega == 'delivery' || producto.metodoEntrega == 'ambos'}">
+              <div class="entrega-icon">
+                <span class="material-symbols-rounded">delivery_dining</span>
+              </div>
+              <div class="entrega-info">
+                <h4>Delivery a Domicilio</h4>
+                <p>Envío directo a tu casa</p>
+                <div class="entrega-details">
+                  <span class="entrega-precio">Desde S/ 5.00</span>
+                  <span class="entrega-tiempo">24-48 horas</span>
+                </div>
+              </div>
+              <div class="entrega-status">
+                <span class="material-symbols-rounded available">check_circle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mensaje cuando no hay opciones de entrega -->
+        <div class="entrega-farmacia" th:if="${producto.metodoEntrega == null || producto.metodoEntrega == ''}">
+          <div class="entrega-header">
+            <h3>
+              <span class="material-symbols-rounded">local_shipping</span>
+              Opciones de Entrega
+            </h3>
+          </div>
+          <div class="entrega-opciones">
+            <div class="entrega-opcion opcion-inactiva">
+              <div class="entrega-icon">
+                <span class="material-symbols-rounded">help</span>
+              </div>
+              <div class="entrega-info">
+                <h4>Consultar Disponibilidad</h4>
+                <p>Contacta con nosotros para conocer las opciones de entrega</p>
+                <div class="entrega-details">
+                  <span class="entrega-precio">Por consultar</span>
+                  <span class="entrega-tiempo">Variable</span>
+                </div>
+              </div>
+              <div class="entrega-status">
+                <span class="material-symbols-rounded unavailable">help</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-col">
+      <h4>Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos</h4>
+      <p>Facebook</p>
+      <p>Instagram</p>
+      <p>WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4>Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+
+  <!-- SIDEBAR DEL CARRITO -->
+  <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3><span class="material-symbols-rounded">shopping_cart</span> Mi carrito (<span id="cart-count-sidebar">0</span>)</h3>
+      <button id="close-cart-btn" class="close-cart-btn" aria-label="Cerrar carrito">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+    <div id="cart-items-container" class="cart-items-container">
+      <!-- Los items del carrito se insertarán aquí por JavaScript -->
+    </div>
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">S/ 0.00</span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Total</span>
+        <strong id="cart-total">S/ 0.00</strong>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <a th:href="@{/carrito}" class="view-cart-btn">Ir a mi carrito</a>
+      <button class="checkout-now-btn">Comprar ahora</button>
+    </div>
+  </div>
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <!-- JavaScript -->
+  <script>
+    function changeImage(thumbnail, mainImageId) {
+      const mainImage = document.getElementById(mainImageId);
+      const thumbnailImg = thumbnail.querySelector('img');
+      mainImage.src = thumbnailImg.src;
+      mainImage.alt = thumbnailImg.alt;
+      
+      // Update active thumbnail
+      document.querySelectorAll('.miniatura').forEach(t => t.classList.remove('active'));
+      thumbnail.classList.add('active');
+    }
+
+    function cambiarCantidad(delta) {
+      const input = document.getElementById('cantidadProducto');
+      let val = parseInt(input.value) || 1;
+      const max = parseInt(input.max) || 99;
+      val += delta;
+      if (val < 1) val = 1;
+      if (val > max) val = max;
+      input.value = val;
+    }
+
+    // La función agregarAlCarrito() ya no es necesaria porque el cart.js maneja el evento
+    // Se mantiene por compatibilidad pero está comentada
+    /*
+    function agregarAlCarrito() {
+      // Esta función ya no se usa, el cart.js maneja el evento directamente
+    }
+    */
+
+    function agregarAFavoritos() {
+      const button = event.target.closest('.btn-secundario');
+      const icon = button.querySelector('.material-symbols-rounded');
+      
+      if (icon.textContent === 'favorite_border') {
+        icon.textContent = 'favorite';
+        icon.style.color = '#dc2626';
+      } else {
+        icon.textContent = 'favorite_border';
+        icon.style.color = '';
+      }
+    }
+
+    function compartirProducto() {
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          url: window.location.href
+        });
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(window.location.href);
+        alert('Enlace copiado al portapapeles');
+      }
+    }
+
+    // Add smooth scrolling for details elements
+    document.querySelectorAll('details').forEach(detail => {
+      detail.addEventListener('toggle', function() {
+        if (this.open) {
+          this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+  </script>
+  
+  <!-- Script del carrito -->
+  <script th:src="@{/js/cliente/auth.js}" defer></script>
+  <script th:src="@{/js/cliente/cart.js}" defer></script>
+  <script th:src="@{/js/cliente/cart-sync.js}" defer></script>
+</body>
+</html> 

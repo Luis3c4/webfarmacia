@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Usuario - FARMA</title>
+  <!-- Enlace al CSS específico para el registro -->
+  <link rel="stylesheet" th:href="@{/css/Cliente/registro.css}" />
+  <!-- Fuente Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+
+</head>
+<body>
+
+  <!-- OPCIONAL: Si quieres un logo o un pequeño encabezado simple específico para esta página -->
+  <div class="registro-header-simple" style="text-align: center; padding: 20px 0;">
+    <!-- Asumiendo que el logo está en la ruta estándar de imágenes -->
+    <a th:href="@{/inicio}"> <!-- Enlace a la página de inicio -->
+        <img th:src="@{/imagenes/logo.png}" alt="Logo FARMA" style="height: 50px; margin-bottom:10px;">
+    </a>
+    <!-- <h2>FARMA</h2> --> <!-- O solo el nombre si prefieres -->
+  </div>
+
+
+  <div class="registro-container">
+    <h1>Crear una cuenta</h1>
+    
+    <!-- Mensajes de error o éxito (Thymeleaf puede llenarlos desde el controlador) -->
+    <div th:if="${param.error}" class="alert alert-danger">
+        <span>Hubo un error durante el registro. Por favor, inténtalo de nuevo.</span>
+        <!-- Podrías ser más específico si pasas un mensaje de error detallado -->
+    </div>
+    <div th:if="${param.exito}" class="alert alert-success">
+        <span>¡Registro exitoso! Ahora puedes <a th:href="@{/login}">iniciar sesión</a>.</span>
+    </div>
+
+
+    <!-- El action apunta al endpoint del controlador que procesa el registro -->
+    <form id="registroForm" th:action="@{/registro/procesar}" method="post" class="registro-form"> 
+      
+      <div class="form-group">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Ej: Ana Pérez" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="tu.email@ejemplo.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono (Opcional)</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Ej: 987654321" />
+      </div>
+
+      <div class="form-group">
+        <label for="contrasena">Contraseña</label>
+        <input type="password" id="contrasena" name="contrasena" placeholder="Mínimo 8 caracteres" required />
+        <!-- Podrías añadir aquí un pequeño texto con los requisitos de la contraseña -->
+        <!-- <small>Debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.</small> -->
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmarContrasena">Confirmar Contraseña</label>
+        <input type="password" id="confirmarContrasena" name="confirmarContrasena" placeholder="Repite tu contraseña" required />
+      </div>
+      
+      <!-- Checkbox para Términos y Condiciones (muy recomendado) -->
+      <div class="form-group form-group-checkbox">
+        <input type="checkbox" id="terminos" name="terminos" required />
+        <label for="terminos" class="label-checkbox">
+            He leído y acepto los <a th:href="@{/terminos-y-condiciones}" target="_blank">Términos y Condiciones</a> y la 
+            <a th:href="@{/politica-de-privacidad}" target="_blank">Política de Privacidad</a>.
+        </label>
+      </div>
+
+      <button type="submit" class="btn-registrarse">Crear Mi Cuenta</button>
+
+      <p class="login-link">
+        ¿Ya tienes una cuenta? 
+        <a th:href="@{/login}">Inicia sesión aquí</a>
+      </p>
+    </form>
+  </div>
+
+  <!-- Un footer simple si no usas el fragmento -->
+  <div class="registro-footer-simple" style="text-align: center; padding: 20px 0; margin-top: 30px; font-size: 0.9em; color: #777;">
+    © <span th:text="${#dates.year(#dates.createNow())}">2024</span> FARMA. Todos los derechos reservados.
+  </div>
+
+<script>
+const registroForm = document.getElementById('registroForm');
+if (registroForm) {
+  registroForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const contrasena = document.getElementById('contrasena').value;
+
+    // Validación de formato de correo
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!nombre || !email || !contrasena) {
+      alert('Por favor, completa los campos obligatorios.');
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      alert('Por favor, ingresa un email válido.');
+      return;
+    }
+
+    // 1. REGISTRO EN SUPABASE AUTH
+    try {
+      const response = await fetch('https://xgielyheqllgacpvfkmc.supabase.co/auth/v1/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhnaWVseWhlcWxsZ2FjcHZma21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMDcxMDcsImV4cCI6MjA2NTY4MzEwN30.5ohQANXG6i7WiRyKg_c5-1XGpldXv6sPWF8uJQ4ylpQ'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: contrasena,
+          options: {
+            data: {
+              nombre: nombre,
+              telefono: telefono
+            }
+          }
+        })
+      });
+
+      const data = await response.json();
+      console.log('Respuesta de Supabase Auth:', data);
+      
+      if (response.ok && (data.user || data.id)) {
+        // Obtener el ID del usuario de Supabase Auth
+        const supabaseId = data.user ? data.user.id : data.id;
+        console.log('Supabase ID obtenido:', supabaseId);
+        
+        // 2. GUARDAR USUARIO EN LA TABLA 'usuarios' VIA BACKEND
+        try {
+          const backendResponse = await fetch('/api/usuarios', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nombre: nombre,
+              email: email, // Cambiado de 'correo' a 'email'
+              supabase_id: supabaseId,
+              tipo_usuario: 'cliente',
+              contraseña: contrasena,
+              telefono: telefono
+            })
+          });
+          
+          if (backendResponse.ok) {
+            console.log('Usuario guardado exitosamente en la base de datos');
+            alert('¡Registro exitoso! Revisa tu email para confirmar tu cuenta.');
+            window.location.href = '/login';
+          } else {
+            const errorData = await backendResponse.json();
+            console.error('Error al guardar en BD:', errorData);
+            alert('Error al guardar usuario en la base de datos: ' + (errorData.message || 'Error desconocido'));
+          }
+        } catch (backendError) {
+          console.error('Error en la petición al backend:', backendError);
+          alert('Error al comunicarse con el servidor: ' + backendError.message);
+        }
+      } else if (data.msg && data.msg.includes('already registered')) {
+        alert('El email ya está registrado. Intenta iniciar sesión o usa otro email.');
+      } else if (data.error_description) {
+        alert('Error: ' + data.error_description);
+      } else {
+        alert('Error en el registro: ' + (data.msg || JSON.stringify(data)));
+      }
+    } catch (error) {
+      console.error('Error al registrar usuario en Supabase:', error);
+      alert('Error al registrar usuario en Supabase: ' + error.message);
+    }
+  });
+}
+</script>
+</body>
+</html>

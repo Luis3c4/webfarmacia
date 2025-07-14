@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Carrito - FARMA</title>
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/cart.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/carrito.css}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}">Inicio</a>
+        <a th:href="@{/productos}">Productos</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+        <button class="login-btn" id="loginBtnHeader" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+        </button>
+        <button class="carrito-btn">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+        <div class="usuario-logeado" id="userInfoHeader" style="display:none;">
+          <span class="material-symbols-rounded usuario-icono">person</span>
+          <span id="userNameHeader" class="usuario-nombre"></span>
+          <button id="logoutBtnHeader" class="logout-icon-btn" title="Cerrar sesión">
+            <span class="material-symbols-rounded">logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="carrito-section">
+      <div class="container">
+        <div class="carrito-header">
+          <h1>Mi Carrito</h1>
+          <p>Revisa tus productos antes de finalizar tu compra</p>
+        </div>
+
+        <div class="carrito-content">
+          <!-- Lista de productos del carrito -->
+          <div class="carrito-items" id="carritoItems">
+            <div class="loading">
+              <span class="material-symbols-rounded">refresh</span>
+              <p>Cargando productos...</p>
+            </div>
+          </div>
+
+          <!-- Resumen del carrito -->
+          <div class="carrito-summary" id="carritoSummary">
+            <div class="summary-header">
+              <h2>Resumen de Compra</h2>
+              <p id="itemCount">0 productos</p>
+            </div>
+            
+            <div class="summary-details">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotal">S/ 0.00</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total</span>
+                <span id="total">S/ 0.00</span>
+              </div>
+            </div>
+            
+            <div class="summary-actions">
+              <button class="btn-checkout" id="checkoutBtn" onclick="proceedToCheckout()">
+                <span class="material-symbols-rounded">shopping_cart_checkout</span>
+                Proceder al Pago
+              </button>
+              <button class="btn-continue" onclick="window.location.href='/productos'">
+                <span class="material-symbols-rounded">store</span>
+                Ir a mis productos
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+
+  <script th:src="@{/js/cliente/auth.js}" defer></script>
+  <script th:src="@{/js/cliente/cart-sync.js}" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      // Cargar productos del carrito
+      loadCartItems();
+    });
+
+    function loadCartItems() {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      const carritoItemsContainer = document.getElementById('carritoItems');
+      const carritoSummary = document.getElementById('carritoSummary');
+      
+      if (cartItems.length === 0) {
+        carritoItemsContainer.innerHTML = `
+          <div class="empty-cart">
+            <span class="material-symbols-rounded">shopping_cart</span>
+            <h2>Tu carrito está vacío</h2>
+            <p>Agrega algunos productos para comenzar a comprar</p>
+            <a href="/productos" class="btn-shop">
+              <span class="material-symbols-rounded">store</span>
+              Ir a Productos
+            </a>
+          </div>
+        `;
+        carritoSummary.style.display = 'none';
+        return;
+      }
+      
+      carritoSummary.style.display = 'block';
+      
+      // Mostrar productos
+      carritoItemsContainer.innerHTML = cartItems.map((item, index) => `
+        <div class="carrito-item" data-id="${item.id}">
+          <img src="${item.imagen}" alt="${item.nombre}" class="item-image" onerror="this.src='/imagenes/productos/default-medicine.jpg'">
+          
+          <div class="item-details">
+            <h3>${item.nombre}</h3>
+            <p>${item.presentacion}</p>
+            <span class="item-category">${item.categoria || 'Sin categoría'}</span>
+          </div>
+          
+          <div class="item-quantity">
+            <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+            <span class="quantity-display">${item.cantidad}</span>
+            <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+          </div>
+          
+          <div class="item-price">
+            <div class="price">S/ ${(item.precio * item.cantidad).toFixed(2)}</div>
+            <div class="subtotal">S/ ${item.precio.toFixed(2)} c/u</div>
+          </div>
+          
+          <button class="remove-item" onclick="removeItem(${index})" title="Eliminar producto">
+            <span class="material-symbols-rounded">close</span>
+          </button>
+        </div>
+      `).join('');
+      
+      updateSummary();
+    }
+
+    function updateQuantity(index, change) {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      if (index >= 0 && index < cartItems.length) {
+        const newQuantity = cartItems[index].cantidad + change;
+        
+        if (newQuantity <= 0) {
+          removeItem(index);
+          return;
+        }
+        
+        cartItems[index].cantidad = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+        
+        // Actualizar contador en header
+        updateCartCount();
+        
+        // Recargar vista
+        loadCartItems();
+      }
+    }
+
+    function removeItem(index) {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      if (index >= 0 && index < cartItems.length) {
+        cartItems.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+        
+        // Actualizar contador en header
+        updateCartCount();
+        
+        // Recargar vista
+        loadCartItems();
+      }
+    }
+
+    function updateSummary() {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      const itemCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
+      const subtotal = cartItems.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+      const shipping = subtotal > 0 ? 5.00 : 0; // Envío fijo de S/ 5.00
+      const total = subtotal + shipping;
+      
+      document.getElementById('itemCount').textContent = `${itemCount} producto${itemCount !== 1 ? 's' : ''}`;
+      document.getElementById('subtotal').textContent = `S/ ${subtotal.toFixed(2)}`;
+      document.getElementById('total').textContent = `S/ ${total.toFixed(2)}`;
+    }
+
+    function updateCartCount() {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cartItems.reduce((total, item) => total + item.cantidad, 0);
+      
+      // Actualizar contador en header
+      const cartCounters = document.querySelectorAll('.carrito-contador');
+      cartCounters.forEach(counter => {
+        counter.textContent = totalItems;
+      });
+    }
+
+    function proceedToCheckout() {
+      const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      if (cartItems.length === 0) {
+        alert('Tu carrito está vacío.');
+        return;
+      }
+      
+      // Verificar si el usuario está logueado
+      if (!localStorage.getItem('id_usuario')) {
+        alert('Debes iniciar sesión para continuar con la compra.');
+        window.location.href = '/login';
+        return;
+      }
+      
+      // Redirigir a la página de pago
+      window.location.href = '/pasarela';
+    }
+
+    // Actualizar contador al cargar la página
+    updateCartCount();
+  </script>
+</body>
+</html> 

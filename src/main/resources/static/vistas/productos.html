@@ -1,0 +1,425 @@
+<div class="container">
+  <div class="header">
+    <h1>Gestión de Productos</h1>
+    <div class="header-actions">
+      <div class="filter-container">
+        <input type="text" id="filterById" placeholder="Buscar productos..." class="filter-input">
+        <button class="btn-filtrar" id="btnFiltrar">
+          <i class="fas fa-search"></i>
+          Filtrar
+        </button>
+      </div>
+      <button class="btn-agregar">
+        <i class="fas fa-plus"></i>
+        Agregar Producto
+      </button>
+    </div>
+  </div>
+  
+  <div class="table-container">
+    <table class="productos-tabla">
+      <thead>
+        <tr>
+          <th class="th-image">Imagen</th>
+          <th class="th-name">Nombre del Producto</th>
+          <th class="th-categoria">Categoría</th>
+          <th class="th-price">Precio</th>
+          <th class="th-stock">Stock</th>
+          <th class="th-status">Estado</th>
+          <th class="th-actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aquí se renderizarán los productos dinámicamente -->
+      </tbody>
+    </table>
+    
+    <div class="table-empty-state" id="emptyState" style="display: none;">
+      <div class="empty-icon">
+        <i class="fas fa-box-open"></i>
+      </div>
+      <h3>No se encontraron productos</h3>
+      <p>Intenta ajustar los filtros o agregar un nuevo producto</p>
+    </div>
+  </div>
+  
+  <div class="pagination">
+    <button class="btn-prev">
+      <i class="fas fa-chevron-left"></i>
+      Anterior
+    </button>
+    <div class="page-info">
+      <span class="current-page">1</span> de <span class="total-pages">1</span>
+    </div>
+    <button class="btn-next">
+      Siguiente
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Modal para agregar producto -->
+<div id="modalAgregarProducto" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
+      <span class="close">&times;</span>
+    </div>
+    <form id="formAgregarProducto">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">
+            <i class="fas fa-tag"></i>
+            Nombre del Producto
+          </label>
+          <input type="text" id="nombre" name="nombre" required placeholder="Ej: Paracetamol 500mg">
+        </div>
+        <div class="form-group">
+          <label for="precio">
+            <span style="font-weight:bold; color:#0074b7;">S/</span>
+            Precio Unitario
+          </label>
+          <input type="number" id="precio" name="precio" step="0.01" required placeholder="0.00">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="categoriaSelect">
+            <i class="fas fa-list"></i>
+            Categoría
+          </label>
+          <select id="categoriaSelect" name="categoria" required>
+            <option value="">Seleccionar categoría</option>
+            <option value="__nueva__">Agregar nueva categoría...</option>
+          </select>
+          <input type="text" id="categoriaInput" name="nuevaCategoria" placeholder="Nueva categoría" style="display:none; margin-top:8px;">
+        </div>
+        <div class="form-group">
+          <label for="cantidadIngresada">
+            <i class="fas fa-archive"></i>
+            Cantidad Ingresada
+          </label>
+          <input type="number" id="cantidadIngresada" name="cantidadIngresada" required placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label for="stock">
+            <i class="fas fa-boxes"></i>
+            Stock Actual (Calculado automáticamente)
+          </label>
+          <input type="number" id="stock" name="stock" readonly value="0" style="background-color: #f8f9fa; color: #6c757d;">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fechaProducto">
+            <i class="fas fa-calendar-alt"></i>
+            Fecha del Producto
+          </label>
+          <input type="date" id="fechaProducto" name="fechaProducto">
+        </div>
+        <div class="form-group">
+          <label for="descuento">
+            <i class="fas fa-percentage"></i>
+            Descuento (%)
+          </label>
+          <input type="number" id="descuento" name="descuento" min="0" max="100" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="metodoEntrega">
+            <i class="fas fa-truck"></i>
+            Método de Entrega
+          </label>
+          <select id="metodoEntrega" name="metodoEntrega" required>
+            <option value="">Seleccionar método</option>
+            <option value="delivery">Delivery</option>
+            <option value="tienda">Tienda</option>
+            <option value="ambos">Ambos</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="descripcion">
+          <i class="fas fa-align-left"></i>
+          Descripción
+        </label>
+        <textarea id="descripcion" name="descripcion" required placeholder="Describe el producto..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="imageFile">
+          <i class="fas fa-image"></i>
+          Imagen del Producto (Se subirá a Supabase)
+        </label>
+        <div class="image-upload-container">
+          <input type="file" id="imageFile" name="imageFile" accept="image/*" class="file-input">
+          <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Haz clic para seleccionar una imagen</span>
+            <small>Formatos: JPG, PNG, GIF, WEBP (Max: 5MB) - Se subirá automáticamente a Supabase</small>
+          </div>
+          <div class="image-preview" id="imagePreview" style="display: none;">
+            <img id="previewImg" src="" alt="Vista previa">
+            <button type="button" class="remove-image" onclick="removeImage()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <input type="hidden" id="imgUrl" name="img_url">
+          <div class="upload-status" id="uploadStatus" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Subiendo imagen a Supabase...</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stock-info-card">
+        <div class="stock-info-header">
+          <i class="fas fa-info-circle"></i>
+          <span>Información del Estado de Stock</span>
+        </div>
+        <div class="stock-status-grid">
+          <div class="status-item out-stock">
+            <div class="status-indicator"></div>
+            <span>0 unidades: Sin stock</span>
+          </div>
+          <div class="status-item low-stock">
+            <div class="status-indicator"></div>
+            <span>1-10 unidades: Stock bajo</span>
+          </div>
+          <div class="status-item in-stock">
+            <div class="status-indicator"></div>
+            <span>>10 unidades: En stock</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-buttons">
+        <button type="button" class="btn-cancelar">
+          <i class="fas fa-times"></i>
+          Cancelar
+        </button>
+        <button type="submit" class="btn-guardar">
+          <i class="fas fa-save"></i>
+          Guardar Producto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para editar producto -->
+<div id="modalEditarProducto" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-edit"></i> Editar Producto</h2>
+      <span class="close">&times;</span>
+    </div>
+    <form id="formEditarProducto">
+      <input type="hidden" id="editProductoId" name="productoId">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editNombre">
+            <i class="fas fa-tag"></i>
+            Nombre del Producto
+          </label>
+          <input type="text" id="editNombre" name="nombre" required placeholder="Ej: Paracetamol 500mg">
+        </div>
+        <div class="form-group">
+          <label for="editPrecio">
+            <span style="font-weight:bold; color:#0074b7;">S/</span>
+            Precio Unitario
+          </label>
+          <input type="number" id="editPrecio" name="precio" step="0.01" required placeholder="0.00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editCategoriaSelect">
+            <i class="fas fa-list"></i>
+            Categoría
+          </label>
+          <select id="editCategoriaSelect" name="categoria" required>
+            <option value="">Seleccionar categoría</option>
+            <option value="__nueva__">Agregar nueva categoría...</option>
+          </select>
+          <input type="text" id="editCategoriaInput" name="nuevaCategoria" placeholder="Nueva categoría" style="display:none; margin-top:8px;">
+        </div>
+        <div class="form-group">
+          <label for="editCantidadIngresada">
+            <i class="fas fa-archive"></i>
+            Cantidad Ingresada
+          </label>
+          <input type="number" id="editCantidadIngresada" name="cantidadIngresada" required placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label for="editStock">
+            <i class="fas fa-boxes"></i>
+            Stock Actual (Calculado automáticamente)
+          </label>
+          <input type="number" id="editStock" name="stock" readonly style="background-color: #f8f9fa; color: #6c757d;">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editFechaProducto">
+            <i class="fas fa-calendar-alt"></i>
+            Fecha del Producto
+          </label>
+          <input type="date" id="editFechaProducto" name="fechaProducto">
+        </div>
+        <div class="form-group">
+          <label for="editDescuento">
+            <i class="fas fa-percentage"></i>
+            Descuento (%)
+          </label>
+          <input type="number" id="editDescuento" name="descuento" min="0" max="100" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editMetodoEntrega">
+            <i class="fas fa-truck"></i>
+            Método de Entrega
+          </label>
+          <select id="editMetodoEntrega" name="metodoEntrega" required>
+            <option value="">Seleccionar método</option>
+            <option value="delivery">Delivery</option>
+            <option value="tienda">Tienda</option>
+            <option value="ambos">Ambos</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="editDescripcion">
+          <i class="fas fa-align-left"></i>
+          Descripción
+        </label>
+        <textarea id="editDescripcion" name="descripcion" required placeholder="Describe el producto..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="editImageFile">
+          <i class="fas fa-image"></i>
+          Imagen del Producto (Se subirá a Supabase)
+        </label>
+        <div class="image-upload-container">
+          <input type="file" id="editImageFile" name="editImageFile" accept="image/*" class="file-input">
+          <div class="upload-area" id="editUploadArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Haz clic para seleccionar una imagen</span>
+            <small>Formatos: JPG, PNG, GIF, WEBP (Max: 5MB) - Se subirá automáticamente a Supabase</small>
+          </div>
+          <div class="image-preview" id="editImagePreview" style="display: none;">
+            <img id="editPreviewImg" src="" alt="Vista previa">
+            <button type="button" class="remove-image" onclick="removeEditImage()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <input type="hidden" id="editImgUrl" name="img_url">
+          <div class="upload-status" id="editUploadStatus" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Subiendo imagen a Supabase...</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stock-info-card">
+        <div class="stock-info-header">
+          <i class="fas fa-info-circle"></i>
+          <span>Información del Estado de Stock</span>
+        </div>
+        <div class="stock-status-grid">
+          <div class="status-item out-stock">
+            <div class="status-indicator"></div>
+            <span>0 unidades: Sin stock</span>
+          </div>
+          <div class="status-item low-stock">
+            <div class="status-indicator"></div>
+            <span>1-10 unidades: Stock bajo</span>
+          </div>
+          <div class="status-item in-stock">
+            <div class="status-indicator"></div>
+            <span>>10 unidades: En stock</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-buttons">
+        <button type="button" class="btn-cancelar">
+          <i class="fas fa-times"></i>
+          Cancelar
+        </button>
+        <button type="submit" class="btn-guardar">
+          <i class="fas fa-save"></i>
+          Actualizar Producto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para agregar stock -->
+<div id="modalAgregarStock" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-plus-circle"></i> Agregar Stock</h2>
+      <span class="close">&times;</span>
+    </div>
+    <form id="formAgregarStock">
+      <input type="hidden" id="stockProductoId" name="productoId">
+      <input type="hidden" id="stockActual" name="stockActual">
+      
+      <div class="form-group">
+        <label for="stockProductoNombre">
+          <i class="fas fa-tag"></i>
+          Producto
+        </label>
+        <input type="text" id="stockProductoNombre" readonly style="background-color: #f8f9fa; color: #6c757d;">
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="stockActualDisplay">
+            <i class="fas fa-boxes"></i>
+            Stock Actual
+          </label>
+          <input type="number" id="stockActualDisplay" readonly style="background-color: #f8f9fa; color: #6c757d;">
+        </div>
+        <div class="form-group">
+          <label for="nuevaCantidadIngresada">
+            <i class="fas fa-archive"></i>
+            Cantidad a Agregar
+          </label>
+          <input type="number" id="nuevaCantidadIngresada" name="cantidadIngresada" required placeholder="0" min="1">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="nuevoStockCalculado">
+          <i class="fas fa-calculator"></i>
+          Nuevo Stock (Calculado)
+        </label>
+        <input type="number" id="nuevoStockCalculado" readonly style="background-color: #e8f5e8; color: #28a745; font-weight: bold;">
+      </div>
+      
+      <div class="form-buttons">
+        <button type="button" class="btn-cancelar">
+          <i class="fas fa-times"></i>
+          Cancelar
+        </button>
+        <button type="submit" class="btn-guardar">
+          <i class="fas fa-plus"></i>
+          Agregar Stock
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+

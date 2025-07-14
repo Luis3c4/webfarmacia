@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Productos - Visualización Completa</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f4f4f4; }
+        tr:nth-child(even) { background: #fafafa; }
+    </style>
+</head>
+<body>
+    <h1>Visualización de Todos los Productos (Test)</h1>
+    <table id="productosTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad Ingresada</th>
+                <th>Descripción</th>
+                <th>Categoría</th>
+                <th>Coste Unitario</th>
+                <th>Stock</th>
+                <th>Stock Status</th>
+                <th>Activo</th>
+                <th>Img URL</th>
+                <th>Supabase ID</th>
+                <th>Fecha Producto</th>
+                <th>Descuento</th>
+                <th>Método Entrega</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los productos se insertarán aquí -->
+        </tbody>
+    </table>
+    <script>
+    fetch('/api/productos?page=0&size=100')
+        .then(res => res.json())
+        .then(data => {
+            console.log('Respuesta de /api/productos:', data);
+            const tbody = document.querySelector('#productosTable tbody');
+            if (Array.isArray(data.content)) {
+                data.content.forEach(producto => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${producto.productoId ?? ''}</td>
+                        <td>${producto.nombre ?? ''}</td>
+                        <td>${producto.precio_unitario ?? ''}</td>
+                        <td>${producto.cantidadIngresada ?? ''}</td>
+                        <td>${producto.descripcion ?? ''}</td>
+                        <td>${producto.categoria ?? ''}</td>
+                        <td>${producto.costeUnitario ?? ''}</td>
+                        <td>${producto.stock ?? ''}</td>
+                        <td>${producto.stockStatus ?? ''}</td>
+                        <td>${producto.activo ?? ''}</td>
+                        <td>${producto.imgUrl ?? ''}</td>
+                        <td>${producto.supabaseId ?? ''}</td>
+                        <td>${producto.fechaProducto ?? ''}</td>
+                        <td>${producto.descuento ?? ''}</td>
+                        <td>${producto.metodoEntrega ?? ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="15">Respuesta inesperada:<br><pre>${JSON.stringify(data, null, 2)}</pre></td></tr>`;
+            }
+        })
+        .catch(err => {
+            document.querySelector('#productosTable tbody').innerHTML = `<tr><td colspan="15">Error al cargar productos: ${err}</td></tr>`;
+        });
+    </script>
+</body>
+</html> 

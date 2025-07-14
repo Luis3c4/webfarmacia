@@ -1,0 +1,233 @@
+<div class="main-content">
+  <!-- Sección de Resumen -->
+  <section class="overview-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-chart-line" aria-hidden="true"></i>
+        Resumen de Ventas
+      </h2>
+      <button class="refresh-button" id="refresh-data" title="Actualizar datos" aria-label="Actualizar datos">
+        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="overview-grid">
+      <div class="overview-card" data-loading="revenue">
+        <div class="card-icon revenue">
+          <span class="moneda" aria-hidden="true">S/.</span>
+        </div>
+        <div class="metric-value" id="total-revenue" aria-live="polite">S/.0.00</div>
+        <div class="metric-label">Ingresos Totales</div>
+        <div class="metric-change positive">+8.3% vs mes anterior</div>
+      </div>
+      
+      <div class="overview-card" data-loading="sales">
+        <div class="card-icon sales">
+          <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+        </div>
+        <div class="metric-value" id="total-sales" aria-live="polite">0</div>
+        <div class="metric-label">Ventas Totales</div>
+        <div class="metric-change positive">+15.2% vs mes anterior</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Productos Más Vendidos -->
+  <section class="product-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        Productos Más Vendidos
+      </h2>
+      <a href="#" class="see-all-link" aria-label="Ver todos los productos">
+        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+        Ver Todos
+      </a>
+    </div>
+
+    <div class="product-table">
+      <div class="table-header">
+        <div class="header-cell">
+          <i class="fas fa-pills" aria-hidden="true"></i>
+          Producto
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-barcode" aria-hidden="true"></i>
+          ID Producto
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-tag" aria-hidden="true"></i>
+          Categoría
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-boxes" aria-hidden="true"></i>
+          Stock Restante
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-chart-line" aria-hidden="true"></i>
+          Facturación
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-trending-up" aria-hidden="true"></i>
+          Incremento
+        </div>
+      </div>
+      
+      <div id="best-products-container" class="table-body" aria-live="polite">
+        <!-- Los datos se cargarán dinámicamente aquí -->
+        <div class="loading-row">
+          <div class="loading-spinner" role="status" aria-label="Cargando productos"></div>
+          <span>Cargando productos...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Ventas Recientes -->
+  <section class="sales-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-receipt" aria-hidden="true"></i>
+        Ventas Recientes
+      </h2>
+      <a href="#" class="see-all-link" aria-label="Ver todas las ventas">
+        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+        Ver Todas
+      </a>
+    </div>
+
+    <div class="sales-table">
+      <div class="table-header">
+        <div class="header-cell">
+          <i class="fas fa-hashtag" aria-hidden="true"></i>
+          ID Venta
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-user" aria-hidden="true"></i>
+          Cliente
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-calendar" aria-hidden="true"></i>
+          Fecha
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-credit-card" aria-hidden="true"></i>
+          Método Pago
+        </div>
+        <div class="header-cell">
+          <span class="moneda" aria-hidden="true">S/.</span>
+          Total
+        </div>
+        <div class="header-cell">
+          <i class="fas fa-eye" aria-hidden="true"></i>
+          Detalles
+        </div>
+      </div>
+      
+      <div id="ventas-container" class="table-body" aria-live="polite">
+        <!-- Los datos se cargarán dinámicamente aquí -->
+        <div class="loading-row">
+          <div class="loading-spinner" role="status" aria-label="Cargando ventas"></div>
+          <span>Cargando ventas...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Popup Modal para Detalles de Venta -->
+<div id="venta-details-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">
+        <i class="fas fa-receipt" aria-hidden="true"></i>
+        Detalles de Venta #<span id="modal-venta-id"></span>
+      </h2>
+      <button class="modal-close" id="close-modal" aria-label="Cerrar modal">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="venta-info">
+        <div class="info-grid">
+          <div class="info-item">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span><strong>Cliente:</strong> <span id="modal-cliente"></span></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar" aria-hidden="true"></i>
+            <span><strong>Fecha:</strong> <span id="modal-fecha"></span></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-credit-card" aria-hidden="true"></i>
+            <span><strong>Método Pago:</strong> <span id="modal-metodo-pago"></span></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-truck" aria-hidden="true"></i>
+            <span><strong>Entrega:</strong> <span id="modal-entrega"></span></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detalles-venta">
+        <h3>
+          <i class="fas fa-list" aria-hidden="true"></i>
+          Productos Vendidos
+        </h3>
+        <div class="detalles-table">
+          <div class="table-header">
+            <div class="header-cell">Producto</div>
+            <div class="header-cell">Cantidad</div>
+            <div class="header-cell">Precio Unit.</div>
+            <div class="header-cell">Subtotal</div>
+          </div>
+          <div id="modal-detalles-container" class="table-body" aria-live="polite">
+            <!-- Los detalles se cargarán dinámicamente aquí -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="venta-total">
+        <div class="total-item">
+          <span>Total de la Venta:</span>
+          <span id="modal-total" class="total-amount"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Performance optimizations -->
+<script>
+// Preload critical resources
+document.addEventListener('DOMContentLoaded', function() {
+  // Preload critical CSS
+  const criticalCSS = document.createElement('link');
+  criticalCSS.rel = 'preload';
+  criticalCSS.as = 'style';
+  criticalCSS.href = '/css/ventas.css';
+  document.head.appendChild(criticalCSS);
+  
+  // Preload critical JavaScript
+  const criticalJS = document.createElement('link');
+  criticalJS.rel = 'preload';
+  criticalJS.as = 'script';
+  criticalJS.href = '/js/venta.js';
+  document.head.appendChild(criticalJS);
+  
+  // Add loading states
+  const loadingElements = document.querySelectorAll('[data-loading]');
+  loadingElements.forEach(element => {
+    element.classList.add('loading');
+  });
+});
+
+// Remove loading states when data is loaded
+window.addEventListener('load', function() {
+  const loadingElements = document.querySelectorAll('[data-loading]');
+  loadingElements.forEach(element => {
+    element.classList.remove('loading');
+  });
+});
+</script>

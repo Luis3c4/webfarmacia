@@ -1,0 +1,210 @@
+/* src/main/resources/static/css/Cliente/registro.css */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #eef7ff; /* Un fondo azul muy claro, más distintivo */
+  margin: 0;
+  padding: 20px; /* Añadir padding para que el contenedor no toque los bordes en pantallas pequeñas */
+  display: flex;
+  flex-direction: column; /* Para centrar el header y el footer si los añades */
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Usar min-height para permitir scroll si el contenido es largo */
+  box-sizing: border-box; /* Incluir padding en el cálculo del tamaño */
+}
+
+/* Estilos para un header simple (opcional, si lo usas en el HTML) */
+.registro-header-simple {
+  width: 100%;
+  max-width: 450px; /* Ancho similar al contenedor del formulario */
+  text-align: center;
+  margin-bottom: 30px; /* Espacio antes del formulario */
+}
+.registro-header-simple img {
+  height: 50px; /* Ajusta según tu logo */
+  margin-bottom: 5px;
+}
+.registro-header-simple h2 { /* Si decides poner un título de texto */
+    color: #005a9c;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+
+.registro-container {
+  background-color: #ffffff;
+  padding: 35px 40px; /* Ajustar padding */
+  border-radius: 18px; /* Bordes un poco más redondeados */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Sombra un poco más pronunciada */
+  width: 100%;
+  max-width: 450px; /* Un poco más de ancho si es necesario */
+  text-align: left; /* Alineación general del texto a la izquierda dentro del contenedor */
+}
+
+.registro-container h1 {
+  text-align: center;
+  margin-top: 0; /* Quitar margen superior si el logo ya da espacio */
+  margin-bottom: 30px; /* Más espacio después del título */
+  color: #005a9c; /* Un azul más oscuro para el título principal */
+  font-size: 1.8em; /* Tamaño del título */
+  font-weight: 700;
+}
+
+.form-group {
+  margin-bottom: 20px; /* Más espacio entre grupos de formulario */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #334155; /* Un gris oscuro para las etiquetas */
+  font-size: 0.95em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+  width: 100%;
+  padding: 14px 16px; /* Más padding interno */
+  border: 1px solid #cbd5e1; /* Borde gris claro */
+  border-radius: 10px; /* Bordes más redondeados para los inputs */
+  font-size: 1em; /* Tamaño de fuente para el input */
+  box-sizing: border-box; /* Importante para que el padding no aumente el ancho total */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0074b7;
+  box-shadow: 0 0 0 3px rgba(0, 116, 183, 0.15); /* Sombra de foco más sutil y amplia */
+}
+.form-group input::placeholder { /* Estilo para los placeholders */
+    color: #94a3b8;
+    font-size: 0.95em;
+}
+
+/* Estilos para el checkbox y su etiqueta */
+.form-group-checkbox {
+  display: flex;
+  align-items: flex-start; /* Alinear el checkbox con la primera línea del texto */
+  margin-top: 25px; /* Espacio antes del checkbox */
+  margin-bottom: 25px;
+}
+.form-group-checkbox input[type="checkbox"] {
+  width: auto; /* Ancho automático para el checkbox */
+  margin-right: 10px;
+  margin-top: 3px; /* Alineación vertical fina */
+  /* Estilos personalizados para el checkbox (pueden requerir más CSS o JS para un look completo) */
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
+  border: 1px solid #cbd5e1;
+  padding: 0; /* Quitar padding por defecto */
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative; /* Para el pseudo-elemento del check */
+}
+.form-group-checkbox input[type="checkbox"]:checked {
+  background-color: #0074b7;
+  border-color: #0074b7;
+}
+.form-group-checkbox input[type="checkbox"]:checked::after { /* Pseudo-elemento para el checkmark */
+  content: '✔';
+  font-size: 12px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.form-group-checkbox .label-checkbox {
+  font-size: 0.9em; /* Tamaño de la etiqueta del checkbox */
+  color: #475569; /* Un gris medio */
+  line-height: 1.5;
+  font-weight: 400; /* Peso normal para este texto */
+  margin-bottom: 0; /* Quitar margen inferior del label */
+}
+.form-group-checkbox .label-checkbox a {
+  color: #0074b7;
+  text-decoration: underline; /* Subrayado para los enlaces */
+  font-weight: 500;
+}
+.form-group-checkbox .label-checkbox a:hover {
+  text-decoration: none;
+}
+
+
+.btn-registrarse {
+  background-color: #0074b7;
+  color: white;
+  border: none;
+  padding: 15px; /* Padding del botón */
+  width: 100%;
+  border-radius: 10px; /* Consistente con los inputs */
+  font-size: 1.05em; /* Tamaño de fuente del botón */
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-transform: uppercase; /* Opcional: para darle más énfasis */
+  letter-spacing: 0.5px; /* Opcional: espaciado entre letras */
+}
+
+.btn-registrarse:hover {
+  background-color: #005f94;
+  transform: scale(1.02); /* Efecto sutil al pasar el mouse */
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 25px; /* Más espacio antes del enlace de login */
+  font-size: 0.95em;
+  color: #475569;
+}
+
+.login-link a {
+  color: #0074b7;
+  text-decoration: none;
+  font-weight: 600;
+}
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para mensajes de alerta (si los usas con Thymeleaf) */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.95em;
+}
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+.alert-success a {
+    color: #2b542c; /* Enlace dentro del mensaje de éxito */
+    font-weight: bold;
+}
+
+
+/* Estilos para un footer simple (opcional, si lo usas en el HTML) */
+.registro-footer-simple {
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 30px;
+  font-size: 0.9em;
+  color: #64748b; /* Gris más oscuro para el footer */
+}

@@ -1,0 +1,60 @@
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1 class="page-title usuarios">Gestión de Usuarios</h1>
+    <div class="header-actions">
+      <div class="filter-container">
+        <input type="text" id="filterUsuarioNombre" placeholder="Buscar usuarios..." class="filter-input">
+        <button class="btn-filtrar" id="btnFiltrarUsuario">
+          <i class="fas fa-search"></i>
+          Filtrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Tipo Usuario</th>
+          <th>Estado</th>
+          <th>Fecha Creación</th>
+          <th>Último Acceso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Los datos se cargarán dinámicamente -->
+      </tbody>
+    </table>
+    
+    <div class="table-empty-state" id="emptyState" style="display: none;">
+      <div class="empty-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <h3>No se encontraron usuarios</h3>
+      <p>Intenta ajustar los filtros o verificar la conexión</p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button class="btn-prev">
+      <i class="fas fa-chevron-left"></i>
+      Anterior
+    </button>
+    <div class="page-info">
+      <span class="current-page">1</span> de <span class="total-pages">1</span>
+    </div>
+    <button class="btn-next">
+      Siguiente
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>

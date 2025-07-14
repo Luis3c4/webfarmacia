@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Gracias por tu Compra! - FARMA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" th:href="@{/css/Cliente/pasarela.css}" />
+    <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+    <style>
+        body { background-color: #f8f9fa; }
+        .success-container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .success-header { text-align: center; border-bottom: 1px solid #e9ecef; padding-bottom: 20px; margin-bottom: 30px; }
+        .success-header .material-symbols-rounded { font-size: 60px; color: #28a745; }
+        .success-header h1 { font-size: 2em; margin: 10px 0 5px 0; }
+        .order-details-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 768px) { .order-details-grid { grid-template-columns: 1.5fr 1fr; } }
+        .detail-card { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .detail-card h2 { display: flex; align-items: center; font-size: 1.3em; margin-top: 0; margin-bottom: 20px; color: #007bff; }
+        .detail-card h2 .material-symbols-rounded { margin-right: 10px; }
+        .detail-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95em; }
+        .detail-item span { color: #6c757d; }
+        .detail-item strong { color: #212529; text-align: right; }
+        .product-list { list-style: none; padding: 0; margin: 0; }
+        .total-section { border-top: 1px solid #e9ecef; margin-top: 15px; padding-top: 15px; }
+        .btn-container { text-align: center; margin-top: 40px; }
+        .btn-home {
+            background-color: #007bff; color: white; text-decoration: none; padding: 12px 30px;
+            border-radius: 8px; font-weight: bold; display: inline-flex; align-items: center;
+            transition: background-color 0.2s;
+        }
+        .btn-home:hover { background-color: #0056b3; }
+        .btn-home .material-symbols-rounded { margin-right: 8px; }
+        .error-message { 
+            background-color: #f8d7da; 
+            color: #721c24; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            text-align: center; 
+        }
+        .loading-message { 
+            background-color: #d1ecf1; 
+            color: #0c5460; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            text-align: center; 
+        }
+    </style>
+</head>
+<body>
+<main class="success-container">
+    <div class="success-header">
+        <span class="material-symbols-rounded">check_circle</span>
+        <h1>¡Pago Realizado con Éxito!</h1>
+        <p>Gracias por tu compra. Tu pedido <strong id="order-id-header"></strong> está siendo procesado.</p>
+    </div>
+
+    <div id="loading-message" class="loading-message">
+        <span class="material-symbols-rounded">hourglass_empty</span>
+        Procesando tu pedido...
+    </div>
+
+    <div id="error-message" class="error-message" style="display: none;">
+        <span class="material-symbols-rounded">error</span>
+        <span id="error-text"></span>
+    </div>
+
+    <div class="order-details-grid" id="order-details" style="display: none;">
+        <div class="resumen-seccion">
+            <div class="detail-card">
+                <h2><span class="material-symbols-rounded">receipt_long</span>Resumen de tu Pedido</h2>
+                <ul class="product-list" id="resumen-pedido-items"><!-- Productos cargados por JS --></ul>
+                <div class="total-section">
+                    <div class="detail-item"><span>Subtotal</span><strong id="resumen-subtotal"></strong></div>
+                    <div class="detail-item"><span>Costo de Envío</span><strong id="resumen-costo-envio"></strong></div>
+                    <div class="detail-item total"><span>Total Pagado</span><strong id="resumen-total-general"></strong></div>
+                </div>
+            </div>
+        </div>
+        <div class="envio-seccion">
+            <div class="detail-card">
+                <h2><span class="material-symbols-rounded">local_shipping</span>Datos de Envío</h2>
+                <div class="detail-item"><span>Recibe:</span><strong id="shipping-name"></strong></div>
+                <div class="detail-item"><span>Dirección:</span><strong id="shipping-address"></strong></div>
+                <div class="detail-item"><span>Teléfono:</span><strong id="shipping-phone"></strong></div>
+            </div>
+            <div class="detail-card" style="margin-top: 20px;">
+                <h2><span class="material-symbols-rounded">calendar_month</span>Entrega Estimada</h2>
+                <div class="detail-item"><span>Fecha:</span><strong id="shipping-date"></strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <a th:href="@{/inicio}" class="btn-home">
+            <span class="material-symbols-rounded">home</span>
+            VOLVER AL INICIO
+        </a>
+    </div>
+</main>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', async () => {
+        const orderDetailsString = localStorage.getItem('currentOrderDetails');
+        const loadingMessage = document.getElementById('loading-message');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const orderDetails = document.getElementById('order-details');
+
+        if (orderDetailsString) {
+            try {
+                const order = JSON.parse(orderDetailsString);
+                console.log('Order details:', order);
+
+                // Procesar la venta en el backend
+                const urlParams = new URLSearchParams(window.location.search);
+                const paymentId = urlParams.get('paymentId');
+                const payerId = urlParams.get('PayerID');
+
+                if (paymentId && payerId) {
+                    console.log('Processing sale with Payment ID:', paymentId, 'Payer ID:', payerId);
+                    
+                    // Crear FormData con los datos necesarios
+                    const formData = new FormData();
+                    formData.append('paymentId', paymentId);
+                    formData.append('payerId', payerId);
+                    
+                    // Agregar datos del carrito
+                    const cartData = localStorage.getItem('cart');
+                    if (cartData) {
+                        formData.append('cartData', cartData);
+                        console.log('Cart data added:', cartData);
+                    }
+                    
+                    // Agregar datos del pedido
+                    formData.append('metodo_entrega', order.metodoEntrega || 'tienda');
+                    formData.append('nombreCompleto', order.nombreCliente || '');
+                    formData.append('telefonoContacto', order.telefonoContacto || '');
+                    formData.append('observaciones', order.observaciones || '');
+                    formData.append('id_usuario', order.id_usuario || '1');
+                    
+                    // Si es delivery, agregar datos de dirección
+                    if (order.metodoEntrega === 'delivery') {
+                        formData.append('direccion', order.direccion || '');
+                        formData.append('distrito', order.distrito || '');
+                        formData.append('ciudad', order.ciudad || '');
+                        formData.append('referencia', order.referencia || '');
+                    }
+
+                    console.log('Sending sale data to backend...');
+                    const response = await fetch('/procesar-venta-paypal', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    console.log('Response status:', response.status);
+                    console.log('Response redirected:', response.redirected);
+                    console.log('Response URL:', response.url);
+
+                    if (response.ok || response.redirected) {
+                        console.log('Sale processed successfully');
+                        loadingMessage.style.display = 'none';
+                        orderDetails.style.display = 'grid';
+                        
+                        // Poblar los elementos con los datos
+                        populateOrderDetails(order);
+                        
+                        // Limpiar el carrito y los detalles para la siguiente compra
+                        localStorage.removeItem('cart');
+                        localStorage.removeItem('currentOrderDetails');
+
+                        const headerCartCounter = document.querySelector('.carrito-contador');
+                        if(headerCartCounter) headerCartCounter.textContent = '0';
+                        
+                    } else {
+                        throw new Error('Error processing sale: ' + response.status);
+                    }
+                } else {
+                    throw new Error('Missing payment parameters');
+                }
+            } catch (error) {
+                console.error('Error processing sale:', error);
+                loadingMessage.style.display = 'none';
+                errorMessage.style.display = 'block';
+                errorText.textContent = 'Error al procesar la venta: ' + error.message;
+                
+                // Solo mostrar los detalles del pedido si order está definido
+                if (typeof order !== 'undefined') {
+                    orderDetails.style.display = 'grid';
+                    populateOrderDetails(order);
+                }
+            }
+        } else {
+            console.warn("No se encontraron detalles del pedido en localStorage");
+            loadingMessage.style.display = 'none';
+            errorMessage.style.display = 'block';
+            errorText.textContent = 'No se encontraron detalles de la compra. Por favor, realiza un pedido primero.';
+        }
+    });
+
+    function populateOrderDetails(order) {
+        // Poblar los elementos con los datos
+        document.getElementById('order-id-header').textContent = order.pedidoId || '';
+
+        // Resumen del pedido
+        const resumenItemsUl = document.getElementById('resumen-pedido-items');
+        resumenItemsUl.innerHTML = '';
+        if(order.productosComprados && order.productosComprados.length > 0) {
+            order.productosComprados.forEach(item => {
+                const li = document.createElement('li');
+                li.classList.add('detail-item');
+                li.innerHTML = `<span>${item.nombre}</span> <strong>${item.precioFormateado}</strong>`;
+                resumenItemsUl.appendChild(li);
+            });
+        }
+        document.getElementById('resumen-subtotal').textContent = order.subtotal || 'S/ 0.00';
+        document.getElementById('resumen-costo-envio').textContent = order.costoEnvio || 'S/ 0.00';
+        document.getElementById('resumen-total-general').textContent = order.totalGeneral || 'S/ 0.00';
+
+        // Detalles de envío
+        document.getElementById('shipping-name').textContent = order.nombreCliente || '';
+        document.getElementById('shipping-address').textContent = order.direccionCompleta || '';
+        document.getElementById('shipping-phone').textContent = order.telefonoContacto || '';
+        document.getElementById('shipping-date').textContent = order.fechaEntrega || 'Próximamente';
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

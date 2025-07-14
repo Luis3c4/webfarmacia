@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Productos - FARMA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fdf2f2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            color: #27ae60;
+            background: #f2fdf2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .producto-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Productos - FARMA</h1>
+    
+    <div class="test-section">
+        <h2>1. Obtener Productos</h2>
+        <button onclick="getProductos()">Obtener Productos</button>
+        <div id="productos-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Crear Producto de Prueba</h2>
+        <button onclick="createProducto()">Crear Producto</button>
+        <div id="create-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Editar Producto</h2>
+        <button onclick="editProducto()">Editar Último Producto</button>
+        <div id="edit-result"></div>
+    </div>
+
+    <script>
+        let ultimoProductoId = null;
+
+        async function getProductos() {
+            const container = document.getElementById('productos-result');
+            container.innerHTML = '<p>Obteniendo productos...</p>';
+            
+            try {
+                const response = await fetch('/api/productos?page=0&size=5');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Data received:', data);
+                
+                if (data && data.content) {
+                    let html = `
+                        <div class="success">
+                            <h3>✅ Productos obtenidos!</h3>
+                            <p>Total productos: ${data.totalElements || 0}</p>
+                            <p>Productos en esta página: ${data.content.length}</p>
+                    `;
+                    
+                    data.content.forEach(producto => {
+                        html += `
+                            <div class="producto-item">
+                                <strong>ID:</strong> ${producto.productoId}<br>
+                                <strong>Nombre:</strong> ${producto.nombre || 'Sin nombre'}<br>
+                                <strong>Categoría:</strong> ${producto.categoria || 'Sin categoría'}<br>
+                                <strong>Precio:</strong> S/ ${producto.precio_unitario || 0}<br>
+                                <strong>Stock:</strong> ${producto.stock || 0}<br>
+                                <strong>Estado:</strong> ${producto.stockStatus || 'Sin estado'}
+                            </div>
+                        `;
+                        ultimoProductoId = producto.productoId;
+                    });
+                    
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Error en la respuesta</h3>
+                            <p>No se recibieron datos válidos</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error de conexión</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function createProducto() {
+            const container = document.getElementById('create-result');
+            container.innerHTML = '<p>Creando producto...</p>';
+            
+            try {
+                const productoTest = {
+                    nombre: "Producto Test " + new Date().getTime(),
+                    precio: 99.99,
+                    cantidadIngresada: 10,
+                    descripcion: "Producto de prueba para verificar la funcionalidad",
+                    categoria: "Test",
+                    stock: 10,
+                    metodoEntrega: "ambos",
+                    descuento: 0.0
+                };
+                
+                const response = await fetch('/api/productos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productoTest)
+                });
+                
+                console.log('Create response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Created producto:', data);
+                
+                ultimoProductoId = data.productoId;
+                
+                container.innerHTML = `
+                    <div class="success">
+                        <h3>✅ Producto creado exitosamente!</h3>
+                        <p>ID: ${data.productoId}</p>
+                        <p>Nombre: ${data.nombre}</p>
+                        <p>Categoría: ${data.categoria}</p>
+                        <p>Stock: ${data.stock}</p>
+                        <p>Estado: ${data.stockStatus}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error creating producto:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error al crear producto</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function editProducto() {
+            if (!ultimoProductoId) {
+                document.getElementById('edit-result').innerHTML = `
+                    <div class="error">
+                        <h3>❌ No hay producto para editar</h3>
+                        <p>Primero crea o obtén un producto</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const container = document.getElementById('edit-result');
+            container.innerHTML = '<p>Editando producto...</p>';
+            
+            try {
+                const productoEditado = {
+                    nombre: "Producto Editado " + new Date().getTime(),
+                    precio: 149.99,
+                    cantidadIngresada: 15,
+                    descripcion: "Producto editado para verificar la funcionalidad",
+                    categoria: "Test Editado",
+                    stock: 15,
+                    metodoEntrega: "delivery",
+                    descuento: 5.0
+                };
+                
+                const response = await fetch(`/api/productos/${ultimoProductoId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productoEditado)
+                });
+                
+                console.log('Edit response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Edited producto:', data);
+                
+                container.innerHTML = `
+                    <div class="success">
+                        <h3>✅ Producto editado exitosamente!</h3>
+                        <p>ID: ${data.productoId}</p>
+                        <p>Nombre: ${data.nombre}</p>
+                        <p>Categoría: ${data.categoria}</p>
+                        <p>Stock: ${data.stock}</p>
+                        <p>Estado: ${data.stockStatus}</p>
+                        <p>Precio: S/ ${data.precio_unitario}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error editing producto:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error al editar producto</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Ejecutar test automáticamente al cargar la página
+        window.onload = function() {
+            console.log('Página cargada, ejecutando tests...');
+            setTimeout(() => {
+                getProductos();
+            }, 1000);
+        };
+    </script>
+</body>
+</html> 

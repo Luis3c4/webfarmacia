@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contáctanos - FARMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"> <!-- Necesario si usas material-icons-round -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/contacto.css}">
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}">
+  <link rel="stylesheet" th:href="@{/css/Cliente/cart.css}">
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo FARMA" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}">Inicio</a>
+        <a th:href="@{/productos}">Productos</a>
+        <a th:href="@{/contacto}" class="active">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+        <button class="login-btn" id="loginBtnHeader" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+        </button>
+        <button class="carrito-btn">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+        <div class="usuario-logeado" id="userInfoHeader" style="display:none;">
+          <span class="material-symbols-rounded usuario-icono">person</span>
+          <span id="userNameHeader" class="usuario-nombre"></span>
+          <button id="logoutBtnHeader" class="logout-icon-btn" title="Cerrar sesión">
+            <span class="material-symbols-rounded">logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="contacto-intro">
+      <h1>Siempre Cerca de Ti</h1>
+      <p>
+        En FARMA, valoramos tu confianza. Conéctate con nosotros fácilmente; nuestro equipo está dedicado a proporcionarte
+        el soporte y la información que necesitas para una experiencia de compra satisfactoria y cuidado de tu salud.
+      </p>
+    </section>
+
+    <div class="grid-contacto container">
+      <div class="info-card">
+        <h3><span class="material-symbols-rounded">schedule</span> Nuestros Horarios</h3>
+        <p><strong>Atención Telefónica y Online:</strong></p>
+        <ul>
+          <li>Pedidos y Consultas: Lunes a Domingo, 07:00 - 22:00 hrs.</li>
+          <li>Despacho de Pedidos: Lunes a Domingo, 07:00 - 22:00 hrs.</li>
+        </ul>
+        <p><strong>Nuestras Boticas (Horario General):</strong></p>
+        <ul>
+            <li>Lunes a Sábado: 08:00 - 21:00 hrs.</li>
+            <li>Domingos y Feriados: 09:00 - 18:00 hrs.</li>
+        </ul>
+        <p><small><em>*Consulta el horario específico de tu botica más cercana.</em></small></p>
+      </div>
+
+      <div class="info-card">
+        <h3><span class="material-symbols-rounded">contact_phone</span> Canales Directos</h3>
+        <p>Estamos a un clic o una llamada de distancia:</p>
+        <div class="canales-atencion">
+            <a href="tel:+5112345678">
+                <span class="material-symbols-rounded">call</span>
+                <span class="texto-canal">Central Telefónica: (01) 234-5678</span>
+            </a>
+            <a href="https://wa.me/51987654321?text=Hola%20FARMA,%20necesito%20ayuda." target="_blank">
+                <span class="material-symbols-rounded"></span>
+                <span class="texto-canal">Escríbenos por WhatsApp</span>
+            </a>
+            <a href="mailto:atencioncliente@farma.com.pe">
+                <span class="material-symbols-rounded">mail</span>
+                <span class="texto-canal">Correo Electrónico de Atención</span>
+            </a>
+        </div>
+        <p style="margin-top: 20px;"><strong>Síguenos y entérate de novedades:</strong></p>
+        <div class="canales-atencion">
+            <a href="https://facebook.com/farmaperu" target="_blank">
+                <span class="material-symbols-rounded">facebook</span> <!-- O podrías usar un icono específico de Facebook si lo tienes -->
+                <span class="texto-canal">Facebook FARMA</span>
+            </a>
+            <a href="https://instagram.com/farmaperu" target="_blank">
+                <span class="material-symbols-rounded">photo_camera</span> <!-- O un icono específico de Instagram -->
+                <span class="texto-canal">Instagram FARMA</span>
+            </a>
+        </div>
+      </div>
+
+      <div class="info-card mapa-container">
+        <h3><span class="material-symbols-rounded">explore</span> Visítanos</h3>
+        <p>Te esperamos en nuestra sede principal o encuentra tu FARMA más cercana.</p>
+        <p><strong>Sede Principal:</strong><br>Av. La Salud 123, Urb. Bienestar<br>Distrito San Roque, Lima - Perú</p>
+        <div class="mapa-placeholder">
+          (Espacio reservado para el mapa interactivo de Google Maps)
+        </div>
+        <a th:href="@{/nuestras-tiendas}" class="btn-accion-contacto">Buscar Tiendas Cercanas</a>
+      </div>
+    </div>
+
+    <section class="container faq-section"> <!-- Usar faq-section para el contenedor -->
+        <div class="info-card"> <!-- Reutilizar info-card para mantener consistencia -->
+            <h3><span class="material-symbols-rounded">quiz</span> Preguntas Frecuentes (FAQ)</h3>
+            <div class="faq-item">
+                <h4><span class="material-symbols-rounded" style="font-size: 1.1em; margin-right: 5px;">help_center</span>¿Cómo puedo rastrear mi pedido?</h4>
+                <p>Una vez tu pedido sea despachado, recibirás un correo electrónico o SMS con un enlace de seguimiento. También puedes consultarlo en la sección "Mis Pedidos" si tienes una cuenta.</p>
+            </div>
+            <div class="faq-item">
+                <h4><span class="material-symbols-rounded" style="font-size: 1.1em; margin-right: 5px;">error_outline</span>¿Qué hago si un producto llega dañado?</h4>
+                <p>Por favor, contáctanos inmediatamente a través de cualquiera de nuestros canales de atención con los detalles de tu pedido y una foto del producto. Nos encargaremos de solucionarlo.</p>
+            </div>
+            <div class="faq-item">
+                <h4><span class="material-symbols-rounded" style="font-size: 1.1em; margin-right: 5px;">assignment_return</span>¿Puedo devolver un producto?</h4>
+                <p>Sí, consulta nuestra <a th:href="@{/politica-devoluciones}">Política de Devoluciones</a> para conocer las condiciones y el proceso a seguir.</p>
+            </div>
+            <a th:href="@{/faq-completo}" class="btn-accion-contacto" style="margin-top: 15px; display: block; text-align: center;">Ver Todas las Preguntas</a>
+        </div>
+    </section>
+
+  </main>
+
+  <!-- SIDEBAR DEL CARRITO -->
+  <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3><span class="material-symbols-rounded">shopping_cart</span> Mi carrito (<span id="cart-count-sidebar">0</span>)</h3>
+      <button id="close-cart-btn" class="close-cart-btn" aria-label="Cerrar carrito">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+    <div id="cart-items-container" class="cart-items-container">
+      <!-- Los items del carrito se insertarán aquí por JavaScript -->
+    </div>
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">S/ 0.00</span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Total</span>
+        <strong id="cart-total">S/ 0.00</strong>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <a th:href="@{/carrito}" class="view-cart-btn">Ir a mi carrito</a>
+      <button class="checkout-now-btn">Comprar ahora</button>
+    </div>
+  </div>
+  <div id="cart-overlay" class="cart-overlay"></div>
+  
+  <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script th:src="@{/js/cliente/auth.js}"></script>
+  <script th:src="@{/js/cliente/cart.js}"></script>
+  <script th:src="@{/js/cliente/cart-sync.js}"></script>
+</body>
+</html>

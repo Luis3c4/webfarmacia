@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pasarela de Pago - FARMA</title>
+    <link rel="stylesheet" th:href="@{/css/Cliente/pasarela.css}" />
+    <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+    <style>
+        /* Estilos adicionales para mejorar la UX del método de pago */
+        .metodos-pago-container { display: flex; gap: 20px; margin-bottom: 1rem; }
+        .metodo-pago-label { display: flex; align-items: center; cursor: pointer; }
+        .metodo-pago-label input { margin-right: 8px; }
+        .btn-paypal {
+            background-color: #ffc439; color: #003087; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-paypal:hover { background-color: #f0b92e; }
+        .btn-paypal img { height: 20px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+<header>
+    <!-- Tu header -->
+    <div class="container">
+        <div class="logo-nombre"><img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo"><span class="nombre-empresa">FARMA</span></div>
+        <nav><a th:href="@{/inicio}">Inicio</a><a th:href="@{/productos}">Productos</a><a th:href="@{/contacto}">Contacto</a></nav>
+        <div class="acciones-header">
+            <button class="login-btn" id="loginBtnHeader" th:onclick="|window.location.href='@{/login}'|"><span class="material-symbols-rounded">person</span>Iniciar sesión</button>
+            <button class="carrito-btn" id="openCartBtnHeaderPasarela"><span class="material-symbols-rounded">shopping_cart</span><span class="carrito-contador" id="headerCartCounterPasarela">0</span></button>
+            <div class="usuario-logeado" id="userInfoHeader" style="display:none;">
+              <span class="material-symbols-rounded usuario-icono">person</span>
+              <span id="userNameHeader" class="usuario-nombre"></span>
+              <button id="logoutBtnHeader" class="logout-icon-btn" title="Cerrar sesión">
+                <span class="material-symbols-rounded">logout</span>
+              </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="pasarela-container">
+    <h1>Confirmar y Pagar</h1>
+    <div class="pasarela-layout">
+        <section class="columna-resumen">
+            <div class="resumen-compra">
+                <h2><span class="material-symbols-rounded icon-titulo">receipt_long</span>Resumen de tu Pedido</h2>
+                <ul id="resumen-pedido-items"><li class="placeholder-resumen">Cargando...</li></ul>
+                <ul style="border-top: 1px solid var(--color-borde-suave); margin-top: 10px; padding-top: 10px;">
+                    <li><span class="item-nombre">Costo de Envío</span><span class="item-precio" id="resumen-costo-envio">S/ 0.00</span></li>
+                    <li class="total"><span class="item-nombre">Total a Pagar:</span><span class="item-precio" id="resumen-total-general">S/ 0.00</span></li>
+                </ul>
+            </div>
+        </section>
+        <section class="columna-formulario" id="columnaFormularioPago">
+            <div class="formulario-pago">
+                <h2><span class="material-symbols-rounded icon-titulo">local_shipping</span>Método de Entrega</h2>
+                <div class="metodos-entrega-container" style="display: flex; gap: 20px; margin-bottom: 1rem;">
+                    <label class="metodo-entrega-label"><input type="radio" name="metodo_entrega" value="tienda" checked> Recojo en tienda</label>
+                    <label class="metodo-entrega-label"><input type="radio" name="metodo_entrega" value="delivery"> Delivery</label>
+                </div>
+                <div id="direccionTienda" style="display: block; margin-bottom: 1rem; background: #f5f5f5; padding: 10px; border-radius: 6px;">
+                    <strong>Dirección de recojo:</strong> Av. El Sol 123, San Juan de Lurigancho, Lima (UTP SJL)
+                </div>
+                <div id="camposDireccion" style="display: none;">
+                    <div class="form-group"><label for="nombreCompleto">Nombre Completo Destinatario</label><input type="text" id="nombreCompleto" name="nombreCompleto"></div>
+                    <div class="form-group"><label for="direccion">Dirección completa</label><input type="text" id="direccion" name="direccion"></div>
+                    <div class="input-fila">
+                        <div class="form-group"><label for="distrito">Distrito</label><input type="text" id="distrito" name="distrito"></div>
+                        <div class="form-group"><label for="ciudad">Ciudad</label><input type="text" id="ciudad" name="ciudad"></div>
+                    </div>
+                    <div class="form-group"><label for="referencia">Referencia (Opcional)</label><input type="text" id="referencia" name="referencia"></div>
+                    <div class="form-group"><label for="telefonoContacto">Teléfono de Contacto</label><input type="tel" id="telefonoContacto" name="telefonoContacto" pattern="[0-9]{9}"></div>
+                    <div class="form-group"><label for="observaciones">Observaciones (opcional)</label><textarea id="observaciones" name="observaciones" placeholder="Notas adicionales para tu pedido" rows="2" style="width:100%;resize:vertical;"></textarea></div>
+                </div>
+
+                <h2><span class="material-symbols-rounded icon-titulo">credit_card</span>Método de Pago</h2>
+                <div class="metodos-pago-container">
+                    <label class="metodo-pago-label"><input type="radio" name="metodo_pago" value="tarjeta" checked> Tarjeta (Simulado)</label>
+                    <label class="metodo-pago-label"><input type="radio" name="metodo_pago" value="paypal"> PayPal</label>
+                </div>
+
+                <form id="cardPaymentForm" method="POST" th:action="@{/procesar-pago-simulado}">
+                    <!-- Campos ocultos para enviar datos del pedido -->
+                    <input type="hidden" name="metodo_entrega" id="metodo_entrega_hidden" value="tienda">
+                    <input type="hidden" name="nombreCompleto" id="nombreCompleto_hidden" value="">
+                    <input type="hidden" name="direccion" id="direccion_hidden" value="">
+                    <input type="hidden" name="distrito" id="distrito_hidden" value="">
+                    <input type="hidden" name="ciudad" id="ciudad_hidden" value="">
+                    <input type="hidden" name="referencia" id="referencia_hidden" value="">
+                    <input type="hidden" name="telefonoContacto" id="telefonoContacto_hidden" value="">
+                    <input type="hidden" name="observaciones" id="observaciones_hidden" value="">
+                    <input type="hidden" name="cartData" id="cartData_hidden" value="">
+                    <input type="hidden" name="id_usuario" id="id_usuario_hidden" value="">
+                    
+                    <button type="submit" class="btn-confirmar-pedido">Confirmar Pedido con Tarjeta</button>
+                </form>
+
+                <form id="paypalPaymentForm" method="POST" th:action="@{/payment/create}" style="display: none;">
+                    <input type="hidden" name="amount" id="paypal-amount" value="">
+                    <input type="hidden" name="currency" value="USD">
+                    <input type="hidden" name="method" value="paypal">
+                    <input type="hidden" name="description" id="paypal-description" value="Compra en FARMA">
+                    <button type="submit" class="btn-confirmar-pedido btn-paypal"><img th:src="@{/imagenes/paypal.png}" alt="PayPal"/>Continuar con PayPal</button>
+                </form>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-col">
+    <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+    <p>Programa Apoyo al Paciente</p>
+    <p>Catálogo del mes</p>
+    <p>Productos Equivalentes</p>
+    <p>Call Center - Términos</p>
+    <p>WhatsApp - Términos</p>
+  </div>
+  <div class="footer-col">
+    <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+    <p>Nuestras boticas</p>
+    <p>Información Médica</p>
+    <p>Consultas y Sugerencias</p>
+    <p>Zona de cobertura</p>
+    <p>Central Telefónica</p>
+  </div>
+  <div class="footer-col">
+    <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+    <p><span class="material-symbols-rounded">public</span> Facebook</p>
+    <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+    <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+  </div>
+  <div class="footer-col">
+    <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+    <p>Av. Salud 123, Lima, Perú</p>
+  </div>
+</footer>
+
+  <script th:src="@{/js/cliente/auth.js}"></script>
+  <script th:src="@{/js/cliente/cart-sync.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Referencias al DOM ---
+        const resumenItemsUl = document.getElementById('resumen-pedido-items');
+        const resumenTotalGeneralEl = document.getElementById('resumen-total-general');
+        const radiosMetodoPago = document.querySelectorAll('input[name="metodo_pago"]');
+        const cardPaymentForm = document.getElementById('cardPaymentForm'); // Contenedor para el botón de tarjeta
+        const paypalPaymentForm = document.getElementById('paypalPaymentForm');
+        const paypalAmountInput = document.getElementById('paypal-amount');
+        const paypalDescriptionInput = document.getElementById('paypal-description');
+        // NUEVO: referencias para método de entrega
+        const radiosMetodoEntrega = document.querySelectorAll('input[name="metodo_entrega"]');
+        const direccionTiendaDiv = document.getElementById('direccionTienda');
+        const camposDireccionDiv = document.getElementById('camposDireccion');
+        const resumenCostoEnvio = document.getElementById('resumen-costo-envio');
+
+        let carritoActual = [];
+        let subtotalCalculado = 0;
+        let costoEnvioFijo = 0.00; // por defecto para tienda
+
+        // --- Cargar y mostrar resumen del carrito ---
+        try {
+            const storedCart = localStorage.getItem('cart');
+            if (storedCart) carritoActual = JSON.parse(storedCart);
+        } catch (e) { console.error(e); }
+
+        function actualizarTotalGeneral() {
+            let subtotalCalculadoLocal = 0;
+            if (carritoActual.length > 0) {
+                carritoActual.forEach(item => {
+                    subtotalCalculadoLocal += parseFloat(item.precio) * item.cantidad;
+                });
+            }
+            let totalGeneralCalculado = subtotalCalculadoLocal + costoEnvioFijo;
+            resumenTotalGeneralEl.textContent = `S/ ${totalGeneralCalculado.toFixed(2)}`;
+            paypalAmountInput.value = totalGeneralCalculado.toFixed(2);
+        }
+
+        if (resumenItemsUl && carritoActual.length > 0) {
+            resumenItemsUl.innerHTML = '';
+            let descripcionPedido = "Pedido: ";
+            carritoActual.forEach(item => {
+                const li = document.createElement('li');
+                const precioItemTotal = parseFloat(item.precio) * item.cantidad;
+                li.innerHTML = `<span class="item-nombre">${item.nombre} (x${item.cantidad})</span><span class="item-precio">S/ ${precioItemTotal.toFixed(2)}</span>`;
+                resumenItemsUl.appendChild(li);
+                subtotalCalculado += precioItemTotal;
+                descripcionPedido += `${item.cantidad}x ${item.nombre}, `;
+            });
+            actualizarTotalGeneral();
+            paypalDescriptionInput.value = descripcionPedido.slice(0, -2);
+        } else if (resumenItemsUl) {
+            resumenItemsUl.innerHTML = '<li class="carrito-vacio-pasarela">Tu carrito está vacío.</li>';
+            document.getElementById('columnaFormularioPago').style.display = 'none';
+        }
+
+        let metodoEntrega = 'tienda'; // por defecto
+
+        // --- Lógica para cambiar método de entrega ---
+        radiosMetodoEntrega.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                metodoEntrega = e.target.value;
+                if (metodoEntrega === 'tienda') {
+                    direccionTiendaDiv.style.display = 'block';
+                    camposDireccionDiv.style.display = 'none';
+                    costoEnvioFijo = 0.00;
+                    resumenCostoEnvio.textContent = 'Gratis';
+                    // Actualizar campo oculto
+                    document.getElementById('metodo_entrega_hidden').value = 'tienda';
+                } else {
+                    direccionTiendaDiv.style.display = 'none';
+                    camposDireccionDiv.style.display = 'block';
+                    costoEnvioFijo = 5.00;
+                    resumenCostoEnvio.textContent = `S/ ${costoEnvioFijo.toFixed(2)}`;
+                    // Actualizar campo oculto
+                    document.getElementById('metodo_entrega_hidden').value = 'delivery';
+                    // Rellenar automáticamente los campos cuando se selecciona delivery
+                    setTimeout(rellenarDatosUsuario, 100);
+                }
+                actualizarTotalGeneral();
+            });
+        });
+        // --- Función para rellenar automáticamente los campos con datos del usuario ---
+        function rellenarDatosUsuario() {
+            const nombre = localStorage.getItem('nombre');
+            const telefono = localStorage.getItem('telefono');
+            
+            if (nombre) {
+                const nombreCompletoInput = document.getElementById('nombreCompleto');
+                if (nombreCompletoInput) {
+                    nombreCompletoInput.value = nombre;
+                }
+            }
+            
+            if (telefono) {
+                const telefonoInput = document.getElementById('telefonoContacto');
+                if (telefonoInput) {
+                    telefonoInput.value = telefono;
+                }
+            }
+            
+            // Rellenar valores por defecto para facilitar la experiencia
+            const ciudadInput = document.getElementById('ciudad');
+            if (ciudadInput && !ciudadInput.value) {
+                ciudadInput.value = 'Lima';
+            }
+            
+            const distritoInput = document.getElementById('distrito');
+            if (distritoInput && !distritoInput.value) {
+                distritoInput.value = 'San Juan de Lurigancho';
+            }
+        }
+
+        // Inicializar estado visual
+        direccionTiendaDiv.style.display = 'block';
+        camposDireccionDiv.style.display = 'none';
+        costoEnvioFijo = 0.00;
+        resumenCostoEnvio.textContent = 'Gratis';
+        
+        // Rellenar datos del usuario al cargar la página
+        rellenarDatosUsuario();
+
+        // --- Lógica para cambiar método de pago ---
+        radiosMetodoPago.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'paypal') {
+                    cardPaymentForm.style.display = 'none';
+                    paypalPaymentForm.style.display = 'block';
+                } else {
+                    cardPaymentForm.style.display = 'block';
+                    paypalPaymentForm.style.display = 'none';
+                }
+            });
+        });
+
+        // --- Validación de dirección ---
+        const validarDireccion = () => {
+            if (metodoEntrega === 'tienda') return true;
+            const camposRequeridos = ['nombreCompleto', 'direccion', 'distrito', 'ciudad', 'telefonoContacto'];
+            for (const id of camposRequeridos) {
+                const campo = document.getElementById(id);
+                if (!campo.value.trim()) {
+                    alert(`Por favor, complete el campo: "${campo.previousElementSibling.textContent}"`);
+                    campo.focus();
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        // =========================================================================
+        //  CÓDIGO CORREGIDO: MANEJO DEL ENVÍO DEL FORMULARIO DE PAYPAL
+        // =========================================================================
+        // Antes de redirigir a PayPal, guarda el orderDetails con id_usuario
+        function guardarOrderDetailsAntesDePagar() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const nombreCliente = localStorage.getItem('nombreCliente') || '';
+            const telefonoContacto = document.getElementById('telefonoContacto') ? document.getElementById('telefonoContacto').value : '';
+            const observaciones = document.getElementById('observaciones') ? document.getElementById('observaciones').value : '';
+            const subtotal = cartItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+            const costoEnvio = (document.querySelector('input[name="metodo_entrega"]:checked')?.value === 'delivery') ? 5.00 : 0.00;
+            const totalGeneral = subtotal + costoEnvio;
+            const id_usuario = localStorage.getItem('id_usuario');
+            const productosComprados = cartItems.map(item => ({
+                id: item.id,
+                nombre: `${item.nombre} (x${item.cantidad})`,
+                precioFormateado: `S/ ${(item.precio * item.cantidad).toFixed(2)}`
+            }));
+            const orderDetails = {
+                productosComprados,
+                subtotal: `S/ ${subtotal.toFixed(2)}`,
+                costoEnvio: costoEnvio === 0 ? 'Gratis' : `S/ ${costoEnvio.toFixed(2)}`,
+                totalGeneral: `S/ ${totalGeneral.toFixed(2)}`,
+                nombreCliente,
+                telefonoContacto,
+                observaciones,
+                id_usuario,
+                metodoEntrega: document.querySelector('input[name="metodo_entrega"]:checked')?.value || 'tienda'
+            };
+            localStorage.setItem('currentOrderDetails', JSON.stringify(orderDetails));
+        }
+        // Llama a guardarOrderDetailsAntesDePagar() justo antes de enviar el formulario de PayPal
+        if (paypalPaymentForm) {
+            paypalPaymentForm.addEventListener('submit', guardarOrderDetailsAntesDePagar);
+        }
+
+        // Función para actualizar campos ocultos del formulario de tarjeta
+        function actualizarCamposOcultos() {
+            const nombreCompleto = document.getElementById('nombreCompleto') ? document.getElementById('nombreCompleto').value : '';
+            const direccion = document.getElementById('direccion') ? document.getElementById('direccion').value : '';
+            const distrito = document.getElementById('distrito') ? document.getElementById('distrito').value : '';
+            const ciudad = document.getElementById('ciudad') ? document.getElementById('ciudad').value : '';
+            const referencia = document.getElementById('referencia') ? document.getElementById('referencia').value : '';
+            const telefonoContacto = document.getElementById('telefonoContacto') ? document.getElementById('telefonoContacto').value : '';
+            const observaciones = document.getElementById('observaciones') ? document.getElementById('observaciones').value : '';
+
+            document.getElementById('nombreCompleto_hidden').value = nombreCompleto;
+            document.getElementById('direccion_hidden').value = direccion;
+            document.getElementById('distrito_hidden').value = distrito;
+            document.getElementById('ciudad_hidden').value = ciudad;
+            document.getElementById('referencia_hidden').value = referencia;
+            document.getElementById('telefonoContacto_hidden').value = telefonoContacto;
+            document.getElementById('observaciones_hidden').value = observaciones;
+            
+            // Agregar datos del carrito
+            const cartData = localStorage.getItem('cart');
+            if (cartData) {
+                document.getElementById('cartData_hidden').value = cartData;
+            }
+            
+            // Agregar id_usuario del localStorage
+            const idUsuario = localStorage.getItem('id_usuario');
+            if (idUsuario) {
+                document.getElementById('id_usuario_hidden').value = idUsuario;
+            }
+        }
+
+        // Actualizar campos ocultos cuando se envíe el formulario de tarjeta
+        if (cardPaymentForm) {
+            cardPaymentForm.addEventListener('submit', actualizarCamposOcultos);
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

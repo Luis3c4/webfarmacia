@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Productos - FARMA</title>
+  <link rel="stylesheet" th:href="@{/css/Cliente/productos.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/Cliente/cart.css}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo-nombre">
+        <img th:src="@{/imagenes/logo.png}" alt="Logo Farma" class="logo">
+        <span class="nombre-empresa">FARMA</span>
+      </div>
+      <nav>
+        <a th:href="@{/inicio}">Inicio</a>
+        <a th:href="@{/productos}" class="active">Productos</a>
+        <a th:href="@{/contacto}">Contacto</a>
+      </nav>
+      <div class="acciones-header">
+       <button class="login-btn" id="loginBtnHeader" th:onclick="|window.location.href='@{/login}'|">
+          <span class="material-symbols-rounded">person</span>
+          Iniciar sesión
+       </button>
+        <button class="carrito-btn">
+          <span class="material-symbols-rounded">shopping_cart</span>
+          <span class="carrito-contador">0</span>
+        </button>
+        <div class="usuario-logeado" id="userInfoHeader" style="display:none;">
+          <span class="material-symbols-rounded usuario-icono">person</span>
+          <span id="userNameHeader" class="usuario-nombre"></span>
+          <button id="logoutBtnHeader" class="logout-icon-btn" title="Cerrar sesión">
+            <span class="material-symbols-rounded">logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <main>
+    <section class="buscador-productos">
+      <div class="container-buscador">
+        <div class="columna-categorias">
+          <select id="categoriaSelect" aria-label="Seleccionar categoría de productos">
+            <option value="">Todas las categorías</option>
+          </select>
+        </div>
+        <div class="buscador-estilizado">
+          <input type="text" id="searchInput" placeholder="Buscar productos..." aria-label="Campo de búsqueda de productos">
+          <button class="btn-icono" id="searchBtn" aria-label="Buscar">
+            <span class="material-icons-round">search</span>
+          </button>
+        </div>
+      </div>
+    </section>
+    
+    <section class="productos-destacados container">
+      <h2>Nuestros Productos</h2>
+      <!-- CONTENEDOR PARA DELEGACIÓN DE EVENTOS EN CART.JS -->
+      <div class="ofertas" id="product-list-container"> 
+        <!-- Productos dinámicos desde la base de datos -->
+        <div th:each="producto : ${productos}" 
+             th:class="'producto'" 
+             th:attr="data-id=${producto.productoId}, 
+                      data-nombre=${producto.nombre}, 
+                      data-precio=${producto.precio_unitario},
+                      data-imagen=${producto.imgUrl != null ? producto.imgUrl : '/imagenes/productos/default-medicine.jpg'},
+                      data-presentacion=${producto.descripcion != null ? producto.descripcion : 'Sin descripción'}"
+                             th:onclick="|window.location.href='@{/producto/detalle/{id}(id=${producto.productoId})}'|"
+             style="cursor: pointer;">
+          
+          <!-- Imagen del producto desde imgUrl -->
+          <img th:if="${producto.imgUrl != null and producto.imgUrl != ''}" 
+               th:src="${producto.imgUrl}" 
+               th:alt="${producto.nombre}" 
+               onerror="this.src='/imagenes/productos/default-medicine.jpg'" />
+          
+          <!-- Imagen por defecto si no hay imgUrl -->
+          <img th:if="${producto.imgUrl == null or producto.imgUrl == ''}" 
+               th:src="@{/imagenes/productos/default-medicine.jpg}" 
+               th:alt="${producto.nombre}" />
+          
+          <p class="etiqueta" th:text="${producto.categoria != null ? producto.categoria : 'Sin categoría'}">Categoría</p>
+          <h3 th:text="${producto.nombre}">Nombre del producto</h3>
+          <p class="precio-final" th:text="'S/ ' + ${#numbers.formatDecimal(producto.precio_unitario, 1, 2)}">S/ 0.00</p>
+          <button class="add-to-cart" 
+                  th:attr="data-id=${producto.productoId}, 
+                           data-nombre=${producto.nombre}, 
+                           data-precio=${producto.precio_unitario},
+                           data-imagen=${producto.imgUrl != null ? producto.imgUrl : '/imagenes/productos/default-medicine.jpg'},
+                           data-presentacion=${producto.descripcion != null ? producto.descripcion : 'Sin descripción'},
+                           data-categoria=${producto.categoria != null ? producto.categoria : 'Sin categoría'}">
+            Agregar al carrito
+          </button>
+        </div>
+
+        <!-- Mensaje si no hay productos -->
+        <div th:if="${#lists.isEmpty(productos)}" class="no-productos">
+          <p>No hay productos disponibles en este momento.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+   <footer class="footer">
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">account_balance_wallet</span> Monedero del Ahorro</h4>
+      <p>Programa Apoyo al Paciente</p>
+      <p>Catálogo del mes</p>
+      <p>Productos Equivalentes</p>
+      <p>Call Center - Términos</p>
+      <p>WhatsApp - Términos</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">support_agent</span> Contáctanos</h4>
+      <p>Nuestras boticas</p>
+      <p>Información Médica</p>
+      <p>Consultas y Sugerencias</p>
+      <p>Zona de cobertura</p>
+      <p>Central Telefónica</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">share</span> Síguenos</h4>
+      <p><span class="material-symbols-rounded">public</span> Facebook</p>
+      <p><span class="material-symbols-rounded">photo_camera</span> Instagram</p>
+      <p><span class="material-symbols-rounded">chat</span> WhatsApp</p>
+    </div>
+    <div class="footer-col">
+      <h4><span class="material-symbols-rounded">location_on</span> Ubicación</h4>
+      <p>Av. Salud 123, Lima, Perú</p>
+    </div>
+  </footer>
+
+  <!-- SIDEBAR DEL CARRITO -->
+  <div id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3><span class="material-symbols-rounded">shopping_cart</span> Mi carrito (<span id="cart-count-sidebar">0</span>)</h3>
+      <button id="close-cart-btn" class="close-cart-btn" aria-label="Cerrar carrito">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+    <div id="cart-items-container" class="cart-items-container">
+      <!-- Los items del carrito se insertarán aquí por JavaScript -->
+    </div>
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">S/ 0.00</span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Total</span>
+        <strong id="cart-total">S/ 0.00</strong>
+      </div>
+    </div>
+    <div class="cart-actions">
+      <a th:href="@{/carrito}" class="view-cart-btn">Ir a mi carrito</a>
+      <button class="checkout-now-btn">Comprar ahora</button>
+    </div>
+  </div>
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <script th:src="@{/js/cliente/auth.js}" defer></script>
+  <script th:src="@{/js/cliente/cart.js}" defer></script>
+  <script th:src="@{/js/cliente/cart-sync.js}" defer></script>
+  <script th:src="@{/test-data.js}" defer></script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // Funcionalidad de búsqueda y filtrado
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const categoriaSelect = document.getElementById('categoriaSelect');
+  const productListContainer = document.getElementById('product-list-container');
+  
+  // Cargar categorías al iniciar
+  loadCategorias();
+  
+  // Event listeners
+  searchBtn.addEventListener('click', performSearch);
+  searchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      performSearch();
+    }
+  });
+  categoriaSelect.addEventListener('change', performSearch);
+  
+  function loadCategorias() {
+    fetch('/api/productos/categorias')
+      .then(response => response.json())
+      .then(categorias => {
+        categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
+        categorias.forEach(categoria => {
+          const option = document.createElement('option');
+          option.value = categoria;
+          option.textContent = categoria;
+          categoriaSelect.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error cargando categorías:', error);
+      });
+  }
+  
+  function performSearch() {
+    const searchTerm = searchInput.value.trim();
+    const selectedCategoria = categoriaSelect.value;
+    
+    let url = '/api/productos';
+    const params = new URLSearchParams();
+    
+    if (searchTerm) {
+      params.append('nombre', searchTerm);
+      url = '/api/productos/buscar?' + params.toString();
+    } else if (selectedCategoria) {
+      url = `/api/productos/categoria/${encodeURIComponent(selectedCategoria)}`;
+    }
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        displayProducts(data.content || data);
+      })
+      .catch(error => {
+        console.error('Error en la búsqueda:', error);
+        // Si hay error, mostrar todos los productos
+        fetch('/api/productos')
+          .then(response => response.json())
+          .then(data => {
+            displayProducts(data.content || data);
+          });
+      });
+  }
+  
+  function displayProducts(productos) {
+    if (!productos || productos.length === 0) {
+      productListContainer.innerHTML = '<div class="no-productos"><p>No se encontraron productos.</p></div>';
+      return;
+    }
+    
+    productListContainer.innerHTML = productos.map(producto => `
+      <div class="producto" 
+           data-id="${producto.productoId}" 
+           data-nombre="${producto.nombre}" 
+           data-precio="${producto.precio_unitario}"
+           data-imagen="${producto.imgUrl || '/imagenes/productos/default-medicine.jpg'}"
+           data-presentacion="${producto.descripcion || 'Sin descripción'}"
+           data-categoria="${producto.categoria || 'Sin categoría'}"
+           onclick="window.location.href='/producto/detalle/${producto.productoId}'"
+           style="cursor: pointer;">
+        
+        <img src="${producto.imgUrl || '/imagenes/productos/default-medicine.jpg'}" 
+             alt="${producto.nombre}" 
+             onerror="this.src='/imagenes/productos/default-medicine.jpg'" />
+        
+        <p class="etiqueta">${producto.categoria || 'Sin categoría'}</p>
+        <h3>${producto.nombre}</h3>
+        <p class="precio-final">S/ ${producto.precio_unitario.toFixed(2)}</p>
+        <button class="add-to-cart" 
+                data-id="${producto.productoId}" 
+                data-nombre="${producto.nombre}" 
+                data-precio="${producto.precio_unitario}"
+                data-imagen="${producto.imgUrl || '/imagenes/productos/default-medicine.jpg'}"
+                data-presentacion="${producto.descripcion || 'Sin descripción'}"
+                data-categoria="${producto.categoria || 'Sin categoría'}">
+          Agregar al carrito
+        </button>
+      </div>
+    `).join('');
+    
+    // El carrito se inicializa automáticamente por cart.js
+  }
+  
+  // Inicializar contador al cargar la página
+  // El contador se actualiza automáticamente por cart.js
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+/* css/productos.css */
+
+/* === BUSCADOR Y CATEGORÍAS === */
+.container-buscador {
+  max-width: 1300px;
+  margin: 40px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.columna-categorias {
+  position: relative;
+  width: 220px; /* O considera usar flex-basis si quieres más flexibilidad */
+}
+
+.columna-categorias select {
+  width: 100%;
+  height: 46px;
+  padding: 0 40px 0 16px; /* Más padding a la derecha para que el texto no se superponga con la flecha */
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background-color: #0074b7;
+  appearance: none; /* Quita la flecha por defecto del navegador */
+  -webkit-appearance: none; /* Para Safari/Chrome */
+  -moz-appearance: none; /* Para Firefox */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px 18px;
+  cursor: pointer;
+}
+.columna-categorias select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 116, 183, 0.5);
+}
+
+.columna-categorias select option {
+  background-color: #ffffff; /* Fondo blanco para las opciones para mejor legibilidad */
+  color: #333333; /* Texto oscuro para las opciones */
+}
+/* Estilo para cuando el select está abierto (depende del navegador, puede ser limitado) */
+.columna-categorias select:focus option {
+  background-color: #0074b7;
+  color: white;
+}
+
+
+/* Buscador */
+.buscador-estilizado {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden; /* Para que el botón no se salga del borde redondeado */
+  border: 1px solid #ccc; /* Borde sutil */
+}
+
+.buscador-estilizado .btn-icono {
+  background-color: #0074b7;
+  color: white;
+  border: none;
+  padding: 0; /* Quitar padding para que el icono se ajuste */
+  height: 46px; /* Mismo alto que el input */
+  width: 50px; /* Ancho para el botón */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border-right: 1px solid #ccc; No es necesario si el input tiene su propio borde */
+  cursor: pointer;
+}
+.buscador-estilizado .btn-icono:hover {
+  background-color: #005f94;
+}
+
+
+.buscador-estilizado input[type="text"] { /* Más específico */
+  flex-grow: 1;
+  padding: 12px 16px;
+  border: none;
+  font-size: 15px;
+  background-color: transparent;
+  color: #333;
+  font-weight: 500;
+  height: 46px; /* Mismo alto que el select y el botón */
+  box-sizing: border-box; /* Para que el padding no incremente el alto */
+}
+.buscador-estilizado input[type="text"]:focus {
+  outline: none; /* Quitar outline al hacer focus */
+}
+
+
+/* === CATÁLOGO === */
+.productos-destacados {
+  padding: 40px 20px;
+  max-width: 1300px; /* O el mismo ancho que container-buscador */
+  margin: 20px auto 0; /* Ajuste de margen superior */
+}
+
+.productos-destacados h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 30px; /* Más espacio */
+  /* padding-left: 10px; No es necesario si .productos-destacados tiene padding */
+  color: #0074b7; /* Mismo color que los botones */
+  text-align: left; /* O center, según prefieras */
+}
+
+.ofertas {
+  display: grid; /* Usar grid para mejor control de columnas y alturas */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Columnas responsivas */
+  gap: 25px; /* Espacio entre tarjetas */
+  /* padding: 20px; No es necesario si .productos-destacados tiene padding */
+  /* max-width: 1200px; No es necesario si .productos-destacados lo controla */
+  /* margin: 0 auto 40px; No es necesario si .productos-destacados lo controla */
+}
+
+.producto {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Sombra un poco más definida */
+  padding: 20px;
+  /* width: 270px;  Grid se encarga del ancho */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra horizontalmente el contenido de la columna flex */
+  justify-content: space-between; /* Distribuye el espacio verticalmente */
+  text-align: center; /* Centra el texto dentro de los elementos */
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Transición más suave */
+  height: 100%; /* Para que todas las tarjetas en una fila tengan la misma altura con grid */
+}
+
+.producto:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.producto img {
+  max-height: 140px; /* Ajusta según tus imágenes */
+  width: auto; /* Para mantener la proporción */
+  max-width: 100%; /* Para que no se desborde */
+  object-fit: contain;
+  margin-bottom: 15px; /* Espacio entre imagen y etiqueta */
+}
+
+.producto .etiqueta { /* Nombre de la categoría del producto */
+  font-size: 10px; /* Más pequeño */
+  color: #777; /* Un gris más suave */
+  text-transform: uppercase;
+  margin-bottom: 8px; /* Espacio antes del nombre del producto */
+  font-weight: 500;
+  display: block; /* Para que ocupe su propia línea */
+}
+
+.producto h3 { /* Nombre del producto */
+  font-size: 15px; /* Ligeramente más pequeño para más espacio */
+  font-weight: 600;
+  margin: 0 0 10px 0; /* Margen inferior */
+  color: #333; /* Un negro más suave */
+  line-height: 1.3; /* Para mejor legibilidad */
+  min-height: 38px; /* Espacio para aprox. 2 líneas. Ajusta según tu fuente. */
+  /* Para truncar texto a 2 líneas (opcional):
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  */
+}
+
+.producto .precios-container { /* Contenedor para los precios */
+    margin-bottom: 10px; /* Espacio antes del botón */
+    min-height: 40px; /* Espacio para precio regular y final */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.producto .precio-regular {
+  font-size: 13px;
+  color: #999;
+  text-decoration: line-through;
+  margin: 0 0 2px 0; /* Pequeño espacio si hay precio regular */
+  display: block; /* Por defecto, se mostrará si existe en el HTML */
+}
+/* Si no quieres mostrarlo si está vacío el span, puedes usar JS o :empty si el span está vacío.
+   Por ahora, asegúrate que el HTML no genere un span vacío. */
+.producto .precio-regular:empty { /* Si el span del precio regular no tiene contenido, no ocupa espacio */
+    display: none;
+}
+
+
+.producto .precio-final {
+  font-size: 18px; /* Más prominente */
+  font-weight: 700;
+  color: #0074b7; /* Mismo color que los botones */
+  margin: 0 0 15px 0; /* Espacio antes del botón */
+  display: block;
+}
+
+.producto button.add-to-cart { /* Más específico para el botón de agregar */
+  background-color: #0074b7;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-out;
+  width: 100%; /* Para que ocupe todo el ancho disponible */
+  margin-top: auto; /* Para que se mantenga al final */
+}
+
+.producto button.add-to-cart:hover {
+  background-color: #005f94;
+}
+
+/* === MENSAJE DE NO PRODUCTOS === */
+.no-productos {
+  grid-column: 1 / -1; /* Ocupa todas las columnas del grid */
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  border-radius: 15px;
+  border: 2px dashed #dee2e6;
+}
+
+.no-productos p {
+  font-size: 18px;
+  color: #6c757d;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .container-buscador {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .columna-categorias {
+    width: 100%;
+  }
+
+  .productos-destacados h2 {
+    font-size: 20px;
+  }
+
+  .ofertas {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .producto {
+    padding: 15px;
+  }
+
+  .producto img {
+    max-height: 120px;
+  }
+
+  .producto h3 {
+    font-size: 14px;
+  }
+
+  .producto .precio-final {
+    font-size: 16px;
+  }
+
+  .producto button.add-to-cart {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+    .ofertas {
+      grid-template-columns: 1fr;
+    }
+
+    .producto img {
+      max-height: 100px;
+    }
+
+    .productos-destacados h2 {
+      font-size: 18px;
+    }
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Base de Datos - FARMA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fdf2f2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            color: #27ae60;
+            background: #f2fdf2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Base de Datos - FARMA</h1>
+    
+    <div class="test-section">
+        <h2>1. Test de Conexión - Obtener Productos</h2>
+        <button onclick="testGetProductos()">Obtener Productos</button>
+        <div id="productos-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test de Categorías</h2>
+        <button onclick="testGetCategorias()">Obtener Categorías</button>
+        <div id="categorias-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Test de Crear Producto</h2>
+        <button onclick="testCreateProducto()">Crear Producto de Prueba</button>
+        <div id="create-result"></div>
+    </div>
+
+    <script>
+        async function testGetProductos() {
+            const container = document.getElementById('productos-result');
+            container.innerHTML = '<p>Probando...</p>';
+            
+            try {
+                const response = await fetch('/api/productos?page=0&size=5');
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Data received:', data);
+                
+                if (data && data.content) {
+                    container.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Conexión exitosa!</h3>
+                            <p>Total productos: ${data.totalElements || 0}</p>
+                            <p>Productos en esta página: ${data.content.length}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Error en la respuesta</h3>
+                            <p>No se recibieron datos válidos</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error de conexión</h3>
+                        <p>${error.message}</p>
+                        <p>Verifica que el servidor esté ejecutándose en http://localhost:8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testGetCategorias() {
+            const container = document.getElementById('categorias-result');
+            container.innerHTML = '<p>Probando...</p>';
+            
+            try {
+                const response = await fetch('/api/productos/categorias');
+                console.log('Categorías response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Categorías data:', data);
+                
+                if (data && Array.isArray(data)) {
+                    container.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Categorías obtenidas!</h3>
+                            <p>Total categorías: ${data.length}</p>
+                            <ul>
+                                ${data.map(cat => `<li>${cat}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Error en categorías</h3>
+                            <p>No se recibieron categorías válidas</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error en categorías:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error al obtener categorías</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testCreateProducto() {
+            const container = document.getElementById('create-result');
+            container.innerHTML = '<p>Creando producto de prueba...</p>';
+            
+            try {
+                const productoTest = {
+                    nombre: "Producto Test " + new Date().getTime(),
+                    precio: 99.99,
+                    cantidadIngresada: 10,
+                    descripcion: "Producto de prueba para verificar la conexión",
+                    categoria: "Test",
+                    stock: 10,
+                    stockStatus: "IN_STOCK",
+                    metodoEntrega: "ambos",
+                    descuento: 0.0
+                };
+                
+                const response = await fetch('/api/productos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productoTest)
+                });
+                
+                console.log('Create response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Created producto:', data);
+                
+                container.innerHTML = `
+                    <div class="success">
+                        <h3>✅ Producto creado exitosamente!</h3>
+                        <p>ID: ${data.productoId}</p>
+                        <p>Nombre: ${data.nombre}</p>
+                        <p>Categoría: ${data.categoria}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error creating producto:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Error al crear producto</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Ejecutar test automáticamente al cargar la página
+        window.onload = function() {
+            console.log('Página cargada, ejecutando tests...');
+            setTimeout(() => {
+                testGetProductos();
+            }, 1000);
+        };
+    </script>
+</body>
+</html> 

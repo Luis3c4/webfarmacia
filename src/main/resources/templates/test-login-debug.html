@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ccc;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background: #0074b7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #005f94; }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Login Debug</h1>
+    
+    <div class="test-section info">
+        <h3>1. Test de Conexión al Controlador</h3>
+        <button onclick="testControllerConnection()">Probar Conexión</button>
+        <div id="controllerResult" class="result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>2. Test de Usuarios en Base de Datos</h3>
+        <button onclick="testUsersInDB()">Obtener Usuarios</button>
+        <div id="usersResult" class="result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>3. Test de Login</h3>
+        <div>
+            <input type="email" id="testEmail" placeholder="Email" value="admin@farmacia.com">
+            <input type="password" id="testPassword" placeholder="Contraseña" value="admin123">
+            <button onclick="testLogin()">Probar Login</button>
+        </div>
+        <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>4. Test de Login con Datos Incorrectos</h3>
+        <div>
+            <input type="email" id="wrongEmail" placeholder="Email incorrecto" value="wrong@email.com">
+            <input type="password" id="wrongPassword" placeholder="Contraseña incorrecta" value="wrongpass">
+            <button onclick="testWrongLogin()">Probar Login Incorrecto</button>
+        </div>
+        <div id="wrongLoginResult" class="result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>5. Crear Usuario de Prueba</h3>
+        <button onclick="createTestUser()">Crear Usuario Test</button>
+        <div id="createUserResult" class="result"></div>
+    </div>
+
+    <script>
+        async function testControllerConnection() {
+            const resultDiv = document.getElementById('controllerResult');
+            resultDiv.textContent = 'Probando conexión...';
+            
+            try {
+                const response = await fetch('/api/usuarios/test-connection');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Conexión exitosa:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Error de conexión:\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error de red: ${error.message}`;
+            }
+        }
+
+        async function testUsersInDB() {
+            const resultDiv = document.getElementById('usersResult');
+            resultDiv.textContent = 'Obteniendo usuarios...';
+            
+            try {
+                const response = await fetch('/api/usuarios/test');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Usuarios encontrados:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Error al obtener usuarios:\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error de red: ${error.message}`;
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            resultDiv.textContent = 'Probando login...';
+            
+            try {
+                const response = await fetch('/api/usuarios/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, contraseña: password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Login exitoso:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Login fallido:\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error de red: ${error.message}`;
+            }
+        }
+
+        async function testWrongLogin() {
+            const resultDiv = document.getElementById('wrongLoginResult');
+            const email = document.getElementById('wrongEmail').value;
+            const password = document.getElementById('wrongPassword').value;
+            
+            resultDiv.textContent = 'Probando login incorrecto...';
+            
+            try {
+                const response = await fetch('/api/usuarios/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, contraseña: password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Correcto - Login rechazado como esperado:\n${JSON.stringify(data, null, 2)}`;
+                } else if (response.ok) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `⚠️ Inesperado - Login exitoso con credenciales incorrectas:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Error inesperado:\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error de red: ${error.message}`;
+            }
+        }
+
+        // Función para crear usuario de prueba
+        async function createTestUser() {
+            const resultDiv = document.getElementById('createUserResult');
+            resultDiv.textContent = 'Creando usuario de prueba...';
+            
+            try {
+                const testUser = {
+                    nombre: "Usuario Test",
+                    email: "test@farmacia.com",
+                    contraseña: "test123",
+                    tipo_usuario: "cliente",
+                    telefono: "123456789"
+                };
+                
+                const response = await fetch('/api/usuarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testUser)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Usuario de prueba creado:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Error al crear usuario:\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error de red: ${error.message}`;
+            }
+        }
+
+        // Ejecutar pruebas automáticamente al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de debug cargada');
+            // Ejecutar pruebas automáticamente después de 2 segundos
+            setTimeout(() => {
+                testControllerConnection();
+                setTimeout(() => testUsersInDB(), 1000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 

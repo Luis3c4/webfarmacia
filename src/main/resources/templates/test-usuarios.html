@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Usuarios - FARMA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .user-item {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fdf2f2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            color: #27ae60;
+            background: #f2fdf2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .login-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .login-form input {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Usuarios - FARMA</h1>
+    
+    <div class="test-section">
+        <h2>1. Verificar Usuarios en Base de Datos</h2>
+        <button onclick="getAllUsuarios()">Obtener Todos los Usuarios</button>
+        <div id="usuarios-list"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Probar Login</h2>
+        <div class="login-form">
+            <label for="test-email">Email:</label>
+            <input type="email" id="test-email" placeholder="cliente@test.com">
+            
+            <label for="test-contrasena">Contraseña:</label>
+            <input type="password" id="test-contrasena" placeholder="123456">
+            
+            <button onclick="testLogin()">Probar Login</button>
+        </div>
+        <div id="login-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Crear Usuario de Prueba</h2>
+        <div class="login-form">
+            <label for="new-nombres">Nombres:</label>
+            <input type="text" id="new-nombres" placeholder="Usuario Prueba">
+            
+            <label for="new-email">Email:</label>
+            <input type="email" id="new-email" placeholder="test@example.com">
+            
+            <label for="new-contrasena">Contraseña:</label>
+            <input type="password" id="new-contrasena" placeholder="password123">
+            
+            <label for="new-tipo">Tipo de Usuario:</label>
+            <select id="new-tipo">
+                <option value="cliente">Cliente</option>
+                <option value="administrador">Administrador</option>
+            </select>
+            
+            <button onclick="createUsuario()">Crear Usuario</button>
+        </div>
+        <div id="create-result"></div>
+    </div>
+
+    <script>
+        async function getAllUsuarios() {
+            try {
+                const response = await fetch('/api/usuarios');
+                const usuarios = await response.json();
+                
+                const container = document.getElementById('usuarios-list');
+                if (usuarios.length === 0) {
+                    container.innerHTML = '<div class="error">No hay usuarios en la base de datos</div>';
+                } else {
+                    container.innerHTML = '<h3>Usuarios encontrados:</h3>';
+                    usuarios.forEach(usuario => {
+                        container.innerHTML += `
+                            <div class="user-item">
+                                <strong>ID:</strong> ${usuario.idUsuario}<br>
+                                <strong>Nombres:</strong> ${usuario.nombres}<br>
+                                <strong>Email:</strong> ${usuario.email}<br>
+                                <strong>Tipo:</strong> ${usuario.tipoUsuario}<br>
+                                <strong>Teléfono:</strong> ${usuario.telefono || 'No especificado'}
+                            </div>
+                        `;
+                    });
+                }
+            } catch (error) {
+                document.getElementById('usuarios-list').innerHTML = 
+                    `<div class="error">Error al obtener usuarios: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('test-email').value;
+            const contrasena = document.getElementById('test-contrasena').value;
+            
+            if (!email || !contrasena) {
+                document.getElementById('login-result').innerHTML = 
+                    '<div class="error">Por favor, completa ambos campos</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/usuarios/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, contraseña: contrasena })
+                });
+                
+                const data = await response.json();
+                const container = document.getElementById('login-result');
+                
+                if (response.ok) {
+                    container.innerHTML = `
+                        <div class="success">
+                            <h3>Login Exitoso!</h3>
+                            <p><strong>ID:</strong> ${data.idUsuario}</p>
+                            <p><strong>Nombres:</strong> ${data.nombres}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Tipo:</strong> ${data.tipoUsuario}</p>
+                            <p><strong>Teléfono:</strong> ${data.telefono || 'No especificado'}</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <h3>Login Fallido</h3>
+                            <p>${data.error || 'Error desconocido'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('login-result').innerHTML = 
+                    `<div class="error">Error en la petición: ${error.message}</div>`;
+            }
+        }
+
+        async function createUsuario() {
+            const nombres = document.getElementById('new-nombres').value;
+            const email = document.getElementById('new-email').value;
+            const contrasena = document.getElementById('new-contrasena').value;
+            const tipo = document.getElementById('new-tipo').value;
+            
+            if (!nombres || !email || !contrasena) {
+                document.getElementById('create-result').innerHTML = 
+                    '<div class="error">Por favor, completa todos los campos</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/usuarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        nombres, 
+                        email, 
+                        contraseña: contrasena, 
+                        tipoUsuario: tipo 
+                    })
+                });
+                
+                const data = await response.json();
+                const container = document.getElementById('create-result');
+                
+                if (response.ok) {
+                    container.innerHTML = `
+                        <div class="success">
+                            <h3>Usuario Creado Exitosamente!</h3>
+                            <p><strong>ID:</strong> ${data.idUsuario}</p>
+                            <p><strong>Nombres:</strong> ${data.nombres}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Tipo:</strong> ${data.tipoUsuario}</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <h3>Error al Crear Usuario</h3>
+                            <p>${data.error || 'Error desconocido'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('create-result').innerHTML = 
+                    `<div class="error">Error en la petición: ${error.message}</div>`;
+            }
+        }
+
+        // Cargar usuarios al cargar la página
+        window.onload = function() {
+            getAllUsuarios();
+        };
+    </script>
+</body>
+</html> 
