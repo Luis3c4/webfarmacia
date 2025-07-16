@@ -1,5 +1,6 @@
 package com.proyecto.farmacia.webfarmacia.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -12,6 +13,7 @@ public class DetalleCompra {
     private Long detalleId;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "compra_id", nullable = false)
     private Compra compra;
 

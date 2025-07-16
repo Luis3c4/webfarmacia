@@ -67,6 +67,22 @@ function cargarVista(vista) {
           }
         }, 300);
       }
+      // Ejecutar inicialización si es compras
+      if (vista === "compras") {
+        console.log('Vista de compras cargada, esperando inicialización...');
+        // Esperar un poco más para asegurar que el DOM esté listo
+        setTimeout(() => {
+          if (typeof initComprasView === "function") {
+            console.log('Llamando a initComprasView...');
+            initComprasView();
+          } else if (window.ComprasModule && typeof window.ComprasModule.initComprasView === "function") {
+            console.log('Llamando a ComprasModule.initComprasView...');
+            window.ComprasModule.initComprasView();
+          } else {
+            console.error('initComprasView no está disponible');
+          }
+        }, 300);
+      }
     })
     .catch(err => {
       console.error("Error al cargar la vista:", err)
@@ -86,7 +102,8 @@ function actualizarPestañaActiva(vista) {
     'dashboard': 0, // Primera pestaña (Inicio)
     'productos': 1, // Segunda pestaña (Productos)
     'ventas': 2,    // Tercera pestaña (Ventas)
-    'clientes': 3   // Cuarta pestaña (Clientes)
+    'compras': 3,   // Cuarta pestaña (Compras)
+    'clientes': 4   // Quinta pestaña (Clientes)
   };
   
   const index = vistaMap[vista];

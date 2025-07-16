@@ -153,3 +153,67 @@ body {
     font-size: 1.8em;
   }
 }
+
+/* --- ESTILOS DE TABLA DE COMPRAS (DASHBOARD) --- */
+.tabla-compras {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.tabla-compras thead {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 2px solid #dee2e6;
+}
+
+.tabla-compras th {
+    text-align: left;
+    padding: 18px 20px;
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    position: relative;
+}
+
+.tabla-compras th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.tabla-compras th:hover::after {
+    transform: scaleX(1);
+}
+
+.tabla-compras tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.tabla-compras tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #3498db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-compras tbody tr:last-child {
+    border-bottom: none;
+}
+
+.tabla-compras td {
+    padding: 20px;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f8f9fa;
+}

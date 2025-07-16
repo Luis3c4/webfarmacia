@@ -1,0 +1,268 @@
+<div class="main-content">
+  <!-- Sección de Resumen -->
+  <section class="overview-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-shopping-basket" aria-hidden="true"></i>
+        Resumen de Compras
+      </h2>
+      <button class="refresh-button" id="refresh-data" title="Actualizar datos" aria-label="Actualizar datos">
+        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="overview-grid">
+      <div class="overview-card" data-loading="purchase-revenue">
+        <div class="card-icon purchase">
+          <span class="moneda" aria-hidden="true">S/.</span>
+        </div>
+        <div class="metric-value" id="total-purchase-revenue" aria-live="polite">S/.0.00</div>
+        <div class="metric-label">Gastos Totales</div>
+        <div class="metric-change negative">+12.5% vs mes anterior</div>
+      </div>
+      
+      <div class="overview-card" data-loading="purchases">
+        <div class="card-icon purchase">
+          <i class="fas fa-shopping-basket" aria-hidden="true"></i>
+        </div>
+        <div class="metric-value" id="total-purchases" aria-live="polite">0</div>
+        <div class="metric-label">Compras Totales</div>
+        <div class="metric-change positive">+8.2% vs mes anterior</div>
+      </div>
+
+      <div class="overview-card" data-loading="avg-purchase">
+        <div class="card-icon purchase">
+          <i class="fas fa-chart-line" aria-hidden="true"></i>
+        </div>
+        <div class="metric-value" id="avg-purchase" aria-live="polite">S/.0.00</div>
+        <div class="metric-label">Promedio por Compra</div>
+        <div class="metric-change neutral">+2.1% vs mes anterior</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Compras Recientes -->
+  <section class="sales-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-receipt" aria-hidden="true"></i>
+        Compras Recientes
+      </h2>
+      <div class="header-actions">
+        <button class="btn-agregar-compra" onclick="abrirModalAgregarCompra()" title="Agregar nueva compra">
+          <i class="fas fa-plus"></i>
+          Agregar Compra
+        </button>
+      </div>
+    </div>
+
+    <div class="sales-table">
+      <div class="table-header">
+        <div class="header-cell"><i class="fas fa-hashtag" aria-hidden="true"></i> ID Detalle</div>
+        <div class="header-cell"><i class="fas fa-box" aria-hidden="true"></i> Producto</div>
+        <div class="header-cell">Cantidad</div>
+        <div class="header-cell">Costo Unit.</div>
+        <div class="header-cell">Descuento</div>
+        <div class="header-cell">Subtotal</div>
+      </div>
+      
+      <div id="compras-container" class="table-body" aria-live="polite">
+        <!-- Los datos se cargarán dinámicamente aquí -->
+        <div class="loading-row">
+          <div class="loading-spinner" role="status" aria-label="Cargando compras"></div>
+          <span>Cargando compras...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Popup Modal para Agregar Compra -->
+<div id="modal-agregar-compra" class="modal" role="dialog" aria-labelledby="modal-agregar-title" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-agregar-title">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+        Agregar Nueva Compra
+      </h2>
+      <button class="modal-close" onclick="cerrarModalAgregarCompra()" aria-label="Cerrar modal">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form id="form-agregar-compra" class="form-agregar-compra">
+        <div class="form-section">
+          <h3>Información de la Compra</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="proveedor-id">Proveedor ID</label>
+              <input type="number" id="proveedor-id" name="proveedorId" required min="1">
+            </div>
+            <div class="form-group">
+              <label for="fecha-compra">Fecha de Compra</label>
+              <input type="datetime-local" id="fecha-compra" name="fecha" required>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3>Productos de la Compra</h3>
+          <div id="productos-container">
+            <div class="producto-item" data-index="0">
+              <div class="producto-header">
+                <h4>Producto #1</h4>
+                <button type="button" class="btn-eliminar-producto" onclick="eliminarProducto(0)" title="Eliminar producto">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="producto-id-0">Producto ID</label>
+                  <input type="number" id="producto-id-0" name="productos[0].productoId" required min="1">
+                </div>
+                <div class="form-group">
+                  <label for="cantidad-0">Cantidad</label>
+                  <input type="number" id="cantidad-0" name="productos[0].cantidad" required min="1" onchange="calcularSubtotal(0)">
+                </div>
+                <div class="form-group">
+                  <label for="costo-unitario-0">Costo Unitario (S/.)</label>
+                  <input type="number" id="costo-unitario-0" name="productos[0].costeUnitario" required min="0" step="0.01" onchange="calcularSubtotal(0)">
+                </div>
+                <div class="form-group">
+                  <label for="descuento-0">Descuento (S/.)</label>
+                  <input type="number" id="descuento-0" name="productos[0].descuentos" min="0" step="0.01" value="0" onchange="calcularSubtotal(0)">
+                </div>
+                <div class="form-group">
+                  <label>Subtotal</label>
+                  <div class="subtotal-display" id="subtotal-0">S/.0.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-agregar-producto" onclick="agregarProducto()">
+            <i class="fas fa-plus"></i>
+            Agregar Producto
+          </button>
+        </div>
+        
+        <div class="form-section">
+          <div class="total-section">
+            <div class="total-item">
+              <span>Total de la Compra:</span>
+              <span id="total-compra" class="total-amount">S/.0.00</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-cancelar" onclick="cerrarModalAgregarCompra()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-guardar">
+            <i class="fas fa-save"></i>
+            Guardar Compra
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Popup Modal para Detalles de Compra -->
+<div id="compra-details-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">
+        <i class="fas fa-receipt" aria-hidden="true"></i>
+        Detalles de Compra #<span id="modal-compra-id"></span>
+      </h2>
+      <button class="modal-close" id="close-modal" aria-label="Cerrar modal">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="venta-info">
+        <div class="info-grid">
+          <div class="info-item">
+            <i class="fas fa-building" aria-hidden="true"></i>
+            <span><strong>Proveedor:</strong> <span id="modal-proveedor"></span></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar" aria-hidden="true"></i>
+            <span><strong>Fecha:</strong> <span id="modal-fecha"></span></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-boxes" aria-hidden="true"></i>
+            <span><strong>Total Productos:</strong> <span id="modal-total-productos"></span></span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-chart-line" aria-hidden="true"></i>
+            <span><strong>Estado:</strong> <span id="modal-estado"></span></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detalles-venta">
+        <h3>
+          <i class="fas fa-list" aria-hidden="true"></i>
+          Productos Comprados
+        </h3>
+        <div class="detalles-table">
+          <div class="table-header">
+            <div class="header-cell">Producto</div>
+            <div class="header-cell">Cantidad</div>
+            <div class="header-cell">Costo Unit.</div>
+            <div class="header-cell">Descuento</div>
+            <div class="header-cell">Subtotal</div>
+          </div>
+          <div id="modal-detalles-container" class="table-body" aria-live="polite">
+            <!-- Los detalles se cargarán dinámicamente aquí -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="venta-total">
+        <div class="total-item">
+          <span>Total de la Compra:</span>
+          <span id="modal-total" class="total-amount"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Performance optimizations -->
+<script>
+// Preload critical resources
+document.addEventListener('DOMContentLoaded', function() {
+  // Preload critical CSS
+  const criticalCSS = document.createElement('link');
+  criticalCSS.rel = 'preload';
+  criticalCSS.as = 'style';
+  criticalCSS.href = '/css/compras.css';
+  document.head.appendChild(criticalCSS);
+  
+  // Preload critical JavaScript
+  const criticalJS = document.createElement('link');
+  criticalJS.rel = 'preload';
+  criticalJS.as = 'script';
+  criticalJS.href = '/js/compra.js';
+  document.head.appendChild(criticalJS);
+  
+  // Add loading states
+  const loadingElements = document.querySelectorAll('[data-loading]');
+  loadingElements.forEach(element => {
+    element.classList.add('loading');
+  });
+});
+
+// Remove loading states when data is loaded
+window.addEventListener('load', function() {
+  const loadingElements = document.querySelectorAll('[data-loading]');
+  loadingElements.forEach(element => {
+    element.classList.remove('loading');
+  });
+});
+</script> 

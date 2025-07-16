@@ -28,7 +28,7 @@ public class DetalleCompraService {
     }
 
     public Double calcularNetPurchaseValue() {
-        Double netPurchaseValue = detalleCompraRepository.calcularNetPurchaseValue();
+        Double netPurchaseValue = detalleCompraRepository.sumTotalCompra();
         return netPurchaseValue != null ? netPurchaseValue : 0.0;
     }
-} 
+}

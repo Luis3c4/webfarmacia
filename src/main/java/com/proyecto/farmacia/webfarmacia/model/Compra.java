@@ -3,6 +3,8 @@ package com.proyecto.farmacia.webfarmacia.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "compras")
@@ -17,6 +19,10 @@ public class Compra {
     private LocalDateTime fecha;
 
     private BigDecimal total;
+
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<DetalleCompra> detalles;
 
     // Getters y Setters
     public Long getCompraId() {
@@ -43,4 +49,7 @@ public class Compra {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
+
+    public List<DetalleCompra> getDetalles() { return detalles; }
+    public void setDetalles(List<DetalleCompra> detalles) { this.detalles = detalles; }
 } 

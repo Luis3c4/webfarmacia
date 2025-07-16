@@ -181,9 +181,6 @@ function renderProductosTabla(productos) {
       </td>
       <td class="td-actions">
         <div class="action-buttons">
-          <button class="btn-agregar-stock" data-id="${producto.productoId}" onclick="abrirModalAgregarStock(${producto.productoId}, '${producto.nombre}', ${producto.stock})" title="Agregar stock">
-            <i class="fas fa-plus"></i>
-          </button>
           <button class="btn-editar" data-id="${producto.productoId}" onclick="editarProducto(${producto.productoId})" title="Editar producto">
             <i class="fas fa-edit"></i>
           </button>
@@ -816,20 +813,6 @@ function removeEditImage() {
   if (editImgUrlInput) editImgUrlInput.value = '';
 }
 
-// Función para abrir modal de agregar stock
-function abrirModalAgregarStock(productoId, nombreProducto, stockActual) {
-  const modal = document.getElementById('modalAgregarStock');
-  const nombreSpan = document.getElementById('nombreProductoStock');
-  const stockActualSpan = document.getElementById('stockActual');
-  const productoIdInput = document.getElementById('productoIdStock');
-  
-  if (modal && nombreSpan && stockActualSpan && productoIdInput) {
-    nombreSpan.textContent = nombreProducto;
-    stockActualSpan.textContent = stockActual;
-    productoIdInput.value = productoId;
-    modal.style.display = 'block';
-  }
-}
 
 // Función para cerrar modal de agregar stock
 function cerrarModalAgregarStock() {
@@ -1139,7 +1122,6 @@ window.ProductosModule = {
   filtrarPorNombre,
   editarProducto,
   eliminarProducto,
-  abrirModalAgregarStock,
   cerrarModalAgregarStock,
   handleImageLoad,
   handleImageError,
