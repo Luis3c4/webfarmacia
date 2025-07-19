@@ -116,5 +116,118 @@ function initDashboard() {
             }
         },
     })
+
+    // Cargar todas las métricas del dashboard
+    cargarMetricasDashboard();
 }
-window.initDashboard=initDashboard;
+
+// Función para cargar todas las métricas del dashboard
+async function cargarMetricasDashboard() {
+    console.log('[dashboard] Cargando métricas del dashboard...');
+    
+    try {
+        // Cargar egresos (ya existe en compra.js)
+        if (typeof window.cargarTotalPurchaseRevenue === 'function') {
+            console.log('[dashboard] Llamando a cargarTotalPurchaseRevenue');
+            window.cargarTotalPurchaseRevenue();
+        } else {
+            console.error('[dashboard] cargarTotalPurchaseRevenue no está definida');
+        }
+
+        // Cargar ingresos (ya existe en venta.js)
+        if (typeof window.cargarTotalRevenue === 'function') {
+            console.log('[dashboard] Llamando a cargarTotalRevenue');
+            window.cargarTotalRevenue();
+        } else {
+            console.error('[dashboard] cargarTotalRevenue no está definida');
+        }
+
+        // Cargar total de ventas (ya existe en venta.js)
+        if (typeof window.cargarTotalSales === 'function') {
+            console.log('[dashboard] Llamando a cargarTotalSales');
+            window.cargarTotalSales();
+        } else {
+            console.error('[dashboard] cargarTotalSales no está definida');
+        }
+
+        // Cargar total de compras (ya existe en compra.js)
+        if (typeof window.cargarTotalPurchases === 'function') {
+            console.log('[dashboard] Llamando a cargarTotalPurchases');
+            window.cargarTotalPurchases();
+        } else {
+            console.error('[dashboard] cargarTotalPurchases no está definida');
+        }
+
+        // Cargar total de productos
+        await cargarTotalProductos();
+
+        // Cargar total de usuarios
+        await cargarTotalUsuarios();
+
+    } catch (error) {
+        console.error('[dashboard] Error al cargar métricas:', error);
+    }
+}
+
+// Función para cargar total de productos
+async function cargarTotalProductos() {
+    try {
+        console.log('[dashboard] Cargando total de productos...');
+        const response = await fetch('/api/productos?size=1');
+        if (response.ok) {
+            const data = await response.json();
+            const totalProductos = data.totalElements || 0;
+            
+            const totalProductsElement = document.getElementById('total-products');
+            if (totalProductsElement) {
+                totalProductsElement.textContent = formatNumber(totalProductos);
+                totalProductsElement.style.color = '#1e293b';
+            }
+            console.log('[dashboard] Total productos:', totalProductos);
+        } else {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (error) {
+        console.error('[dashboard] Error al cargar total de productos:', error);
+        const totalProductsElement = document.getElementById('total-products');
+        if (totalProductsElement) {
+            totalProductsElement.textContent = 'Error';
+            totalProductsElement.style.color = '#ef4444';
+        }
+    }
+}
+
+// Función para cargar total de usuarios
+async function cargarTotalUsuarios() {
+    try {
+        console.log('[dashboard] Cargando total de usuarios...');
+        const response = await fetch('/api/usuarios');
+        if (response.ok) {
+            const usuarios = await response.json();
+            const totalUsuarios = usuarios.length || 0;
+            
+            const totalUsersElement = document.getElementById('total-users');
+            if (totalUsersElement) {
+                totalUsersElement.textContent = formatNumber(totalUsuarios);
+                totalUsersElement.style.color = '#1e293b';
+            }
+            console.log('[dashboard] Total usuarios:', totalUsuarios);
+        } else {
+            throw new Error(`HTTP ${response.status}`);
+        }
+    } catch (error) {
+        console.error('[dashboard] Error al cargar total de usuarios:', error);
+        const totalUsersElement = document.getElementById('total-users');
+        if (totalUsersElement) {
+            totalUsersElement.textContent = 'Error';
+            totalUsersElement.style.color = '#ef4444';
+        }
+    }
+}
+
+// Función para formatear números
+function formatNumber(num) {
+    return new Intl.NumberFormat('es-PE').format(num || 0);
+}
+
+window.initDashboard = initDashboard;

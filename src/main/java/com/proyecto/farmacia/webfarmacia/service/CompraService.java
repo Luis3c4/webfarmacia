@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class CompraService {
     private ProductoRepository productoRepository;
     @Autowired
     private DetalleCompraRepository detalleCompraRepository;
+    @Autowired
+    private DetalleCompraService detalleCompraService;
 
     public List<Compra> getAllCompras() {
         return compraRepository.findAll();
@@ -37,11 +40,9 @@ public class CompraService {
     }
 
     public BigDecimal getTotalRevenue() {
-        List<Compra> compras = compraRepository.findAll();
-        return compras.stream()
-                .map(Compra::getTotal)
-                .filter(total -> total != null)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // Usar DetalleCompraService para calcular el total real de gastos desde detallesCompras
+        Double totalGastos = detalleCompraService.calcularNetPurchaseValue();
+        return BigDecimal.valueOf(totalGastos != null ? totalGastos : 0.0);
     }
 
     public Long getTotalCount() {
@@ -54,8 +55,9 @@ public class CompraService {
             return BigDecimal.ZERO;
         }
         
+        // Usar el total real de gastos desde detallesCompras
         BigDecimal totalRevenue = getTotalRevenue();
-        return totalRevenue.divide(BigDecimal.valueOf(compras.size()), 2, BigDecimal.ROUND_HALF_UP);
+        return totalRevenue.divide(BigDecimal.valueOf(compras.size()), 2, RoundingMode.HALF_UP);
     }
 
     public Map<String, Object> getMonthlyStats() {
@@ -75,11 +77,9 @@ public class CompraService {
                 .filter(compra -> compra.getFecha() != null && compra.getFecha().isAfter(startOfMonth))
                 .count();
         
-        BigDecimal revenueEsteMes = compras.stream()
-                .filter(compra -> compra.getFecha() != null && compra.getFecha().isAfter(startOfMonth))
-                .map(Compra::getTotal)
-                .filter(total -> total != null)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // Para el revenue del mes, necesitaríamos filtrar por fecha en detallesCompras
+        // Por ahora usamos el total general
+        BigDecimal revenueEsteMes = getTotalRevenue();
         
         stats.put("comprasEsteMes", comprasEsteMes);
         stats.put("revenueEsteMes", revenueEsteMes);

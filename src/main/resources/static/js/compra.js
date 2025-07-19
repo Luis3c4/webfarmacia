@@ -1,3 +1,4 @@
+console.log('[compra.js] cargado');
 (function() {
 // Configuración global optimizada para compras
 const COMPRA_CONFIG = {
@@ -178,6 +179,7 @@ function formatDate(dateString) {
 
 // Función para cargar el total de gastos en compras
 async function cargarTotalPurchaseRevenue() {
+  console.log('[Egresos] Llamando a cargarTotalPurchaseRevenue...');
   if (isLoading.purchaseRevenue) return;
   
   // Verificar cache
@@ -187,6 +189,7 @@ async function cargarTotalPurchaseRevenue() {
       totalRevenueElement.textContent = formatCurrency(dataCache.purchaseRevenue.data);
       totalRevenueElement.style.color = '#1e293b';
     }
+    console.log('[Egresos] Usando cache:', dataCache.purchaseRevenue.data);
     return;
   }
   
@@ -195,6 +198,7 @@ async function cargarTotalPurchaseRevenue() {
   try {
     // Usar el endpoint específico para total revenue
     const totalRevenue = await fetchWithRetry('/api/compras/stats/total-revenue');
+    console.log('[Egresos] Respuesta del backend:', totalRevenue);
     
     // Actualizar cache
     dataCache.purchaseRevenue = { data: totalRevenue, timestamp: Date.now() };
@@ -205,7 +209,7 @@ async function cargarTotalPurchaseRevenue() {
       totalRevenueElement.style.color = '#1e293b';
     }
   } catch (error) {
-    console.error('Error al cargar los gastos totales:', error);
+    console.error('[Egresos] Error al cargar los gastos totales:', error);
     const totalRevenueElement = document.getElementById('total-purchase-revenue');
     if (totalRevenueElement) {
       totalRevenueElement.textContent = 'Error';
@@ -856,4 +860,7 @@ window.agregarProducto = agregarProducto;
 window.eliminarProducto = eliminarProducto;
 window.calcularSubtotal = calcularSubtotal;
 window.calcularTotalCompra = calcularTotalCompra;
+console.log('[compra.js] exponiendo cargarTotalPurchaseRevenue:', typeof cargarTotalPurchaseRevenue);
+window.cargarTotalPurchaseRevenue = cargarTotalPurchaseRevenue;
+window.cargarTotalPurchases = cargarTotalPurchases;
 })(); 

@@ -806,3 +806,6 @@ window.VentasModule = {
   setupRefreshButton,
   cleanExpiredCache
 };
+
+window.cargarTotalRevenue = cargarTotalRevenue;
+window.cargarTotalSales = cargarTotalSales;

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proyecto.farmacia.webfarmacia.model.DetalleVenta;
 import com.proyecto.farmacia.webfarmacia.model.Producto;
 import com.proyecto.farmacia.webfarmacia.model.Usuario;
@@ -41,6 +43,8 @@ public class VentaController {
     private ProductoRepository productoRepository;
     @Autowired
     private DetalleVentaRepository detalleVentaRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     public List<VentaDTO> getAllVentas() {
@@ -65,7 +69,10 @@ public class VentaController {
     public ResponseEntity<?> confirmarVenta(@RequestBody Map<String, Object> payload) {
         try {
             // Obtener datos del payload
-            List<Map<String, Object>> items = (List<Map<String, Object>>) payload.get("items");
+            List<Map<String, Object>> items = objectMapper.convertValue(
+                payload.get("items"),
+                new TypeReference<List<Map<String, Object>>>() {}
+            );
             Number total = (Number) payload.get("total");
             Number idUsuario = (Number) payload.get("id_usuario");
             String metodoPago = (String) payload.getOrDefault("metodo_pago", "desconocido");

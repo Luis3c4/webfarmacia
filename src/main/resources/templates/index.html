@@ -41,7 +41,7 @@
         </a>
       </nav>
       <div class="logout-container">
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" onclick="logout()">
           <i class="fas fa-sign-out-alt icon"></i>
           <span>Cerrar Sesión</span>
         </a>
@@ -54,9 +54,10 @@
       <header class="header">
         <h1 class="page-title">Dashboard</h1>
         <div class="user-actions">
-          <button class="notification-btn">
-            <i class="fas fa-bell"></i>
-          </button>
+          <div class="user-info">
+            <span class="user-name" id="user-name">Usuario</span>
+            <span class="user-role" id="user-role">Admin</span>
+          </div>
           <div class="avatar">
             <img th:src="@{/imagenes/avatar.png}" alt="User" class="avatar-img">
           </div>
@@ -71,14 +72,127 @@
 <script th:src="@{/js/producto.js}" defer></script>
 <script th:src="@{/js/cliente.js}" defer></script>
 <script th:src="@{/js/venta.js}" defer></script>
-<script th:src="@{/js/router.js}" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script th:src="@{/js/dashboard.js}" defer></script>
 <script th:src="@{/js/compra.js}" defer></script>
+<script th:src="@{/js/router.js}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  // Cargar la vista de Inicio por defecto cuando se carga la página
+  // Función para cerrar sesión
+  function logout() {
+    console.log('Cerrando sesión...');
+    
+    // Limpiar datos locales si existen
+    try {
+      // Limpiar carrito si existe
+      if (localStorage.getItem('cart')) {
+        localStorage.removeItem('cart');
+        console.log('Carrito limpiado');
+      }
+      
+      // Limpiar cualquier otro dato de sesión
+      const keysToRemove = ['user', 'token', 'session', 'auth'];
+      keysToRemove.forEach(key => {
+        if (localStorage.getItem(key)) {
+          localStorage.removeItem(key);
+          console.log(`Dato ${key} limpiado`);
+        }
+      });
+      
+      // Limpiar sessionStorage también
+      sessionStorage.clear();
+      console.log('SessionStorage limpiado');
+      
+    } catch (error) {
+      console.error('Error al limpiar datos locales:', error);
+    }
+    
+    // Redirigir a la página de inicio
+    window.location.href = '/';
+  }
+
+  // Función para cargar información del usuario
+  function cargarInformacionUsuario() {
+    try {
+      // Obtener datos del usuario desde localStorage (usando las claves del login)
+      const idUsuario = localStorage.getItem('id_usuario');
+      const tipoUsuario = localStorage.getItem('tipo_usuario');
+      const nombre = localStorage.getItem('nombre');
+      const email = localStorage.getItem('email');
+      
+      if (idUsuario && nombre) {
+        console.log('Usuario encontrado en localStorage:', { idUsuario, tipoUsuario, nombre, email });
+        
+        // Actualizar el nombre del usuario
+        const userNameElement = document.getElementById('user-name');
+        if (userNameElement) {
+          userNameElement.textContent = nombre;
+        }
+        
+        // Actualizar el rol del usuario
+        const userRoleElement = document.getElementById('user-role');
+        if (userRoleElement && tipoUsuario) {
+          const roleText = tipoUsuario === 'administrador' ? 'Administrador' : 
+                          tipoUsuario === 'cliente' ? 'Cliente' : 
+                          tipoUsuario === 'admin' ? 'Administrador' :
+                          tipoUsuario;
+          userRoleElement.textContent = roleText;
+        }
+        
+        // Opcional: Actualizar información desde el backend para datos más frescos
+        actualizarInformacionUsuarioDesdeBackend(idUsuario);
+      } else {
+        console.log('No se encontró información de usuario en localStorage');
+        // Si no hay usuario y no estamos en login o inicio, redirigir al login
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
+          console.log('Redirigiendo al login...');
+          window.location.href = '/login';
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar información del usuario:', error);
+    }
+  }
+
+  // Función opcional para actualizar información del usuario desde el backend
+  async function actualizarInformacionUsuarioDesdeBackend(idUsuario) {
+    try {
+      const response = await fetch(`/api/usuarios/${idUsuario}`);
+      if (response.ok) {
+        const usuario = await response.json();
+        console.log('Información actualizada del backend:', usuario);
+        
+        // Actualizar localStorage con información fresca
+        localStorage.setItem('nombre', usuario.nombre || '');
+        localStorage.setItem('email', usuario.email || '');
+        localStorage.setItem('tipo_usuario', usuario.tipoUsuario || '');
+        localStorage.setItem('telefono', usuario.telefono || '');
+        
+        // Actualizar la UI si hay cambios
+        const userNameElement = document.getElementById('user-name');
+        if (userNameElement && usuario.nombre) {
+          userNameElement.textContent = usuario.nombre;
+        }
+        
+        const userRoleElement = document.getElementById('user-role');
+        if (userRoleElement && usuario.tipoUsuario) {
+          const roleText = usuario.tipoUsuario === 'administrador' ? 'Administrador' : 
+                          usuario.tipoUsuario === 'cliente' ? 'Cliente' : 
+                          usuario.tipoUsuario === 'admin' ? 'Administrador' :
+                          usuario.tipoUsuario;
+          userRoleElement.textContent = roleText;
+        }
+      }
+    } catch (error) {
+      console.log('No se pudo actualizar información del usuario desde el backend:', error.message);
+      // No es crítico, continuamos con la información del localStorage
+    }
+  }
+
+  // Cargar información del usuario cuando se carga la página
   document.addEventListener('DOMContentLoaded', function() {
+    cargarInformacionUsuario();
+    
     // Si no hay hash en la URL, cargar la vista de dashboard (Inicio)
     if (!window.location.hash) {
       console.log('Cargando vista de Inicio por defecto...');

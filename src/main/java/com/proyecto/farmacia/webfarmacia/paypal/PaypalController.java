@@ -8,17 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
-import com.proyecto.farmacia.webfarmacia.service.VentaProcesamientoService;
 
 @Controller
 public class PaypalController {
 
     private final PaypalService paypalService;
-    private final VentaProcesamientoService ventaProcesamientoService;
 
-    public PaypalController(PaypalService paypalService, VentaProcesamientoService ventaProcesamientoService) {
+    public PaypalController(PaypalService paypalService) {
         this.paypalService = paypalService;
-        this.ventaProcesamientoService = ventaProcesamientoService;
     }
 
 

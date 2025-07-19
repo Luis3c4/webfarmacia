@@ -84,13 +84,6 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!-- Quitar esta dependencia, ya no es necesaria -->
-    <!-- <dependency>
-        <groupId>jakarta.validation</groupId>
-        <artifactId>jakarta.validation-api</artifactId>
-        <version>3.0.2</version>
-    </dependency> -->
-    <!-- Agregar el starter correcto para validación -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-validation</artifactId>
