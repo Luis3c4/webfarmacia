@@ -1144,4 +1144,5 @@ window.buscarNombreProductoDirecto = window.buscarNombreProductoDirecto;
 console.log('[compra.js] exponiendo cargarTotalPurchaseRevenue:', typeof cargarTotalPurchaseRevenue);
 window.cargarTotalPurchaseRevenue = cargarTotalPurchaseRevenue;
 window.cargarTotalPurchases = cargarTotalPurchases;
+window.cargarComprasRecientes = cargarComprasRecientes;
 })(); 
