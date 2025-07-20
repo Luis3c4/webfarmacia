@@ -89,7 +89,23 @@
           <p class="etiqueta" th:text="${producto.categoria != null ? producto.categoria : 'Sin categoría'}">Categoría</p>
           <h3 th:text="${producto.nombre}">Nombre del producto</h3>
           <p class="precio-final" th:text="'S/ ' + ${#numbers.formatDecimal(producto.precio_unitario, 1, 2)}">S/ 0.00</p>
+          
+          <!-- Mostrar estado de stock -->
+          <div class="stock-status" th:if="${producto.stock <= 0}">
+            <span class="stock-agotado">
+              <span class="material-symbols-rounded">cancel</span>
+              Agotado
+            </span>
+          </div>
+          <div class="stock-status" th:if="${producto.stock > 0 and producto.stock <= 10}">
+            <span class="stock-bajo">
+              <span class="material-symbols-rounded">warning</span>
+              Solo quedan <span th:text="${producto.stock}">0</span>
+            </span>
+          </div>
+          
           <button class="add-to-cart" 
+                  th:if="${producto.stock > 0}"
                   th:attr="data-id=${producto.productoId}, 
                            data-nombre=${producto.nombre}, 
                            data-precio=${producto.precio_unitario},
@@ -97,6 +113,12 @@
                            data-presentacion=${producto.descripcion != null ? producto.descripcion : 'Sin descripción'},
                            data-categoria=${producto.categoria != null ? producto.categoria : 'Sin categoría'}">
             Agregar al carrito
+          </button>
+          <button class="add-to-cart disabled" 
+                  th:if="${producto.stock <= 0}"
+                  disabled>
+            <span class="material-symbols-rounded">cancel</span>
+            Agotado
           </button>
         </div>
 

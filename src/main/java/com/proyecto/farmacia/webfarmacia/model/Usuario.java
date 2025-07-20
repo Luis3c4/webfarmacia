@@ -117,9 +117,7 @@ public class Usuario {
     }
 
     public String getTipoUsuario() {
-        // Normalizar el valor para el frontend
-        if (tipoUsuario == null) return null;
-        if (tipoUsuario.equalsIgnoreCase("administrador")) return "admin";
+        // Devolver el valor tal como está en la base de datos
         return tipoUsuario;
     }
 

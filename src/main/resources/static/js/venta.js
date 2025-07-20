@@ -643,13 +643,13 @@ async function actualizarTodosLosDatos() {
     // Usar el nuevo endpoint optimizado
     await cargarDashboardData();
     
-    showNotification('Datos actualizados correctamente', 'success');
+    // No mostrar notificación aquí, se maneja en setupRefreshButton
   } catch (error) {
     console.error('Error al actualizar los datos:', error);
-    showNotification('Error al actualizar los datos', 'error');
     
     // Fallback a carga individual si el endpoint optimizado falla
     try {
+      console.log('Intentando fallback a carga individual...');
       await Promise.all([
         cargarTotalRevenue(),
         cargarTotalSales(),
@@ -661,6 +661,7 @@ async function actualizarTodosLosDatos() {
       }, 200);
     } catch (fallbackError) {
       console.error('Error en fallback:', fallbackError);
+      throw fallbackError; // Re-lanzar el error para que se maneje en setupRefreshButton
     }
   }
 }
@@ -678,7 +679,19 @@ const actualizarVentasRapido = debounce(async () => {
 function setupRefreshButton() {
   const refreshButton = document.getElementById('refresh-data');
   if (refreshButton) {
-    refreshButton.addEventListener('click', async () => {
+    // Prevenir múltiples clicks
+    let isRefreshing = false;
+    
+    refreshButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      
+      // Evitar múltiples clicks simultáneos
+      if (isRefreshing) {
+        return;
+      }
+      
+      isRefreshing = true;
+      
       // Agregar clase de carga
       refreshButton.classList.add('loading');
       refreshButton.disabled = true;
@@ -692,12 +705,30 @@ function setupRefreshButton() {
         });
         
         await actualizarTodosLosDatos();
+        
+        // Mostrar notificación de éxito
+        showNotification('Datos actualizados correctamente', 'success');
+      } catch (error) {
+        console.error('Error al actualizar datos:', error);
+        showNotification('Error al actualizar los datos', 'error');
       } finally {
-        // Remover clase de carga después de un delay
+        // Remover clase de carga después de un delay mínimo
         setTimeout(() => {
           refreshButton.classList.remove('loading');
           refreshButton.disabled = false;
-        }, 1000);
+          isRefreshing = false;
+        }, 800);
+      }
+    });
+    
+    // Agregar tooltip mejorado
+    refreshButton.setAttribute('title', 'Actualizar datos (Ctrl+R)');
+    
+    // Agregar atajo de teclado
+    document.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault();
+        refreshButton.click();
       }
     });
   }
@@ -730,13 +761,23 @@ function initVentasView() {
   
   // Verificar que los elementos necesarios existen
   const ventasContainer = document.getElementById('ventas-container');
+  const refreshButton = document.getElementById('refresh-data');
+  
   if (!ventasContainer) {
     console.error('No se encontró el contenedor de ventas');
     return;
   }
   
+  if (!refreshButton) {
+    console.error('No se encontró el botón de refresh');
+    return;
+  }
+  
   // Limpiar cache expirado al inicio
   cleanExpiredCache();
+  
+  // Configurar botón de refresh primero
+  setupRefreshButton();
   
   // Cargar todos los datos usando el endpoint optimizado
   cargarDashboardData().catch(error => {
@@ -749,9 +790,6 @@ function initVentasView() {
       cargarBestSellingProducts();
     }, 500);
   });
-  
-  // Configurar botón de refresh
-  setupRefreshButton();
   
   // Configurar eventos del modal
   setupModalEvents();

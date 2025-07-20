@@ -1,6 +1,11 @@
 package com.proyecto.farmacia.webfarmacia.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto.farmacia.webfarmacia.model.Producto;
 import com.proyecto.farmacia.webfarmacia.service.ProductoService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -263,6 +263,19 @@ public class ProductoController {
         return ResponseEntity.ok(categorias);
     }
     
+    //obtener productos en ofertas (con descuento)
+    @GetMapping("/ofertas")
+    public ResponseEntity<Page<Producto>> getProductosOfertas(@PageableDefault(size = 10) Pageable pageable) {
+        try {
+            Page<Producto> productosOfertas = productoService.getProductosOfertas(pageable);
+            return ResponseEntity.ok(productosOfertas);
+        } catch (Exception e) {
+            System.err.println("Error al obtener productos en ofertas: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+    
     /**
      * Verifica si hay stock suficiente para un producto
      */
@@ -333,73 +346,6 @@ public class ProductoController {
             System.err.println("Error al actualizar stock: " + e.getMessage());
             return ResponseEntity.status(500).body(null);
         }
-    }
-    
-    // Endpoint temporal para agregar datos de prueba
-    @PostMapping("/init-data")
-    public ResponseEntity<String> initializeTestData() {
-        try {
-            // Verificar si ya hay productos
-            Page<Producto> existingProducts = productoService.getProductosPage(org.springframework.data.domain.PageRequest.of(0, 1));
-            
-            if (existingProducts.getTotalElements() > 0) {
-                return ResponseEntity.ok("Ya existen productos en la base de datos. Total: " + existingProducts.getTotalElements());
-            }
-            
-            // Crear productos de prueba con URLs de Supabase Storage
-            Producto[] productosPrueba = {
-                createProducto("Paracetamol 500mg", "Analgésico y antipirético para el alivio del dolor y la fiebre", 15.90, 100, 85, "https://via.placeholder.com/300x300/3498db/ffffff?text=Paracetamol", "Analgésicos"),
-                createProducto("Ibuprofeno 400mg", "Antiinflamatorio no esteroideo para dolor e inflamación", 18.50, 75, 12, "https://via.placeholder.com/300x300/27ae60/ffffff?text=Ibuprofeno", "Antiinflamatorios"),
-                createProducto("Vitamina C 1000mg", "Suplemento vitamínico para fortalecer el sistema inmune", 25.99, 50, 0, "https://via.placeholder.com/300x300/e74c3c/ffffff?text=Vitamina+C", "Vitaminas"),
-                createProducto("Omeprazol 20mg", "Protector gástrico para el tratamiento de la acidez", 32.75, 60, 45, "https://via.placeholder.com/300x300/f39c12/ffffff?text=Omeprazol", "Gastritis"),
-                createProducto("Aspirina 100mg", "Anticoagulante y analgésico para prevención cardiovascular", 12.25, 80, 8, "https://via.placeholder.com/300x300/9b59b6/ffffff?text=Aspirina", "Analgésicos"),
-                createProducto("Diclofenaco 50mg", "Antiinflamatorio para el tratamiento del dolor articular", 22.99, 40, 25, "https://via.placeholder.com/300x300/34495e/ffffff?text=Diclofenaco", "Antiinflamatorios"),
-                createProducto("Jabón Antibacterial", "Jabón para higiene personal con acción antibacterial", 8.50, 120, 95, "https://via.placeholder.com/300x300/1abc9c/ffffff?text=Jabon", "Higiene"),
-                createProducto("Shampoo Anticaspa", "Shampoo especializado para el control de la caspa", 15.75, 80, 60, "https://via.placeholder.com/300x300/2ecc71/ffffff?text=Shampoo", "Higiene"),
-                createProducto("Crema Hidratante", "Crema facial hidratante para todo tipo de piel", 28.99, 60, 45, "https://via.placeholder.com/300x300/e67e22/ffffff?text=Crema", "Dermocosmética"),
-                createProducto("Protector Solar SPF 50", "Protector solar de amplio espectro para piel sensible", 35.50, 40, 30, "https://via.placeholder.com/300x300/f1c40f/ffffff?text=Protector", "Dermocosmética"),
-                createProducto("Jarabe para la Tos", "Jarabe natural para aliviar la tos seca y húmeda", 18.25, 70, 55, "https://via.placeholder.com/300x300/95a5a6/ffffff?text=Jarabe", "Niños"),
-                createProducto("Vitamina D3", "Suplemento de vitamina D para fortalecer huesos", 22.99, 45, 35, "https://via.placeholder.com/300x300/8e44ad/ffffff?text=Vitamina+D", "Vitaminas")
-            };
-            
-            for (Producto producto : productosPrueba) {
-                productoService.saveProducto(producto);
-            }
-            
-            return ResponseEntity.ok("Datos de prueba agregados exitosamente. Se crearon " + productosPrueba.length + " productos.");
-            
-        } catch (Exception e) {
-            System.err.println("Error al inicializar datos de prueba: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error al inicializar datos: " + e.getMessage());
-        }
-    }
-    
-    private Producto createProducto(String nombre, String descripcion, double precio, int cantidadIngresada, int stock, String imgUrl, String categoria) {
-        Producto producto = new Producto();
-        producto.setNombre(nombre);
-        producto.setDescripcion(descripcion);
-        producto.setPrecio_unitario(BigDecimal.valueOf(precio));
-        producto.setCantidadIngresada(cantidadIngresada);
-        producto.setStock(stock);
-        producto.setImgUrl(imgUrl);
-        producto.setCategoria(categoria);
-        
-        // Agregar datos de ejemplo para los nuevos campos
-        producto.setFechaProducto(java.time.LocalDate.now());
-        producto.setDescuento(new java.math.BigDecimal("0.00"));
-        producto.setMetodoEntrega("delivery");
-        
-        // Determinar el estado del stock
-        if (stock <= 0) {
-            producto.setStockStatus("OUT_OF_STOCK");
-        } else if (stock <= 10) {
-            producto.setStockStatus("LOW_STOCK");
-        } else {
-            producto.setStockStatus("IN_STOCK");
-        }
-        
-        return producto;
     }
     
     // Clase interna para la solicitud de agregar stock

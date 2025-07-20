@@ -67,6 +67,7 @@ public class UsuarioController {
         return usuarioService.findByEmailAndContraseña(loginRequest.getEmail(), loginRequest.getContraseña())
             .map(usuario -> {
                 System.out.println("Login exitoso para: " + usuario.getNombre());
+                System.out.println("Tipo de usuario: " + usuario.getTipoUsuario());
                 
                 // Crear respuesta con los datos necesarios para el frontend
                 Map<String, Object> response = new HashMap<>();
@@ -102,46 +103,5 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<Map<String, Object>> testConnection() {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            List<Usuario> usuarios = usuarioService.getAllUsuarios();
-            response.put("status", "success");
-            response.put("message", "Conexión exitosa a la base de datos");
-            response.put("total_usuarios", usuarios.size());
-            response.put("usuarios", usuarios.stream().map(u -> {
-                Map<String, Object> userMap = new HashMap<>();
-                userMap.put("id", u.getIdUsuario());
-                userMap.put("email", u.getEmail());
-                userMap.put("nombre", u.getNombre());
-                userMap.put("tipo_usuario", u.getTipoUsuario());
-                return userMap;
-            }).toList());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", "Error al conectar con la base de datos: " + e.getMessage());
-            response.put("error_type", e.getClass().getSimpleName());
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(response);
-        }
-    }
 
-    @GetMapping("/test-connection")
-    public ResponseEntity<Map<String, Object>> testSimpleConnection() {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            response.put("status", "success");
-            response.put("message", "Controlador funcionando correctamente");
-            response.put("timestamp", System.currentTimeMillis());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", "Error en el controlador: " + e.getMessage());
-            response.put("error_type", e.getClass().getSimpleName());
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(response);
-        }
-    }
 } 

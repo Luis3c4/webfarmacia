@@ -13,9 +13,17 @@
 </head>
 
 <body>
+  <!-- Botón hamburguesa para móviles -->
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <!-- Overlay para cerrar sidebar en móviles -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  
   <div class="dashboard-container">
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="logo-container">
         <div class="logo">
           <img th:src="@{/imagenes/logo.png}" alt="FARMA logo" width="32" height="32">
@@ -189,9 +197,50 @@
     }
   }
 
+  // Función para alternar el sidebar en móviles
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      sidebar.classList.add('open');
+      hamburgerBtn.innerHTML = '<i class="fas fa-times"></i>';
+      overlay.classList.add('open');
+    }
+  }
+  
+  // Función para cerrar el sidebar
+  function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    sidebar.classList.remove('open');
+    hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+    overlay.classList.remove('open');
+  }
+  
+  // Cerrar sidebar al hacer clic en un enlace (móviles)
+  function closeSidebarOnClick() {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+  
   // Cargar información del usuario cuando se carga la página
   document.addEventListener('DOMContentLoaded', function() {
     cargarInformacionUsuario();
+    
+    // Configurar el comportamiento del sidebar en móviles
+    closeSidebarOnClick();
     
     // Si no hay hash en la URL, cargar la vista de dashboard (Inicio)
     if (!window.location.hash) {

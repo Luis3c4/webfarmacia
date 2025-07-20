@@ -20,6 +20,124 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIONES DEL CARRITO ---
 
     /**
+     * Verifica el stock disponible de un producto antes de agregarlo al carrito
+     * @param {string} productId - ID del producto
+     * @param {number} cantidad - Cantidad que se quiere agregar
+     * @returns {Promise<Object>} - Objeto con información del stock
+     */
+    async function verificarStockProducto(productId, cantidad) {
+        try {
+            const response = await fetch(`/api/productos/${productId}/stock?cantidad=${cantidad}`);
+            if (!response.ok) {
+                throw new Error('Error al verificar stock');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error al verificar stock:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Muestra un mensaje de notificación al usuario
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {string} tipo - Tipo de mensaje ('error', 'success', 'warning')
+     */
+    function mostrarNotificacion(mensaje, tipo = 'error') {
+        // Crear elemento de notificación
+        const notificacion = document.createElement('div');
+        notificacion.className = `notificacion notificacion-${tipo}`;
+        notificacion.innerHTML = `
+            <div class="notificacion-contenido">
+                <span class="material-symbols-rounded">
+                    ${tipo === 'error' ? 'error' : tipo === 'success' ? 'check_circle' : 'warning'}
+                </span>
+                <span class="notificacion-texto">${mensaje}</span>
+                <button class="notificacion-cerrar" onclick="this.parentElement.parentElement.remove()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+        `;
+
+        // Agregar estilos si no existen
+        if (!document.getElementById('notificacion-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'notificacion-styles';
+            styles.textContent = `
+                .notificacion {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    max-width: 400px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    animation: slideIn 0.3s ease-out;
+                }
+                .notificacion-error {
+                    background: #fee;
+                    border: 1px solid #fcc;
+                    color: #c33;
+                }
+                .notificacion-success {
+                    background: #efe;
+                    border: 1px solid #cfc;
+                    color: #3c3;
+                }
+                .notificacion-warning {
+                    background: #fff3cd;
+                    border: 1px solid #ffeaa7;
+                    color: #856404;
+                }
+                .notificacion-contenido {
+                    display: flex;
+                    align-items: center;
+                    padding: 12px 16px;
+                    gap: 8px;
+                }
+                .notificacion-texto {
+                    flex: 1;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                .notificacion-cerrar {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: inherit;
+                    padding: 4px;
+                    border-radius: 4px;
+                    transition: background-color 0.2s;
+                }
+                .notificacion-cerrar:hover {
+                    background: rgba(0,0,0,0.1);
+                }
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+
+        // Agregar al DOM
+        document.body.appendChild(notificacion);
+
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            if (notificacion.parentElement) {
+                notificacion.remove();
+            }
+        }, 5000);
+    }
+
+    /**
      * Carga el carrito desde localStorage.
      */
     function loadCart() {
@@ -107,21 +225,51 @@ document.addEventListener('DOMContentLoaded', () => {
      * Añade un producto al carrito o incrementa su cantidad si ya existe.
      * @param {object} product - El objeto del producto a añadir.
      */
-    function addItemToCart(product) {
+    async function addItemToCart(product) {
         if (!product || !product.id) {
             console.error("Intento de añadir producto inválido:", product);
             return;
         }
+
+        // Verificar stock antes de agregar al carrito
+        const cantidadSolicitada = product.cantidad || 1;
+        const stockInfo = await verificarStockProducto(product.id, cantidadSolicitada);
+        
+        if (!stockInfo) {
+            mostrarNotificacion('Error al verificar la disponibilidad del producto. Inténtalo de nuevo.', 'error');
+            return;
+        }
+
+        if (!stockInfo.stockDisponible) {
+            if (stockInfo.stockActual <= 0) {
+                mostrarNotificacion(`El producto "${product.nombre}" se encuentra agotado.`, 'error');
+            } else {
+                mostrarNotificacion(`Solo quedan ${stockInfo.stockActual} unidades disponibles de "${product.nombre}".`, 'warning');
+            }
+            return;
+        }
+
         const existingItem = cart.find(item => item.id === product.id);
         if (existingItem) {
+            // Verificar si al sumar la cantidad no excede el stock disponible
+            const nuevaCantidadTotal = existingItem.cantidad + cantidadSolicitada;
+            if (nuevaCantidadTotal > stockInfo.stockActual) {
+                mostrarNotificacion(`No puedes agregar más unidades. Solo quedan ${stockInfo.stockActual} disponibles de "${product.nombre}".`, 'warning');
+                return;
+            }
             // Si el producto ya existe, sumar la cantidad especificada
-            existingItem.cantidad += (product.cantidad || 1);
+            existingItem.cantidad = nuevaCantidadTotal;
         } else {
             // Si es un producto nuevo, asegurar que tenga cantidad
-            cart.push({ ...product, cantidad: product.cantidad || 1 });
+            cart.push({ ...product, cantidad: cantidadSolicitada });
         }
+        
         saveCart();
         renderCartItems();
+        
+        // Mostrar mensaje de éxito
+        mostrarNotificacion(`"${product.nombre}" agregado al carrito.`, 'success');
+        
         // Opcional: abrir el carrito al agregar un item.
         // openCart();
     }
@@ -219,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Delegación de eventos para botones "Agregar al carrito" y redirección de productos
         if (productListContainer) {
-            productListContainer.addEventListener('click', (e) => {
+            productListContainer.addEventListener('click', async (e) => {
                 const productElement = e.target.closest('.producto'); // Elemento que contiene los data-attributes
                 
                 // Botón "Agregar al carrito"
@@ -274,14 +422,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         precioRegular: productPriceRegular,
                         cantidad: cantidad
                     };
-                    addItemToCart(product);
-
-                    // Feedback visual
+                    
+                    // Feedback visual inmediato
                     const originalText = button.textContent;
-                    button.textContent = '✓ Agregado';
-                    button.style.background = '#4CAF50';
+                    button.textContent = 'Verificando...';
+                    button.style.background = '#ffa726';
                     button.style.color = 'white';
                     button.disabled = true;
+                    
+                    try {
+                        await addItemToCart(product);
+                        
+                        // Feedback visual de éxito
+                        button.textContent = '✓ Agregado';
+                        button.style.background = '#4CAF50';
+                        button.style.color = 'white';
+                    } catch (error) {
+                        console.error('Error al agregar al carrito:', error);
+                        // Feedback visual de error
+                        button.textContent = 'Error';
+                        button.style.background = '#f44336';
+                        button.style.color = 'white';
+                    }
+                    
                     setTimeout(() => {
                         button.textContent = originalText;
                         button.style.background = '';
@@ -299,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Event listener global para botones "add-to-cart" que puedan estar fuera del contenedor principal
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', async (e) => {
             if (e.target.classList.contains('add-to-cart')) {
                 const button = e.target;
                 
@@ -335,14 +498,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         presentacion: productPresentation,
                         cantidad: cantidad
                     };
-                    addItemToCart(product);
-
-                    // Feedback visual
+                    
+                    // Feedback visual inmediato
                     const originalText = button.textContent;
-                    button.textContent = '✓ Agregado';
-                    button.style.background = '#4CAF50';
+                    button.textContent = 'Verificando...';
+                    button.style.background = '#ffa726';
                     button.style.color = 'white';
                     button.disabled = true;
+                    
+                    try {
+                        await addItemToCart(product);
+                        
+                        // Feedback visual de éxito
+                        button.textContent = '✓ Agregado';
+                        button.style.background = '#4CAF50';
+                        button.style.color = 'white';
+                    } catch (error) {
+                        console.error('Error al agregar al carrito:', error);
+                        // Feedback visual de error
+                        button.textContent = 'Error';
+                        button.style.background = '#f44336';
+                        button.style.color = 'white';
+                    }
+                    
                     setTimeout(() => {
                         button.textContent = originalText;
                         button.style.background = '';

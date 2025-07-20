@@ -445,25 +445,29 @@
 
 /* Refresh Button */
 .refresh-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   border: none;
   color: white;
-  font-size: 1.25rem;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   transition: all 0.3s ease;
-  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .refresh-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
 }
 
 .refresh-button:active {
@@ -472,7 +476,27 @@
 
 .refresh-button.loading {
   animation: spin 1s linear infinite;
+  pointer-events: none;
 }
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Focus styles para accesibilidad */
+.refresh-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.refresh-button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
 
 /* Modal Styles */
 .modal {
@@ -809,11 +833,9 @@
   }
   
   .refresh-button {
-    bottom: 10px;
-    right: 10px;
-    width: 48px;
-    height: 48px;
-    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
   }
 }
 

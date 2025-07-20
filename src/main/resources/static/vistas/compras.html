@@ -119,7 +119,14 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="producto-id-0">Producto ID</label>
-                  <input type="number" id="producto-id-0" name="productos[0].productoId" required min="1">
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="number" id="producto-id-0" name="productos[0].productoId" required min="1" onchange="buscarNombreProducto(0)">
+                    <button type="button" onclick="window.buscarNombreProductoDirecto(0)" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="nombre-producto-0">Nombre del Producto</label>
+                  <input type="text" id="nombre-producto-0" readonly placeholder="Se llenará automáticamente">
                 </div>
                 <div class="form-group">
                   <label for="cantidad-0">Cantidad</label>
@@ -148,6 +155,10 @@
         
         <div class="form-section">
           <div class="total-section">
+            <h3>Resumen de la Compra</h3>
+            <div id="resumen-productos" class="resumen-productos">
+              <!-- El resumen se generará dinámicamente aquí -->
+            </div>
             <div class="total-item">
               <span>Total de la Compra:</span>
               <span id="total-compra" class="total-amount">S/.0.00</span>

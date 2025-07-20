@@ -227,9 +227,10 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Redirigir después de 2 segundos
           setTimeout(() => {
-            if (data.tipoUsuario === 'administrador') {
+            const tipoUsuario = data.tipoUsuario?.toLowerCase();
+            if (tipoUsuario === 'administrador' || tipoUsuario === 'admin') {
               window.location.href = '/home';
-            } else if (data.tipoUsuario === 'cliente') {
+            } else if (tipoUsuario === 'cliente') {
               window.location.href = '/inicio';
             } else {
               showError('Tipo de usuario no reconocido: ' + data.tipoUsuario);

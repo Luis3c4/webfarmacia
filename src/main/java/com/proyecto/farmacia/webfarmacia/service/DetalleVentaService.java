@@ -1,14 +1,17 @@
 package com.proyecto.farmacia.webfarmacia.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.proyecto.farmacia.webfarmacia.model.DetalleVenta;
-import com.proyecto.farmacia.webfarmacia.repository.DetalleVentaRepository;
-import com.proyecto.farmacia.webfarmacia.dto.CategoriaVentaDTO;
-import com.proyecto.farmacia.webfarmacia.dto.ProductoVentaDTO;
-import com.proyecto.farmacia.webfarmacia.dto.DetalleVentaDTO;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.proyecto.farmacia.webfarmacia.dto.CategoriaVentaDTO;
+import com.proyecto.farmacia.webfarmacia.dto.DetalleVentaDTO;
+import com.proyecto.farmacia.webfarmacia.dto.ProductoVentaDTO;
+import com.proyecto.farmacia.webfarmacia.dto.ProductoCantidadVentaDTO;
+import com.proyecto.farmacia.webfarmacia.model.DetalleVenta;
+import com.proyecto.farmacia.webfarmacia.repository.DetalleVentaRepository;
 
 @Service
 public class DetalleVentaService {
@@ -72,6 +75,19 @@ public class DetalleVentaService {
                 (String) row[1],
                 (String) row[2],
                 ((Number) row[3]).doubleValue(),
+                ((Number) row[4]).doubleValue()
+            ))
+            .toList();
+    }
+    
+    public List<ProductoCantidadVentaDTO> getProductosMasVendidosPorCantidad() {
+        List<Object[]> resultados = detalleVentaRepository.getProductosMasVendidosPorCantidad();
+        return resultados.stream()
+            .map(row -> new ProductoCantidadVentaDTO(
+                ((Number) row[0]).longValue(),
+                (String) row[1],
+                (String) row[2],
+                ((Number) row[3]).intValue(),
                 ((Number) row[4]).doubleValue()
             ))
             .toList();

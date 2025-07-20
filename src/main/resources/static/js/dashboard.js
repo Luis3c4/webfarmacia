@@ -1,21 +1,144 @@
 function initDashboard() {
-    // Line Chart
-    const lineCtx = document.getElementById("lineChart").getContext("2d")
-    const lineChart = new Chart(lineCtx, {
-        type: "line",
+    console.log('[dashboard] Inicializando dashboard...');
+    
+    // Cargar todos los datos del dashboard desde el nuevo endpoint consolidado
+    cargarDashboardDataCompleto();
+}
+
+// Función principal para cargar todos los datos del dashboard
+async function cargarDashboardDataCompleto() {
+    try {
+        console.log('[dashboard] Cargando datos completos del dashboard...');
+        
+        const response = await fetch('/api/dashboard/data');
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const dashboardData = await response.json();
+        
+        if (dashboardData.error) {
+            throw new Error(dashboardData.error);
+        }
+        
+        console.log('[dashboard] Datos recibidos:', dashboardData);
+        
+        // Actualizar métricas principales
+        actualizarMetricas(dashboardData);
+        
+        // Inicializar gráficos con datos reales
+        inicializarGraficos(dashboardData);
+        
+        // Actualizar actividad reciente
+        actualizarActividadReciente(dashboardData.recentActivity);
+        
+        console.log('[dashboard] Dashboard actualizado exitosamente');
+        
+    } catch (error) {
+        console.error('[dashboard] Error al cargar datos del dashboard:', error);
+        mostrarErrorDashboard();
+    }
+}
+
+// Función para actualizar las métricas principales
+function actualizarMetricas(dashboardData) {
+    // Ingresos
+    const totalRevenueElement = document.getElementById('total-revenue');
+    if (totalRevenueElement) {
+        const revenue = dashboardData.totalRevenue || 0;
+        totalRevenueElement.textContent = formatCurrency(revenue);
+        totalRevenueElement.style.color = '#1a1a1a';
+    }
+    
+    // Egresos
+    const totalExpensesElement = document.getElementById('total-purchase-revenue');
+    if (totalExpensesElement) {
+        const expenses = dashboardData.totalExpenses || 0;
+        totalExpensesElement.textContent = formatCurrency(expenses);
+        totalExpensesElement.style.color = '#1a1a1a';
+    }
+    
+    // Productos
+    const totalProductsElement = document.getElementById('total-products');
+    if (totalProductsElement) {
+        const products = dashboardData.totalProducts || 0;
+        totalProductsElement.textContent = formatNumber(products);
+        totalProductsElement.style.color = '#1a1a1a';
+    }
+    
+    // Usuarios
+    const totalUsersElement = document.getElementById('total-users');
+    if (totalUsersElement) {
+        const users = dashboardData.totalUsers || 0;
+        totalUsersElement.textContent = formatNumber(users);
+        totalUsersElement.style.color = '#1a1a1a';
+    }
+    
+    // Compras
+    const totalPurchasesElement = document.getElementById('total-purchases');
+    if (totalPurchasesElement) {
+        const purchases = dashboardData.totalPurchases || 0;
+        totalPurchasesElement.textContent = formatNumber(purchases);
+        totalPurchasesElement.style.color = '#1a1a1a';
+    }
+    
+    // Ventas
+    const totalSalesElement = document.getElementById('total-sales');
+    if (totalSalesElement) {
+        const sales = dashboardData.totalSales || 0;
+        totalSalesElement.textContent = formatNumber(sales);
+        totalSalesElement.style.color = '#1a1a1a';
+    }
+}
+
+// Función para inicializar todos los gráficos con datos reales
+function inicializarGraficos(dashboardData) {
+    // Gráfico de Ingresos vs Egresos
+    if (dashboardData.revenueChartData) {
+        initRevenueChart(dashboardData.revenueChartData);
+    }
+    
+    // Gráfico de Distribución de Ventas
+    if (dashboardData.salesDistributionData) {
+        initSalesDistributionChart(dashboardData.salesDistributionData);
+    }
+    
+    // Gráfico de Productos Más Vendidos
+    if (dashboardData.productPerformanceData) {
+        initProductPerformanceChart(dashboardData.productPerformanceData);
+    }
+    
+    // Gráfico de Tendencias Mensuales
+    if (dashboardData.monthlyTrendsData) {
+        initMonthlyTrendsChart(dashboardData.monthlyTrendsData);
+    }
+}
+
+// Gráfico de Ingresos vs Egresos con datos reales
+function initRevenueChart(chartData) {
+    const ctx = document.getElementById("revenueChart");
+    if (!ctx || !chartData.labels) return;
+    
+    const revenueChart = new Chart(ctx, {
+        type: "bar",
         data: {
-            labels: ["Jan 1", "", "Jan 7", "", "Jan 14", "", "Jan 21", "", "Jan 28"],
+            labels: chartData.labels,
             datasets: [
                 {
-                    label: "Sessions",
-                    data: [20, 40, 15, 35, 25, 50, 10, 30, 20, 45, 15, 35, 25],
-                    borderColor: "#1e88e5",
-                    backgroundColor: "rgba(30, 136, 229, 0.1)",
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 0,
+                    label: "Ingresos",
+                    data: chartData.revenue || [],
+                    backgroundColor: "#10b981",
+                    borderRadius: 8,
+                    borderSkipped: false,
                 },
-            ],
+                {
+                    label: "Egresos",
+                    data: chartData.expenses || [],
+                    backgroundColor: "#ef4444",
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -25,209 +148,311 @@ function initDashboard() {
                     display: false,
                 },
                 tooltip: {
-                    enabled: true,
-                },
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': S/. ' + context.parsed.y.toLocaleString('es-PE');
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
-                    min: -20,
-                    max: 60,
-                    ticks: {
-                        stepSize: 20,
-                    },
+                    beginAtZero: true,
                     grid: {
-                        color: "#e5e7eb",
+                        color: "#f3f4f6",
+                        drawBorder: false,
                     },
+                    ticks: {
+                        callback: function(value) {
+                            return 'S/. ' + value.toLocaleString('es-PE');
+                        },
+                        color: "#6b7280",
+                        font: {
+                            size: 12
+                        }
+                    }
                 },
                 x: {
                     grid: {
                         display: false,
                     },
-                },
-            },
-        },
-    })
+                    ticks: {
+                        color: "#6b7280",
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
-    // Pie Chart
-    const pieCtx = document.getElementById("pieChart").getContext("2d")
-    const pieChart = new Chart(pieCtx, {
+// Gráfico de Distribución de Ventas con datos reales
+function initSalesDistributionChart(chartData) {
+    const ctx = document.getElementById("salesDistributionChart");
+    if (!ctx || !chartData.labels) return;
+    
+    const salesDistributionChart = new Chart(ctx, {
         type: "doughnut",
         data: {
-            labels: ["Email", "Referral", "Paid Search", "(Other)", "Direct", "Social", "Display", "Organic Search"],
-            datasets: [
-                {
-                    data: [40, 40, 37, 35, 32, 28, 27, 10],
-                    backgroundColor: [
-                        "#a5c8d0", // Email
-                        "#90caf9", // Referral
-                        "#ffe082", // Paid Search
-                        "#e6c07b", // Other
-                        "#4fc3f7", // Direct
-                        "#81c784", // Social
-                        "#d4d4d4", // Display
-                        "#b9f6ca", // Organic Search
-                    ],
-                    borderWidth: 0,
-                },
-            ],
+            labels: chartData.labels,
+            datasets: [{
+                data: chartData.data || [],
+                backgroundColor: chartData.colors || [
+                    "#3b82f6",
+                    "#8b5cf6", 
+                    "#06b6d4",
+                    "#10b981",
+                    "#f59e0b"
+                ],
+                borderWidth: 0,
+                cutout: "70%"
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: "70%",
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        },
+                        color: "#6b7280"
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return context.label + ': ' + percentage + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico de Productos Más Vendidos con datos reales
+function initProductPerformanceChart(chartData) {
+    const ctx = document.getElementById("productPerformanceChart");
+    if (!ctx || !chartData.labels) return;
+    
+    const productPerformanceChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: "Unidades Vendidas",
+                data: chartData.data || [],
+                backgroundColor: [
+                    "#3b82f6",
+                    "#8b5cf6",
+                    "#06b6d4", 
+                    "#10b981",
+                    "#f59e0b"
+                ],
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false,
                 },
                 tooltip: {
-                    enabled: true,
-                },
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.x + ' unidades';
+                        }
+                    }
+                }
             },
-        },
-    })
-
-    // Añadir texto en el centro del gráfico de donut
-    Chart.register({
-        id: "centerText",
-        beforeDraw: (chart) => {
-            if (chart.config.type === "doughnut") {
-                const width = chart.width
-                const height = chart.height
-                const ctx = chart.ctx
-
-                ctx.restore()
-                const fontSize = (height / 114).toFixed(2)
-                ctx.font = fontSize + "em sans-serif"
-                ctx.textBaseline = "middle"
-
-                const text = "249"
-                const textX = Math.round((width - ctx.measureText(text).width) / 2)
-                const textY = height / 2 - 10
-
-                ctx.fillText(text, textX, textY)
-
-                ctx.font = fontSize * 0.5 + "em sans-serif"
-                const subText = "Sessions"
-                const subTextX = Math.round((width - ctx.measureText(subText).width) / 2)
-                const subTextY = height / 2 + 10
-
-                ctx.fillText(subText, subTextX, subTextY)
-                ctx.save()
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: "#f3f4f6",
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        color: "#6b7280",
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        color: "#6b7280",
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
             }
-        },
-    })
-
-    // Cargar todas las métricas del dashboard
-    cargarMetricasDashboard();
+        }
+    });
 }
 
-// Función para cargar todas las métricas del dashboard
-async function cargarMetricasDashboard() {
-    console.log('[dashboard] Cargando métricas del dashboard...');
+// Gráfico de Tendencias Mensuales con datos reales
+function initMonthlyTrendsChart(chartData) {
+    const ctx = document.getElementById("monthlyTrendsChart");
+    if (!ctx || !chartData.labels) return;
     
-    try {
-        // Cargar egresos (ya existe en compra.js)
-        if (typeof window.cargarTotalPurchaseRevenue === 'function') {
-            console.log('[dashboard] Llamando a cargarTotalPurchaseRevenue');
-            window.cargarTotalPurchaseRevenue();
-        } else {
-            console.error('[dashboard] cargarTotalPurchaseRevenue no está definida');
-        }
-
-        // Cargar ingresos (ya existe en venta.js)
-        if (typeof window.cargarTotalRevenue === 'function') {
-            console.log('[dashboard] Llamando a cargarTotalRevenue');
-            window.cargarTotalRevenue();
-        } else {
-            console.error('[dashboard] cargarTotalRevenue no está definida');
-        }
-
-        // Cargar total de ventas (ya existe en venta.js)
-        if (typeof window.cargarTotalSales === 'function') {
-            console.log('[dashboard] Llamando a cargarTotalSales');
-            window.cargarTotalSales();
-        } else {
-            console.error('[dashboard] cargarTotalSales no está definida');
-        }
-
-        // Cargar total de compras (ya existe en compra.js)
-        if (typeof window.cargarTotalPurchases === 'function') {
-            console.log('[dashboard] Llamando a cargarTotalPurchases');
-            window.cargarTotalPurchases();
-        } else {
-            console.error('[dashboard] cargarTotalPurchases no está definida');
-        }
-
-        // Cargar total de productos
-        await cargarTotalProductos();
-
-        // Cargar total de usuarios
-        await cargarTotalUsuarios();
-
-    } catch (error) {
-        console.error('[dashboard] Error al cargar métricas:', error);
-    }
-}
-
-// Función para cargar total de productos
-async function cargarTotalProductos() {
-    try {
-        console.log('[dashboard] Cargando total de productos...');
-        const response = await fetch('/api/productos?size=1');
-        if (response.ok) {
-            const data = await response.json();
-            const totalProductos = data.totalElements || 0;
-            
-            const totalProductsElement = document.getElementById('total-products');
-            if (totalProductsElement) {
-                totalProductsElement.textContent = formatNumber(totalProductos);
-                totalProductsElement.style.color = '#1e293b';
+    const monthlyTrendsChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: "Ventas",
+                data: chartData.data || [],
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59, 130, 246, 0.1)",
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 6,
+                pointBackgroundColor: "#3b82f6",
+                pointBorderColor: "#ffffff",
+                pointBorderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Ventas: ' + context.parsed.y + ' unidades';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: "#f3f4f6",
+                        drawBorder: false,
+                    },
+                    ticks: {
+                        color: "#6b7280",
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        color: "#6b7280",
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
             }
-            console.log('[dashboard] Total productos:', totalProductos);
-        } else {
-            throw new Error(`HTTP ${response.status}`);
         }
-    } catch (error) {
-        console.error('[dashboard] Error al cargar total de productos:', error);
-        const totalProductsElement = document.getElementById('total-products');
-        if (totalProductsElement) {
-            totalProductsElement.textContent = 'Error';
-            totalProductsElement.style.color = '#ef4444';
-        }
-    }
+    });
 }
 
-// Función para cargar total de usuarios
-async function cargarTotalUsuarios() {
-    try {
-        console.log('[dashboard] Cargando total de usuarios...');
-        const response = await fetch('/api/usuarios');
-        if (response.ok) {
-            const usuarios = await response.json();
-            const totalUsuarios = usuarios.length || 0;
-            
-            const totalUsersElement = document.getElementById('total-users');
-            if (totalUsersElement) {
-                totalUsersElement.textContent = formatNumber(totalUsuarios);
-                totalUsersElement.style.color = '#1e293b';
-            }
-            console.log('[dashboard] Total usuarios:', totalUsuarios);
-        } else {
-            throw new Error(`HTTP ${response.status}`);
-        }
-    } catch (error) {
-        console.error('[dashboard] Error al cargar total de usuarios:', error);
-        const totalUsersElement = document.getElementById('total-users');
-        if (totalUsersElement) {
-            totalUsersElement.textContent = 'Error';
-            totalUsersElement.style.color = '#ef4444';
-        }
-    }
+// Función para actualizar la actividad reciente con datos reales
+function actualizarActividadReciente(activities) {
+    const activityList = document.getElementById('recent-activity-list');
+    if (!activityList || !activities) return;
+    
+    activityList.innerHTML = '';
+    
+    activities.forEach(actividad => {
+        const activityItem = document.createElement('div');
+        activityItem.className = 'activity-item';
+        activityItem.innerHTML = `
+            <div class="activity-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    ${getActivityIcon(actividad.icon)}
+                </svg>
+            </div>
+            <div class="activity-content">
+                <p class="activity-text">${actividad.text}</p>
+                <span class="activity-time">${actividad.time}</span>
+            </div>
+        `;
+        activityList.appendChild(activityItem);
+    });
 }
 
-// Función para formatear números
+// Función para mostrar error en el dashboard
+function mostrarErrorDashboard() {
+    const metricElements = [
+        'total-revenue',
+        'total-purchase-revenue', 
+        'total-products',
+        'total-users',
+        'total-purchases',
+        'total-sales'
+    ];
+    
+    metricElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = 'Error';
+            element.style.color = '#ef4444';
+        }
+    });
+    
+    // Mostrar mensaje de error en la consola
+    console.error('[dashboard] No se pudieron cargar los datos del dashboard');
+}
+
+// Función para obtener el icono SVG según el tipo de actividad
+function getActivityIcon(icono) {
+    const icons = {
+        'check-circle': '<path d="M9 12l2 2 4-4"/><path d="M21 12c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2z"/>',
+        'package': '<path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>',
+        'user': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
+        'shopping-cart': '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>'
+    };
+    return icons[icono] || icons['check-circle'];
+}
+
+// Función para formatear números con separadores de miles
 function formatNumber(num) {
     return new Intl.NumberFormat('es-PE').format(num || 0);
 }
 
+// Función para formatear moneda en soles
+function formatCurrency(amount) {
+    return `S/.${parseFloat(amount || 0).toFixed(2)}`;
+}
+
+// Función para actualizar el dashboard (para compatibilidad con el sistema existente)
+async function cargarMetricasDashboard() {
+    console.log('[dashboard] Función de compatibilidad llamada');
+    await cargarDashboardDataCompleto();
+}
+
+// Exportar funciones para uso global
 window.initDashboard = initDashboard;
+window.cargarMetricasDashboard = cargarMetricasDashboard;
+window.formatNumber = formatNumber;
+window.formatCurrency = formatCurrency;

@@ -594,6 +594,13 @@ function setupFormularioAgregarCompra() {
       }
     });
   }
+  
+  // Configurar eventos para el campo de ID del producto #1
+  const productoIdInput = document.getElementById('producto-id-0');
+  if (productoIdInput) {
+    productoIdInput.addEventListener('change', () => window.buscarNombreProductoDirecto(0));
+    productoIdInput.addEventListener('blur', () => window.buscarNombreProductoDirecto(0));
+  }
 }
 
 // Función para verificar si estamos en la vista de compras
@@ -619,6 +626,20 @@ function abrirModalAgregarCompra() {
     
     modal.classList.add('show');
     console.log('Modal de agregar compra abierto');
+    
+    // Inicializar el resumen
+    setTimeout(() => {
+      calcularTotalCompra();
+    }, 100);
+    
+    // Verificar que el producto #1 tenga todos los campos
+    setTimeout(() => {
+      console.log('[DEBUG] Verificando producto #1:');
+      console.log('[DEBUG] producto-id-0:', !!document.getElementById('producto-id-0'));
+      console.log('[DEBUG] nombre-producto-0:', !!document.getElementById('nombre-producto-0'));
+      console.log('[DEBUG] cantidad-0:', !!document.getElementById('cantidad-0'));
+      console.log('[DEBUG] costo-unitario-0:', !!document.getElementById('costo-unitario-0'));
+    }, 200);
   }
 }
 
@@ -639,8 +660,13 @@ function cerrarModalAgregarCompra() {
 
 // Función para agregar producto al formulario
 function agregarProducto() {
+  console.log(`[DEBUG] Agregando producto con índice: ${productoIndex}`);
+  
   const container = document.getElementById('productos-container');
-  if (!container) return;
+  if (!container) {
+    console.log('[DEBUG] Container no encontrado');
+    return;
+  }
   
   const productoItem = document.createElement('div');
   productoItem.className = 'producto-item';
@@ -656,7 +682,14 @@ function agregarProducto() {
     <div class="form-grid">
       <div class="form-group">
         <label for="producto-id-${productoIndex}">Producto ID</label>
-        <input type="number" id="producto-id-${productoIndex}" name="productos[${productoIndex}].productoId" required min="1">
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="number" id="producto-id-${productoIndex}" name="productos[${productoIndex}].productoId" required min="1">
+          <button type="button" onclick="window.buscarNombreProductoDirecto(${productoIndex})" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="nombre-producto-${productoIndex}">Nombre del Producto</label>
+        <input type="text" id="nombre-producto-${productoIndex}" readonly placeholder="Se llenará automáticamente">
       </div>
       <div class="form-group">
         <label for="cantidad-${productoIndex}">Cantidad</label>
@@ -678,6 +711,50 @@ function agregarProducto() {
   `;
   
   container.appendChild(productoItem);
+  console.log(`[DEBUG] Producto agregado al DOM con índice: ${productoIndex}`);
+  
+  // Configurar eventos para el nuevo producto usando setTimeout para asegurar que el DOM esté listo
+  setTimeout(() => {
+    const nuevoProductoIdInput = document.getElementById(`producto-id-${productoIndex}`);
+    console.log(`[DEBUG] Buscando input con ID: producto-id-${productoIndex}`);
+    console.log(`[DEBUG] Input encontrado:`, !!nuevoProductoIdInput);
+    
+    if (nuevoProductoIdInput) {
+      // Agregar eventos usando la función directa
+      nuevoProductoIdInput.addEventListener('change', () => {
+        console.log(`[DEBUG] Evento change disparado para producto ${productoIndex}`);
+        window.buscarNombreProductoDirecto(productoIndex);
+      });
+      
+      nuevoProductoIdInput.addEventListener('blur', () => {
+        console.log(`[DEBUG] Evento blur disparado para producto ${productoIndex}`);
+        window.buscarNombreProductoDirecto(productoIndex);
+      });
+      
+      nuevoProductoIdInput.addEventListener('input', () => {
+        if (nuevoProductoIdInput.value.length >= 1) {
+          console.log(`[DEBUG] Evento input disparado para producto ${productoIndex}`);
+          window.buscarNombreProductoDirecto(productoIndex);
+        }
+      });
+      
+      console.log(`[DEBUG] Eventos configurados para producto ${productoIndex}`);
+    } else {
+      console.log(`[DEBUG] ERROR: No se pudo encontrar el input para producto ${productoIndex}`);
+    }
+    
+    // Verificar que el campo de nombre también se haya creado
+    const nombreProductoInput = document.getElementById(`nombre-producto-${productoIndex}`);
+    console.log(`[DEBUG] Campo nombre encontrado:`, !!nombreProductoInput);
+    
+    // Verificar que el botón de búsqueda se haya creado
+    const botonBuscar = nuevoProductoIdInput?.parentElement?.querySelector('button');
+    console.log(`[DEBUG] Botón buscar encontrado:`, !!botonBuscar);
+    
+    // Actualizar el resumen
+    calcularTotalCompra();
+  }, 100); // Aumenté el timeout para dar más tiempo al DOM
+  
   productoIndex++;
 }
 
@@ -705,23 +782,159 @@ function calcularSubtotal(index) {
   calcularTotalCompra();
 }
 
+// Cache para búsquedas de productos
+const productoCache = new Map();
+
+// Función para buscar el nombre del producto por ID con debounce
+const buscarNombreProducto = debounce(async function(index) {
+  console.log(`[DEBUG] Buscando producto para índice: ${index}`);
+  
+  const productoIdInput = document.getElementById(`producto-id-${index}`);
+  const nombreProductoInput = document.getElementById(`nombre-producto-${index}`);
+  
+  console.log(`[DEBUG] productoIdInput encontrado:`, !!productoIdInput);
+  console.log(`[DEBUG] nombreProductoInput encontrado:`, !!nombreProductoInput);
+  
+  if (!productoIdInput || !nombreProductoInput) {
+    console.log(`[DEBUG] Elementos no encontrados para índice ${index}`);
+    return;
+  }
+  
+  const productoId = productoIdInput.value.trim();
+  
+  if (!productoId) {
+    nombreProductoInput.value = '';
+    nombreProductoInput.className = '';
+    return;
+  }
+  
+  // Verificar cache primero
+  if (productoCache.has(productoId)) {
+    const producto = productoCache.get(productoId);
+    nombreProductoInput.value = producto.nombre || 'Sin nombre';
+    nombreProductoInput.className = 'success';
+    
+    // Llenar costo unitario si está disponible
+    const costoUnitarioInput = document.getElementById(`costo-unitario-${index}`);
+    if (costoUnitarioInput && producto.costeUnitario) {
+      costoUnitarioInput.value = producto.costeUnitario;
+      calcularSubtotal(index);
+    } else {
+      // Actualizar el resumen aunque no haya costo unitario
+      calcularTotalCompra();
+    }
+    return;
+  }
+  
+  try {
+    // Mostrar estado de carga
+    nombreProductoInput.value = 'Buscando...';
+    nombreProductoInput.className = 'loading';
+    
+    // Hacer la petición al backend
+    const response = await fetch(`/api/productos/${productoId}`);
+    
+    if (response.ok) {
+      const producto = await response.json();
+      
+      // Guardar en cache
+      productoCache.set(productoId, producto);
+      
+      nombreProductoInput.value = producto.nombre || 'Sin nombre';
+      nombreProductoInput.className = 'success';
+      
+      // También llenar automáticamente el costo unitario si está disponible
+      const costoUnitarioInput = document.getElementById(`costo-unitario-${index}`);
+      if (costoUnitarioInput && producto.costeUnitario) {
+        costoUnitarioInput.value = producto.costeUnitario;
+        calcularSubtotal(index);
+      } else {
+        // Actualizar el resumen aunque no haya costo unitario
+        calcularTotalCompra();
+      }
+    } else {
+      nombreProductoInput.value = 'Producto no encontrado';
+      nombreProductoInput.className = 'error';
+    }
+  } catch (error) {
+    console.error('Error al buscar producto:', error);
+    nombreProductoInput.value = 'Error al buscar';
+    nombreProductoInput.className = 'error';
+  }
+}, 300); // 300ms de debounce
+
 // Función para calcular total de la compra
 function calcularTotalCompra() {
   let total = 0;
   const productos = document.querySelectorAll('.producto-item');
+  const resumenContainer = document.getElementById('resumen-productos');
+  
+  if (resumenContainer) {
+    resumenContainer.innerHTML = '';
+  }
+  
+  const productosValidos = [];
   
   productos.forEach(producto => {
     const index = producto.getAttribute('data-index');
     const cantidad = parseFloat(document.getElementById(`cantidad-${index}`)?.value || 0);
     const costoUnitario = parseFloat(document.getElementById(`costo-unitario-${index}`)?.value || 0);
     const descuento = parseFloat(document.getElementById(`descuento-${index}`)?.value || 0);
+    const nombreProducto = document.getElementById(`nombre-producto-${index}`)?.value || 'Sin nombre';
+    const productoId = document.getElementById(`producto-id-${index}`)?.value;
     
-    total += (cantidad * costoUnitario) - descuento;
+    const subtotal = (cantidad * costoUnitario) - descuento;
+    total += subtotal;
+    
+    // Solo agregar al resumen si tiene datos válidos
+    if (productoId && cantidad > 0 && costoUnitario > 0) {
+      productosValidos.push({
+        index,
+        nombre: nombreProducto,
+        cantidad,
+        costoUnitario,
+        descuento,
+        subtotal
+      });
+    }
   });
   
+  // Actualizar el total
   const totalDisplay = document.getElementById('total-compra');
   if (totalDisplay) {
     totalDisplay.textContent = formatCurrency(total);
+  }
+  
+  // Generar el resumen de productos
+  if (resumenContainer) {
+    if (productosValidos.length === 0) {
+      resumenContainer.innerHTML = `
+        <div class="resumen-vacio">
+          <i class="fas fa-shopping-basket"></i>
+          <p>No hay productos agregados</p>
+        </div>
+      `;
+    } else {
+      productosValidos.forEach(producto => {
+        const resumenItem = document.createElement('div');
+        resumenItem.className = 'resumen-item';
+        resumenItem.innerHTML = `
+          <div class="resumen-item-info">
+            <div class="resumen-item-nombre">${producto.nombre}</div>
+            <div class="resumen-item-detalles">
+              <span>ID: ${producto.index}</span>
+              <span>Cantidad: ${producto.cantidad}</span>
+              <span>Costo: ${formatCurrency(producto.costoUnitario)}</span>
+              ${producto.descuento > 0 ? `<span>Desc: ${formatCurrency(producto.descuento)}</span>` : ''}
+            </div>
+          </div>
+          <div class="resumen-item-subtotal">
+            ${formatCurrency(producto.subtotal)}
+          </div>
+        `;
+        resumenContainer.appendChild(resumenItem);
+      });
+    }
   }
 }
 
@@ -748,6 +961,12 @@ function resetearProductos() {
           input.value = '';
         }
       });
+      // Limpiar específicamente el campo de nombre del producto
+      const nombreProductoInput = document.getElementById('nombre-producto-0');
+      if (nombreProductoInput) {
+        nombreProductoInput.value = '';
+        nombreProductoInput.className = '';
+      }
       document.getElementById('subtotal-0').textContent = 'S/.0.00';
     }
     
@@ -838,6 +1057,64 @@ window.addEventListener('hashchange', function() {
   }
 });
 
+// Función global para buscar nombre de producto (sin debounce para testing)
+window.buscarNombreProductoDirecto = async function(index) {
+  console.log(`[DEBUG] Función directa llamada para índice: ${index}`);
+  
+  const productoIdInput = document.getElementById(`producto-id-${index}`);
+  const nombreProductoInput = document.getElementById(`nombre-producto-${index}`);
+  
+  console.log(`[DEBUG] productoIdInput:`, productoIdInput);
+  console.log(`[DEBUG] nombreProductoInput:`, nombreProductoInput);
+  
+  if (!productoIdInput || !nombreProductoInput) {
+    console.log(`[DEBUG] Elementos no encontrados para índice ${index}`);
+    return;
+  }
+  
+  const productoId = productoIdInput.value.trim();
+  console.log(`[DEBUG] Producto ID ingresado: "${productoId}"`);
+  
+  if (!productoId) {
+    nombreProductoInput.value = '';
+    nombreProductoInput.className = '';
+    return;
+  }
+  
+  try {
+    nombreProductoInput.value = 'Buscando...';
+    nombreProductoInput.className = 'loading';
+    
+    console.log(`[DEBUG] Haciendo petición a /api/productos/${productoId}`);
+    const response = await fetch(`/api/productos/${productoId}`);
+    
+    console.log(`[DEBUG] Respuesta recibida:`, response.status, response.statusText);
+    
+    if (response.ok) {
+      const producto = await response.json();
+      console.log(`[DEBUG] Producto encontrado:`, producto);
+      
+      nombreProductoInput.value = producto.nombre || 'Sin nombre';
+      nombreProductoInput.className = 'success';
+      
+      const costoUnitarioInput = document.getElementById(`costo-unitario-${index}`);
+      if (costoUnitarioInput && producto.costeUnitario) {
+        costoUnitarioInput.value = producto.costeUnitario;
+        calcularSubtotal(index);
+      } else {
+        calcularTotalCompra();
+      }
+    } else {
+      nombreProductoInput.value = 'Producto no encontrado';
+      nombreProductoInput.className = 'error';
+    }
+  } catch (error) {
+    console.error('Error al buscar producto:', error);
+    nombreProductoInput.value = 'Error al buscar';
+    nombreProductoInput.className = 'error';
+  }
+};
+
 // Exportar funciones para uso global
 window.ComprasModule = {
   initComprasView,
@@ -851,7 +1128,9 @@ window.ComprasModule = {
   agregarProducto,
   eliminarProducto,
   calcularSubtotal,
-  calcularTotalCompra
+  calcularTotalCompra,
+  buscarNombreProducto,
+  buscarNombreProductoDirecto
 };
 window.initComprasView = initComprasView;
 window.abrirModalAgregarCompra = abrirModalAgregarCompra;
@@ -860,6 +1139,8 @@ window.agregarProducto = agregarProducto;
 window.eliminarProducto = eliminarProducto;
 window.calcularSubtotal = calcularSubtotal;
 window.calcularTotalCompra = calcularTotalCompra;
+window.buscarNombreProducto = buscarNombreProducto;
+window.buscarNombreProductoDirecto = window.buscarNombreProductoDirecto;
 console.log('[compra.js] exponiendo cargarTotalPurchaseRevenue:', typeof cargarTotalPurchaseRevenue);
 window.cargarTotalPurchaseRevenue = cargarTotalPurchaseRevenue;
 window.cargarTotalPurchases = cargarTotalPurchases;

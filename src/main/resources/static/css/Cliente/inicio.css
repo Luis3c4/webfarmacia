@@ -449,6 +449,58 @@ body {
     color: white;
   }
   
+  /* === ESTADOS DE STOCK (idénticos a productos.css, con especificidad) === */
+.producto .stock-status {
+  margin: 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.producto .stock-agotado {
+  color: #dc3545;
+  background-color: #f8d7da;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+}
+
+.producto .stock-agotado .material-symbols-rounded {
+  font-size: 14px;
+}
+
+.producto .stock-bajo {
+  color: #856404;
+  background-color: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ffeaa7;
+}
+
+.producto .stock-bajo .material-symbols-rounded {
+  font-size: 14px;
+}
+
+.producto button.add-to-cart.disabled,
+.producto button.add-to-cart:disabled {
+  background-color: #6c757d;
+  color: #adb5bd;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.producto button.add-to-cart.disabled:hover,
+.producto button.add-to-cart:disabled:hover {
+  background-color: #6c757d;
+}
+
+.producto button.add-to-cart.disabled .material-symbols-rounded,
+.producto button.add-to-cart:disabled .material-symbols-rounded {
+  margin-right: 4px;
+}
   
   
   @media (max-width: 768px) {

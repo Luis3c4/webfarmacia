@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.proyecto.farmacia.webfarmacia.model.Producto;
 import com.proyecto.farmacia.webfarmacia.repository.ProductoRepository;
 import java.util.List;
+import java.math.BigDecimal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +84,10 @@ public class ProductoService {
     
     public List<String> getCategoriasDisponibles() {
         return productoRepository.findDistinctCategoriasByActivoTrue();
+    }
+    
+    public Page<Producto> getProductosOfertas(Pageable pageable) {
+        return productoRepository.findByActivoTrueAndDescuentoGreaterThan(BigDecimal.ZERO, pageable);
     }
     
     /**

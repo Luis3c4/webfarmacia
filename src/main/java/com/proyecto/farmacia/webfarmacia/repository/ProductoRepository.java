@@ -1,11 +1,14 @@
 package com.proyecto.farmacia.webfarmacia.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.proyecto.farmacia.webfarmacia.model.Producto;
-import org.springframework.data.jpa.repository.Query;
+import java.math.BigDecimal;
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.proyecto.farmacia.webfarmacia.model.Producto;
 
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
     
@@ -25,6 +28,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     List<String> findDistinctCategoriasByActivoTrue();
 
     Producto findBySupabaseId(String supabaseId);
+    
+    Page<Producto> findByActivoTrueAndDescuentoGreaterThan(BigDecimal descuento, Pageable pageable);
     
     // Consultas JPQL originales como respaldo (comentadas por ahora)
     /*

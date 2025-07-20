@@ -169,7 +169,21 @@
 
           <!-- Cuadro de acciones: solo cantidad y agregar al carrito -->
           <div class="acciones-producto">
-            <div class="acciones-cantidad">
+            <!-- Mostrar estado de stock -->
+            <div class="stock-info" th:if="${producto.stock <= 0}">
+              <div class="stock-alert agotado">
+                <span class="material-symbols-rounded">cancel</span>
+                <span>Producto Agotado</span>
+              </div>
+            </div>
+            <div class="stock-info" th:if="${producto.stock > 0 and producto.stock <= 10}">
+              <div class="stock-alert bajo">
+                <span class="material-symbols-rounded">warning</span>
+                <span>Solo quedan <strong th:text="${producto.stock}">0</strong> unidades disponibles</span>
+              </div>
+            </div>
+            
+            <div class="acciones-cantidad" th:if="${producto.stock > 0}">
               <button type="button" class="btn-cantidad" onclick="cambiarCantidad(-1)">-</button>
               <input type="number" id="cantidadProducto" min="1" th:attr="max=${producto.stock}" value="1" />
               <button type="button" class="btn-cantidad" onclick="cambiarCantidad(1)">+</button>
@@ -184,7 +198,7 @@
               <span class="material-symbols-rounded">shopping_cart</span>
               <span class="btn-texto">Agregar al Carrito</span>
             </button>
-            <button class="btn-principal" th:if="${producto.stock <= 0}" disabled>
+            <button class="btn-principal disabled" th:if="${producto.stock <= 0}" disabled>
               <span class="material-symbols-rounded">cancel</span>
               <span class="btn-texto">Producto Agotado</span>
             </button>

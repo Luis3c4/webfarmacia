@@ -1,10 +1,12 @@
 package com.proyecto.farmacia.webfarmacia.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import com.proyecto.farmacia.webfarmacia.model.DetalleVenta;
-import java.util.List;
 import org.springframework.data.repository.query.Param;
+
+import com.proyecto.farmacia.webfarmacia.model.DetalleVenta;
 
 public interface DetalleVentaRepository extends JpaRepository<DetalleVenta, Long> {
     @Query("SELECT SUM((dv.precioUnitario - dv.costeUnitario) * dv.cantidad) - SUM(dv.descuentos) " +
@@ -96,4 +98,21 @@ public interface DetalleVentaRepository extends JpaRepository<DetalleVenta, Long
     // Método para obtener detalles de venta por ID de venta
     @Query("SELECT dv FROM DetalleVenta dv WHERE dv.venta.ventaId = :ventaId")
     List<DetalleVenta> findByVentaId(@Param("ventaId") Long ventaId);
+    
+    // Nueva consulta para productos más vendidos por cantidad (no por valor)
+    @Query(value = """
+        SELECT 
+          p.producto_id,
+          p.nombre AS producto,
+          p.categoria AS category,
+          SUM(dv.cantidad) AS cantidad_vendida,
+          SUM(dv.precio_unitario * dv.cantidad) AS valor_total
+        FROM detalle_venta dv
+        JOIN ventas v ON dv.venta_id = v.venta_id
+        JOIN productos p ON dv.producto_id = p.producto_id
+        GROUP BY p.producto_id, p.nombre, p.categoria
+        ORDER BY cantidad_vendida DESC
+        LIMIT 5
+        """, nativeQuery = true)
+    List<Object[]> getProductosMasVendidosPorCantidad();
 } 

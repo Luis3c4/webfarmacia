@@ -52,79 +52,17 @@
   </section>
 
   <section class="productos-destacados">
-    <h2>Lo más visto</h2>
+    <h2>Productos en Ofertas</h2>
     <div class="carrusel-productos">
       <button class="slide-btn left" onclick="document.getElementById('productosSlider').scrollBy({left:-320,behavior:'smooth'})">❮</button>
       <div class="productos-slider" id="productosSlider">
-
-        <div class="producto">
-          <!-- Corregido: Añadido /cliente/ a la ruta -->
-          <img th:src="@{/imagenes/cliente/Productos_destacados/eucerin_baby.jpg}" alt="Eucerin Baby">
-          <p class="etiqueta">FRASCO 240 ML</p>
-          <h3>Baño y Shampoo Eucerin Baby</h3>
-          <p class="marca">FARMA</p>
-          <div class="precios">
-            <p class="precio-regular">S/ 89.90</p>
-            <p class="precio-final">S/ 68.90</p>
-          </div>
-          <div class="delivery-icons">
-            <span class="material-symbols-rounded">local_shipping</span>
-            <span class="material-symbols-rounded">store</span>
-          </div>
-          <button>Agregar al carrito</button>
+        <!-- Skeleton loader para productos en ofertas -->
+        <div class="skeleton-productos" id="skeletonOfertas">
+          <div class="skeleton-product"></div>
+          <div class="skeleton-product"></div>
+          <div class="skeleton-product"></div>
+          <div class="skeleton-product"></div>
         </div>
-
-        <div class="producto">
-          <!-- Corregido: Añadido /cliente/ a la ruta -->
-          <img th:src="@{/imagenes/cliente/Productos_destacados/Vital_Vitamina.jpg}" alt="Vital Adulto">
-          <p class="etiqueta">LATA 400 GR</p>
-          <h3>Vital Vitaminado Adulto Vainilla</h3>
-          <p class="marca">FARMA</p>
-          <div class="precios">
-            <p class="precio-regular">S/ 49.90</p>
-            <p class="precio-final">S/ 39.90</p>
-          </div>
-          <div class="delivery-icons">
-            <span class="material-symbols-rounded">local_shipping</span>
-            <span class="material-symbols-rounded">store</span>
-          </div>
-          <button>Agregar al carrito</button>
-        </div>
-
-        <div class="producto">
-          <!-- Corregido: Añadido /cliente/ a la ruta -->
-          <img th:src="@{/imagenes/cliente/Productos_destacados/shampoo_head.png}" alt="Shampoo Head & Shoulders">
-          <p class="etiqueta">FRASCO 375 ML</p>
-          <h3>Shampoo Head & Shoulders Menta</h3>
-          <p class="marca">Head & Shoulders</p>
-          <div class="precios">
-            <p class="precio-regular">S/ 24.90</p>
-            <p class="precio-final">S/ 14.90</p>
-          </div>
-          <div class="delivery-icons">
-            <span class="material-symbols-rounded">local_shipping</span>
-            <span class="material-symbols-rounded">store</span>
-          </div>
-          <button>Agregar al carrito</button>
-        </div>
-
-        <div class="producto">
-            <!-- Corregido: Añadido /cliente/ a la ruta -->
-            <img th:src="@{/imagenes/cliente/Productos_destacados/nivea_men.jpg}" alt="Nivea Men Pack">
-            <p class="etiqueta">SUPER PACK</p>
-            <h3>Pack 02 Desodorante Spray Nivea Men Black & White Invisible</h3>
-            <p class="marca">Nivea Men</p>
-            <div class="precios">
-              <p class="precio-regular">S/ 60.90</p>
-              <p class="precio-final">S/ 41.00</p>
-            </div>
-            <div class="delivery-icons">
-              <span class="material-symbols-rounded">local_shipping</span>
-              <span class="material-symbols-rounded">store</span>
-            </div>
-            <button>Agregar al carrito</button>
-          </div>
-
       </div>
       <button class="slide-btn right" onclick="document.getElementById('productosSlider').scrollBy({left:320,behavior:'smooth'})">❯</button>
     </div>
@@ -133,91 +71,25 @@
     <div class="contenedor-marca">
       <div class="banner-marca">
         <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
-        <img th:src="@{/imagenes/cliente/Productos_Dove/shampoo-seco-ppal.jpg}" alt="Lo nuevo de Dove">
+        <img th:src="@{/imagenes/cliente/Productos_Dove/shampoo-seco-ppal.jpg}" alt="Productos Destacados">
         <div class="texto-banner">
-          <h2>Lo nuevo de Dove</h2>
-          <button class="ver-mas">Ver más productos</button>
+          <h2>Productos de Limpieza</h2>
+          <button class="ver-mas" onclick="window.location.href='/productos'">Ver más productos</button>
         </div>
       </div>
   
 <div class="carrusel-productos">
-  <button class="slide-btn left" onclick="document.getElementById('sliderDove').scrollBy({left:-320,behavior:'smooth'})">❮</button> <!-- CORREGIDO AQUÍ -->
+  <button class="slide-btn left" onclick="document.getElementById('sliderDove').scrollBy({left:-320,behavior:'smooth'})">❮</button>
   <div class="productos-slider" id="sliderDove">
-  
-          <div class="producto">
-            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
-            <img th:src="@{/imagenes/cliente/Productos_Dove/shampoo_dove.jpg}" alt="Shampoo Dove">
-            <p class="etiqueta">FRASCO 350 ML</p>
-            <h3>Shampoo Dove Bond Intense Repair</h3>
-            <p class="marca">FARMA</p>
-            <div class="precios">
-              <p class="precio-regular">S/ 19.90</p>
-              <p class="precio-descuento">S/ 16.90</p>
-              <p class="precio-final">S/ 15.90</p>
-            </div>
-            <div class="delivery-icons">
-              <span class="material-symbols-rounded">local_shipping</span>
-              <span class="material-symbols-rounded">store</span>
-            </div>
-            <button>Agregar al carrito</button>
-          </div>
-  
-          <div class="producto">
-            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
-            <img th:src="@{/imagenes/cliente/Productos_Dove/acondicionador_dove.jpg}" alt="Acondicionador Dove">
-            <p class="etiqueta">TUBO 250 ML</p>
-            <h3>Acondicionador Dove Bond Intense Repair</h3>
-            <p class="marca">FARMA</p>
-            <div class="precios">
-              <p class="precio-regular">S/ 19.90</p>
-              <p class="precio-descuento">S/ 16.90</p>
-              <p class="precio-final">S/ 15.90</p>
-            </div>
-            <div class="delivery-icons">
-              <span class="material-symbols-rounded">local_shipping</span>
-              <span class="material-symbols-rounded">store</span>
-            </div>
-            <button>Agregar al carrito</button>
-          </div>
-  
-          <div class="producto">
-            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
-            <img th:src="@{/imagenes/cliente/Productos_Dove/mascarilla_dove.jpg}" alt="Mascarilla Dove">
-            <p class="etiqueta">FRASCO 250 GR</p>
-            <h3>Mascarilla Capilar Dove Bond Intense Repair</h3>
-            <p class="marca">FARMA</p>
-            <div class="precios">
-              <p class="precio-regular">S/ 39.90</p>
-              <p class="precio-descuento">S/ 25.90</p>
-              <p class="precio-final">S/ 24.90</p>
-            </div>
-            <div class="delivery-icons">
-              <span class="material-symbols-rounded">local_shipping</span>
-              <span class="material-symbols-rounded">store</span>
-            </div>
-            <button>Agregar al carrito</button>
-          </div>
-
-          <div class="producto">
-            <!-- Corregido: Añadido /cliente/ a la ruta y asumiendo Productos_Dove -->
-            <img th:src="@{/imagenes/cliente/Productos_Dove/serum.jpg}" alt="Serum Dove">
-            <p class="etiqueta">FRASCO 110 ML</p>
-            <h3>Sérum Capilar Bifásico Dove Bond Intense Repair</h3>
-            <p class="marca">FARMA</p>
-            <div class="precios">
-              <p class="precio-regular">S/ 39.90</p>
-              <p class="precio-descuento">S/ 25.90</p>
-              <p class="precio-final">S/ 24.90</p>
-            </div>
-            <div class="delivery-icons">
-              <span class="material-symbols-rounded">local_shipping</span>
-              <span class="material-symbols-rounded">store</span>
-            </div>
-            <button>Agregar al carrito</button>
-          </div>
-  
-        </div>
-        <button class="slide-btn right" onclick="document.getElementById('sliderDove').scrollBy({left:320,behavior:'smooth'})">❯</button>
+    <!-- Skeleton loader para productos destacados -->
+    <div class="skeleton-productos" id="skeletonDestacados">
+      <div class="skeleton-product"></div>
+      <div class="skeleton-product"></div>
+      <div class="skeleton-product"></div>
+      <div class="skeleton-product"></div>
+    </div>
+  </div>
+  <button class="slide-btn right" onclick="document.getElementById('sliderDove').scrollBy({left:320,behavior:'smooth'})">❯</button>
       </div>
     </div>
   </section>
@@ -297,5 +169,148 @@
   <script th:src="@{/js/cliente/cart.js}"></script>
   <script th:src="@{/js/cliente/cart-sync.js}"></script>
   <script th:src="@{/js/inicio.js}"></script>
+  <style>
+    .skeleton-productos {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+    .skeleton-product {
+      width: 200px;
+      height: 320px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 400% 100%;
+      animation: skeleton-loading 1.2s infinite linear;
+      border-radius: 1rem;
+    }
+    @keyframes skeleton-loading {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
+    }
+  </style>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Lanzar ambas cargas en paralelo
+    Promise.all([loadProductosOfertas(), loadProductosDestacados()]);
+
+    function renderProductos(productos, containerId, skeletonId) {
+      const container = document.getElementById(containerId);
+      const skeleton = document.getElementById(skeletonId);
+      skeleton.style.display = 'none';
+      if (!productos || productos.length === 0) {
+        container.innerHTML = '<div class="no-productos"><p>No hay productos para mostrar en este momento.</p></div>';
+        return;
+      }
+      // Usar fragmento para mejorar el rendimiento
+      const fragment = document.createDocumentFragment();
+      productos.forEach(producto => {
+        const div = document.createElement('div');
+        div.className = 'producto';
+        div.setAttribute('data-id', producto.productoId);
+        div.setAttribute('data-nombre', producto.nombre);
+        div.setAttribute('data-precio', producto.precio_unitario);
+        div.setAttribute('data-imagen', producto.imgUrl || '/imagenes/productos/default-medicine.jpg');
+        div.setAttribute('data-presentacion', producto.descripcion || 'Sin descripción');
+        div.setAttribute('data-categoria', producto.categoria || 'Sin categoría');
+        div.style.cursor = 'pointer';
+        div.onclick = () => window.location.href = `/producto/detalle/${producto.productoId}`;
+        div.innerHTML = `
+          <img src="${producto.imgUrl || '/imagenes/productos/default-medicine.jpg'}" 
+               alt="${producto.nombre}" 
+               loading="lazy"
+               onerror="this.src='/imagenes/productos/default-medicine.jpg'" />
+          <p class="etiqueta">${producto.categoria || 'Sin categoría'}</p>
+          <h3>${producto.nombre}</h3>
+          <p class="marca">FARMA</p>
+          <div class="precios">
+            ${producto.descuento && producto.descuento > 0 ? 
+              `<p class="precio-regular">S/ ${(producto.precio_unitario + producto.descuento).toFixed(2)}</p>
+               <p class="precio-descuento">S/ ${(producto.precio_unitario + producto.descuento * 0.9).toFixed(2)}</p>
+               <p class="precio-final">S/ ${producto.precio_unitario.toFixed(2)}</p>` :
+              `<p class="precio-final">S/ ${producto.precio_unitario.toFixed(2)}</p>`
+            }
+          </div>
+          <div class="delivery-icons">
+            <span class="material-symbols-rounded">local_shipping</span>
+            <span class="material-symbols-rounded">store</span>
+          </div>
+          ${producto.stock <= 0 ? `
+            <div class="stock-status">
+              <span class="stock-agotado">
+                <span class="material-symbols-rounded">cancel</span>
+                Agotado
+              </span>
+            </div>
+            <button class="add-to-cart disabled" disabled>
+              <span class="material-symbols-rounded">cancel</span>
+              Agotado
+            </button>
+          ` : producto.stock > 0 && producto.stock <= 10 ? `
+            <div class="stock-status">
+              <span class="stock-bajo">
+                <span class="material-symbols-rounded">warning</span>
+                Solo quedan ${producto.stock}
+              </span>
+            </div>
+            <button class="add-to-cart" 
+                    data-id="${producto.productoId}" 
+                    data-nombre="${producto.nombre}" 
+                    data-precio="${producto.precio_unitario}"
+                    data-imagen="${producto.imgUrl || '/imagenes/productos/default-medicine.jpg'}"
+                    data-presentacion="${producto.descripcion || 'Sin descripción'}"
+                    data-categoria="${producto.categoria || 'Sin categoría'}">
+              Agregar al carrito
+            </button>
+          ` : `
+            <button class="add-to-cart" 
+                    data-id="${producto.productoId}" 
+                    data-nombre="${producto.nombre}" 
+                    data-precio="${producto.precio_unitario}"
+                    data-imagen="${producto.imgUrl || '/imagenes/productos/default-medicine.jpg'}"
+                    data-presentacion="${producto.descripcion || 'Sin descripción'}"
+                    data-categoria="${producto.categoria || 'Sin categoría'}">
+              Agregar al carrito
+            </button>
+          `}
+        `;
+        fragment.appendChild(div);
+      });
+      container.innerHTML = '';
+      container.appendChild(fragment);
+    }
+
+    function loadProductosOfertas() {
+      const skeleton = document.getElementById('skeletonOfertas');
+      skeleton.style.display = 'flex';
+      return fetch('/api/productos/ofertas?page=0&size=10')
+        .then(response => response.json())
+        .then(data => {
+          const productos = data.content || data;
+          renderProductos(productos, 'productosSlider', 'skeletonOfertas');
+        })
+        .catch(error => {
+          console.error('Error cargando productos en ofertas:', error);
+          skeleton.style.display = 'none';
+          document.getElementById('productosSlider').innerHTML = '<div class="no-productos"><p>Error al cargar productos en ofertas.</p></div>';
+        });
+    }
+
+    function loadProductosDestacados() {
+      const skeleton = document.getElementById('skeletonDestacados');
+      skeleton.style.display = 'flex';
+      return fetch('/api/productos/categoria/Limpieza?page=0&size=8')
+        .then(response => response.json())
+        .then(data => {
+          const productos = data.content || data;
+          renderProductos(productos, 'sliderDove', 'skeletonDestacados');
+        })
+        .catch(error => {
+          console.error('Error cargando productos destacados:', error);
+          skeleton.style.display = 'none';
+          document.getElementById('sliderDove').innerHTML = '<div class="no-productos"><p>Error al cargar productos destacados.</p></div>';
+        });
+    }
+  });
+  </script>
 </body>
 </html>
