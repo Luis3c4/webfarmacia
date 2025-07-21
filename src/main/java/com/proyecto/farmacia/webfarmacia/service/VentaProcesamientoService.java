@@ -187,7 +187,16 @@ public class VentaProcesamientoService {
                 DetalleVenta detalleVenta = new DetalleVenta();
                 detalleVenta.setVenta(ventaGuardada);
                 detalleVenta.setProducto(producto);
-                detalleVenta.setCantidad(1);
+                // Asignar la cantidad real del producto comprado
+                int cantidad = 1;
+                if (productoInfo.containsKey("cantidad")) {
+                    try {
+                        cantidad = Integer.parseInt(productoInfo.get("cantidad").toString());
+                    } catch (Exception e) {
+                        System.err.println("No se pudo parsear la cantidad, usando 1 por defecto. Valor: " + productoInfo.get("cantidad"));
+                    }
+                }
+                detalleVenta.setCantidad(cantidad);
                 detalleVenta.setPrecioUnitario(producto.getPrecio_unitario());
                 detalleVenta.setCosteUnitario(producto.getCosteUnitario());
                 System.out.println("Guardando detalle de venta...");

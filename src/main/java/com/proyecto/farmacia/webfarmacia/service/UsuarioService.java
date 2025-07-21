@@ -60,6 +60,11 @@ public class UsuarioService {
                 usuario.setUpdatedAt(LocalDateTime.now());
                 System.out.println("Updated At establecido por defecto: " + usuario.getUpdatedAt());
             }
+            // Valor por defecto para tipoUsuario
+            if (usuario.getTipoUsuario() == null || usuario.getTipoUsuario().trim().isEmpty()) {
+                usuario.setTipoUsuario("cliente");
+                System.out.println("TipoUsuario establecido por defecto: cliente");
+            }
             
             System.out.println("Intentando guardar usuario...");
             Usuario usuarioGuardado = usuarioRepository.save(usuario);

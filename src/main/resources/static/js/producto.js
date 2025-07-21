@@ -155,6 +155,7 @@ function renderProductosTabla(productos) {
     // Usar solo producto.productoId como id
     const id = producto.productoId;
     tr.innerHTML = `
+      <td class="td-id">${id}</td>
       <td class="td-image">
         <div class="product-image-container">
           ${createOptimizedImage(producto)}
@@ -407,14 +408,10 @@ function setupFormularios() {
     formEditar.addEventListener('submit', handleSubmitEditarProducto);
   }
 
-  // Formulario de agregar stock
-  const formAgregarStock = document.getElementById('formAgregarStock');
-  if (formAgregarStock) {
-    formAgregarStock.addEventListener('submit', handleSubmitAgregarStock);
-  }
-
-  // Configurar botones de cancelar
-  setupBotonesCancelar();
+  // Eliminar referencias y lógica de cantidadIngresada y stock en formularios y procesamiento
+  // (Eliminar líneas que usan cantidadIngresada y stock en formularios de agregar/editar producto)
+  // (Eliminar funciones y event listeners relacionados con agregar stock y campos de stock/cantidadIngresada)
+  // (Eliminar asignaciones y obtención de valores de cantidadIngresada y stock en edición y creación)
 }
 
 // Función para configurar botones de cancelar
@@ -460,8 +457,6 @@ async function handleSubmitAgregarProducto(e) {
       nombre: formData.get('nombre'),
       precio_unitario: parseFloat(formData.get('precio')),
       categoria: formData.get('categoria') === '__nueva__' ? formData.get('nuevaCategoria') : formData.get('categoria'),
-      cantidadIngresada: parseInt(formData.get('cantidadIngresada')),
-      stock: parseInt(formData.get('stock')),
       descripcion: formData.get('descripcion'),
       fechaProducto: formData.get('fechaProducto') || null,
       descuento: parseFloat(formData.get('descuento')) || 0,
@@ -515,8 +510,6 @@ async function handleSubmitEditarProducto(e) {
       nombre: formData.get('nombre'),
       precio_unitario: parseFloat(formData.get('precio')),
       categoria: formData.get('categoria') === '__nueva__' ? formData.get('nuevaCategoria') : formData.get('categoria'),
-      cantidadIngresada: parseInt(formData.get('cantidadIngresada')),
-      stock: parseInt(formData.get('stock')),
       descripcion: formData.get('descripcion'),
       fechaProducto: formData.get('fechaProducto') || null,
       descuento: parseFloat(formData.get('descuento')) || 0,
@@ -989,8 +982,6 @@ async function editarProducto(productoId) {
     document.getElementById('editProductoId').value = producto.productoId;
     document.getElementById('editNombre').value = producto.nombre;
     document.getElementById('editPrecio').value = producto.precio_unitario;
-    document.getElementById('editCantidadIngresada').value = producto.cantidadIngresada || 0;
-    document.getElementById('editStock').value = producto.stock;
     document.getElementById('editDescripcion').value = producto.descripcion || '';
     document.getElementById('editFechaProducto').value = producto.fechaProducto || '';
     document.getElementById('editDescuento').value = producto.descuento || 0;

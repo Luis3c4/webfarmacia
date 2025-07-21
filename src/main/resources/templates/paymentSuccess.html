@@ -66,6 +66,10 @@
     <div id="error-message" class="error-message" style="display: none;">
         <span class="material-symbols-rounded">error</span>
         <span id="error-text"></span>
+        <button id="retry-payment-btn" style="margin-top: 15px; display: none;" class="btn-home">
+            <span class="material-symbols-rounded">refresh</span>
+            VOLVER A INTENTAR LA COMPRA
+        </button>
     </div>
 
     <div class="order-details-grid" id="order-details" style="display: none;">
@@ -187,6 +191,7 @@
                 loadingMessage.style.display = 'none';
                 errorMessage.style.display = 'block';
                 errorText.textContent = 'Error al procesar la venta: ' + error.message;
+                document.getElementById('retry-payment-btn').style.display = 'inline-flex';
                 
                 // Solo mostrar los detalles del pedido si order está definido
                 if (typeof order !== 'undefined') {
@@ -199,6 +204,7 @@
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
             errorText.textContent = 'No se encontraron detalles de la compra. Por favor, realiza un pedido primero.';
+            document.getElementById('retry-payment-btn').style.display = 'inline-flex';
         }
     });
 
@@ -228,6 +234,9 @@
         document.getElementById('shipping-date').textContent = order.fechaEntrega || 'Próximamente';
     }
     /*]]>*/
+    document.getElementById('retry-payment-btn').addEventListener('click', function() {
+        window.location.href = '/pasarela';
+    });
 </script>
 </body>
 </html>

@@ -296,6 +296,14 @@
     text-align: center;
 }
 
+.th-id, .td-id {
+  min-width: 60px;
+  max-width: 80px;
+  text-align: center;
+  color: #888;
+  font-weight: 500;
+}
+
 /* Product Image Styles */
 .product-image-container {
     display: flex;
@@ -1513,4 +1521,14 @@ form {
         height: 22px;
         font-size: 11px;
     }
+}
+
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.table-container {
+  overflow-x: auto;
 }

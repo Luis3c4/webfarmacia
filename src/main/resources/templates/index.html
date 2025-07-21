@@ -237,6 +237,14 @@
   
   // Cargar información del usuario cuando se carga la página
   document.addEventListener('DOMContentLoaded', function() {
+    // Validar tipo de usuario antes de cargar la vista de dashboard
+    const tipoUsuario = localStorage.getItem('tipo_usuario');
+    if (!tipoUsuario || (tipoUsuario.toLowerCase() !== 'administrador' && tipoUsuario.toLowerCase() !== 'admin')) {
+      // Si no es admin, mostrar mensaje y redirigir a login
+      alert('Debe iniciar sesión como administrador para acceder a esta sección.');
+      window.location.href = '/login';
+      return;
+    }
     cargarInformacionUsuario();
     
     // Configurar el comportamiento del sidebar en móviles

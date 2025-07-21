@@ -8,6 +8,7 @@ function initDashboard() {
 // Función principal para cargar todos los datos del dashboard
 async function cargarDashboardDataCompleto() {
     try {
+        mostrarSkeletonMetricas();
         console.log('[dashboard] Cargando datos completos del dashboard...');
         
         const response = await fetch('/api/dashboard/data');
@@ -37,6 +38,8 @@ async function cargarDashboardDataCompleto() {
     } catch (error) {
         console.error('[dashboard] Error al cargar datos del dashboard:', error);
         mostrarErrorDashboard();
+    } finally {
+        quitarSkeletonMetricas();
     }
 }
 
@@ -451,8 +454,55 @@ async function cargarMetricasDashboard() {
     await cargarDashboardDataCompleto();
 }
 
+// Mostrar skeletons en las tarjetas de métricas
+function mostrarSkeletonMetricas() {
+    const metricElements = [
+        'total-revenue',
+        'total-purchase-revenue',
+        'total-products',
+        'total-users',
+        'total-purchases',
+        'total-sales'
+    ];
+    metricElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = '';
+            element.classList.add('skeleton-metric');
+        }
+    });
+}
+// Quitar skeletons de las tarjetas de métricas
+function quitarSkeletonMetricas() {
+    const metricElements = [
+        'total-revenue',
+        'total-purchase-revenue',
+        'total-products',
+        'total-users',
+        'total-purchases',
+        'total-sales'
+    ];
+    metricElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.remove('skeleton-metric');
+        }
+    });
+}
+
 // Exportar funciones para uso global
 window.initDashboard = initDashboard;
 window.cargarMetricasDashboard = cargarMetricasDashboard;
 window.formatNumber = formatNumber;
 window.formatCurrency = formatCurrency;
+
+// Inicialización del dashboard y botón de recarga
+window.addEventListener('DOMContentLoaded', function() {
+    initDashboard();
+    var refreshBtn = document.getElementById('refresh-dashboard-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            cargarDashboardDataCompleto();
+        });
+    }
+});
