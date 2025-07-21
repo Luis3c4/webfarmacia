@@ -88,7 +88,6 @@ function createOptimizedImage(producto) {
     <img src="${imageUrl}"
          alt="${producto.nombre}"
          class="product-image"
-         style="display: none;"
          onload="handleImageLoad(this)"
          onerror="handleImageError(this)"
          loading="lazy">
@@ -126,6 +125,15 @@ function renderProductosTabla(productos) {
   const fragment = document.createDocumentFragment();
   
   productos.forEach(producto => {
+    if (!producto.productoId) {
+      console.warn('[RENDER] Producto sin productoId:', producto);
+      return; // No renderizar productos sin ID
+    }
+    if (producto.activo === false) {
+      // No mostrar productos inactivos (eliminados)
+      return;
+    }
+    console.log('[RENDER] Producto:', producto);
     const tr = document.createElement('tr');
     tr.className = 'producto-row';
     
@@ -144,6 +152,8 @@ function renderProductosTabla(productos) {
       stockStatusText = 'En stock';
     }
     
+    // Usar solo producto.productoId como id
+    const id = producto.productoId;
     tr.innerHTML = `
       <td class="td-image">
         <div class="product-image-container">
@@ -181,11 +191,11 @@ function renderProductosTabla(productos) {
       </td>
       <td class="td-actions">
         <div class="action-buttons">
-          <button class="btn-editar" data-id="${producto.productoId}" onclick="editarProducto(${producto.productoId})" title="Editar producto">
+          <button class="btn-editar" data-id="${id}" title="Editar producto">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="btn-eliminar" data-id="${producto.productoId}" onclick="eliminarProducto(${producto.productoId})" title="Eliminar producto">
-            <i class="fas fa-trash"></i>
+          <button class="btn-eliminar-nuevo" data-id="${id}" title="Eliminar producto">
+            <i class="fas fa-trash"></i> Eliminar
           </button>
         </div>
       </td>
@@ -1074,19 +1084,19 @@ function setupNuevaCategoriaInputAgregar() {
 }
 
 // Función para eliminar producto optimizada
-async function eliminarProducto(productoId) {
-  if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-    return;
+async function eliminarProducto(productoId, skipConfirm = false) {
+  console.log('[JS] Intentando eliminar producto', productoId);
+  if (!skipConfirm) {
+    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+      return;
+    }
   }
-  
   try {
     const response = await fetch(`/api/productos/${productoId}`, {
       method: 'DELETE'
     });
-    
     if (response.ok) {
       alert('Producto eliminado exitosamente');
-      
       // Recargar la tabla
       if (typeof fetchAndRender === 'function') {
         fetchAndRender(currentPage);
@@ -1101,6 +1111,33 @@ async function eliminarProducto(productoId) {
     console.error('Error:', error);
     alert('Error al eliminar producto');
   }
+}
+
+// Función para mostrar el modal de confirmación de eliminación
+function mostrarModalEliminarProducto(productoId) {
+  console.log('[MODAL] mostrarModalEliminarProducto llamado con productoId:', productoId);
+  const modal = document.getElementById('modalEliminarProducto');
+  if (!modal) {
+    alert('No se encontró el modal de confirmación de eliminación.');
+    return;
+  }
+  document.getElementById('eliminarProductoId').value = productoId;
+  modal.style.display = 'block';
+}
+
+// Función para cerrar el modal de eliminación
+function cerrarModalEliminarProducto() {
+  const modal = document.getElementById('modalEliminarProducto');
+  if (modal) modal.style.display = 'none';
+  document.getElementById('eliminarProductoId').value = '';
+}
+
+// Función para confirmar la eliminación
+async function confirmarEliminarProducto() {
+  const productoId = document.getElementById('eliminarProductoId').value;
+  console.log('[MODAL] confirmarEliminarProducto llamado. Producto a eliminar:', productoId);
+  await eliminarProducto(productoId, true);
+  cerrarModalEliminarProducto();
 }
 
 // Inicializar cuando el DOM esté listo
@@ -1127,6 +1164,40 @@ window.ProductosModule = {
   handleImageError,
   closeModalEditar
 };
+window.cerrarModalEliminarProducto = cerrarModalEliminarProducto;
+window.confirmarEliminarProducto = confirmarEliminarProducto;
+window.mostrarModalEliminarProducto = mostrarModalEliminarProducto;
+
+// Delegación de eventos para el nuevo botón eliminar
+// Elimina producto directamente y actualiza la tabla
+// (No usa modal para máxima claridad de prueba)
+document.addEventListener('click', async function(e) {
+  // Botón eliminar nuevo
+  if (e.target.closest('.btn-eliminar-nuevo')) {
+    const btn = e.target.closest('.btn-eliminar-nuevo');
+    const id = btn.getAttribute('data-id');
+    if (!id) return;
+    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+    try {
+      const response = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        alert('Producto eliminado exitosamente');
+        // Recargar la tabla sin el producto eliminado
+        if (typeof fetchAndRender === 'function') {
+          fetchAndRender(currentPage);
+        } else {
+          location.reload();
+        }
+      } else {
+        const error = await response.text();
+        alert('Error al eliminar producto: ' + error);
+      }
+    } catch (error) {
+      alert('Error al eliminar producto');
+      console.error(error);
+    }
+  }
+});
 
 
 

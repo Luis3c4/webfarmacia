@@ -365,4 +365,34 @@
   </div>
 </div>
 
+<!-- Modal para eliminar producto -->
+<div id="modalEliminarProducto" class="modal">
+  <div class="modal-content" style="max-width: 400px; min-width: 320px;">
+    <div class="modal-header" style="background: linear-gradient(135deg, #fff0f3, #ffe3e3); border-bottom: 1px solid #f8d7da;">
+      <h2 style="color: #dc3545; display: flex; align-items: center; gap: 10px; font-size: 1.2rem;">
+        <i class="fas fa-trash"></i> Eliminar Producto
+      </h2>
+      <span class="close" onclick="cerrarModalEliminarProducto()">&times;</span>
+    </div>
+    <div class="modal-body" style="padding: 2rem 1.5rem; text-align: center;">
+      <input type="hidden" id="eliminarProductoId">
+      <div style="margin-bottom: 1.5rem;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: #dc3545; margin-bottom: 1rem;"></i>
+        <p style="font-size: 1.1rem; color: #2c3e50;">¿Estás seguro de que deseas eliminar este producto?<br><span style="color: #dc3545; font-weight: 600;">Esta acción no se puede deshacer.</span></p>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 1rem;">
+        <button class="btn-cancelar" type="button" onclick="cerrarModalEliminarProducto()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button class="btn-eliminar" type="button" onclick="confirmarEliminarProducto()">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INCLUYE EL JS DE PRODUCTOS -->
+<script src="/js/producto.js"></script>
+
 

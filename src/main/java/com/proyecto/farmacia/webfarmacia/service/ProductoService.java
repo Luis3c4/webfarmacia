@@ -35,9 +35,13 @@ public class ProductoService {
     public void deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id).orElse(null);
         if (producto != null) {
+            System.out.println("[deleteProducto] Eliminando producto ID: " + id + " (" + producto.getNombre() + ")");
             // Soft delete - marcar como inactivo
             producto.setActivo(false);
             productoRepository.save(producto);
+            System.out.println("[deleteProducto] Producto marcado como inactivo y guardado en BD");
+        } else {
+            System.out.println("[deleteProducto] Producto no encontrado con ID: " + id);
         }
     }
 
